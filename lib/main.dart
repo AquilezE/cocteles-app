@@ -1,34 +1,26 @@
+import 'package:cocteles_app/app.dart';
+import 'package:cocteles_app/data/repositories/authentication/authentication_repository.dart';
+import 'package:cocteles_app/data/repositories/user/user_repository.dart';
 import 'package:flutter/material.dart';
-import 'package:provider/provider.dart';
+import 'package:flutter_dotenv/flutter_dotenv.dart';
+import 'package:flutter_native_splash/flutter_native_splash.dart';
+import 'package:get_storage/get_storage.dart';
+import 'package:get/get.dart';
 
-import 'auth_state.dart';
-import 'screens/login_page.dart';
-import 'screens/home_page.dart';
+Future<void> main() async {
 
-void main() {
-  runApp(
-    ChangeNotifierProvider(
-      create: (_) => AuthState(),
-      child: MyApp(),
-    ),
-  );
+  await dotenv.load(fileName: ".env");
+
+  final WidgetsBinding widgetsBinding = WidgetsFlutterBinding.ensureInitialized();
+
+  await GetStorage.init();
+
+  FlutterNativeSplash.preserve(widgetsBinding: widgetsBinding);
+
+  Get.put(AuthenticationRepository());
+  Get.put(UserRepository());
+  
+  runApp(const App());
 }
 
-class MyApp extends StatelessWidget {
-  @override
-  Widget build(BuildContext context) {
-    return MaterialApp(
-      title: 'Modular App',
-      theme: ThemeData(
-        useMaterial3: true,
-        colorScheme: ColorScheme.fromSeed(seedColor: Colors.deepOrange),
-      ),
-      home: Consumer<AuthState>(
-        builder: (context, auth, _) {
-          // if we have a token, go to HomePage; otherwise LoginPage
-          return auth.jwt != null ? MyHomePage() : LoginPage();
-        },
-      ),
-    );
-  }
-}
+
