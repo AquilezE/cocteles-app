@@ -4,6 +4,8 @@ import 'package:cocteles_app/utils/validators/validator.dart';
 import 'package:iconsax/iconsax.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:cocteles_app/features/createUser/screens/createUser_page.dart';
+
 
 class LoginForm extends StatelessWidget {
   const LoginForm({super.key});
@@ -75,7 +77,7 @@ class LoginForm extends StatelessWidget {
                   width: double.infinity,
                   child: OutlinedButton(
                     //AQUI VA LO DE CREAR CUENTA
-                      onPressed: () => Get.to(() => const ()),
+                      onPressed: () => Get.to(() => const RegisterScreen()),
                       child: const Text("Create Account"))),
             ],
           ),
