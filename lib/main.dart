@@ -1,6 +1,7 @@
 import 'package:cocteles_app/app.dart';
 import 'package:cocteles_app/data/repositories/authentication/authentication_repository.dart';
 import 'package:cocteles_app/data/repositories/user/user_repository.dart';
+import 'package:cocteles_app/data/repositories/cocktails/cocktail_repository.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:flutter_native_splash/flutter_native_splash.dart';
@@ -19,6 +20,7 @@ Future<void> main() async {
 
   Get.put(AuthenticationRepository());
   Get.put(UserRepository());
+  Get.put(CocktailRepository());
   
   runApp(const App());
 }

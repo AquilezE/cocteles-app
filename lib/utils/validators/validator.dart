@@ -1,4 +1,13 @@
 class Validator {
+
+  static String? validateUrl(String? value) {
+    final urlPattern = r'^(http|https):\/\/[^\s$.?#].[^\s]*$';
+    final result = RegExp(urlPattern, caseSensitive: false).hasMatch(value ?? '');
+    if (!result) return 'Por favor ingresa una URL válida';
+    return null;
+  }
+
+
   static String? validateEmptyText(String? fieldName, String? value) {
     if (value == null || value.isEmpty) {
       return '$fieldName is required.';

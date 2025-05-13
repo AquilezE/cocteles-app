@@ -2,6 +2,7 @@ import 'dart:async';
 import 'dart:ffi';
 
 import 'package:cocteles_app/features/authentication/models/user_credentials.dart';
+import 'package:cocteles_app/features/cocktails/screens/create_cocktail_page.dart';
 import 'package:cocteles_app/features/perzonalization/controllers/user_controller.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
@@ -40,35 +41,61 @@ class NavigationController extends GetxController{
   NavigationController(UserCredentials userCredentials)
       : screens = userCredentials.role == 'user'
        ? [
+        const CreateCocktailPage()
 
       ] : [
+        const CreateCocktailPage()
 
       ],
 
-      destinations = userCredentials.role == 'user'
-       ? [
-          const NavigationDestination(
-            icon: Icon(Icons.home),
-            label: 'Home',
-            selectedIcon: Icon(Icons.home_filled),
-          ),
-          const NavigationDestination(
-            icon: Icon(Icons.settings),
-            label: 'Settings',
-            selectedIcon: Icon(Icons.settings),
-          ),
-        ]
-        : [
-          const NavigationDestination(
-            icon: Icon(Icons.home),
-            label: 'Home',
-            selectedIcon: Icon(Icons.home_filled),
-          ),
-          const NavigationDestination(
-            icon: Icon(Icons.settings),
-            label: 'Settings',
-            selectedIcon: Icon(Icons.settings),
-          ),
-        ];
-
+  destinations = userCredentials.role == 'user'
+    ? [
+        const NavigationDestination(
+          icon: Icon(Icons.home),
+          label: 'Home',
+          selectedIcon: Icon(Icons.home_filled),
+        ),
+        const NavigationDestination(
+          icon: Icon(Icons.menu_book),
+          label: 'Recetas',
+          selectedIcon: Icon(Icons.menu_book),
+        ),
+        const NavigationDestination(
+          icon: Icon(Icons.menu_book),
+          label: 'Directos',
+          selectedIcon: Icon(Icons.menu_book),
+        ),
+        const NavigationDestination(
+          icon: Icon(Icons.face),
+          label: 'Cuenta',
+          selectedIcon: Icon(Icons.face),
+        ),
+      ]
+    : [
+        const NavigationDestination(
+          icon: Icon(Icons.home),
+          label: 'Home',
+          selectedIcon: Icon(Icons.home_filled),
+        ),
+        const NavigationDestination(
+          icon: Icon(Icons.menu_book),
+          label: 'Recetas',
+          selectedIcon: Icon(Icons.menu_book),
+        ),
+        const NavigationDestination(
+          icon: Icon(Icons.menu_book),
+          label: 'Directos',
+          selectedIcon: Icon(Icons.menu_book),
+        ),
+        const NavigationDestination(
+          icon: Icon(Icons.face),
+          label: 'Cuenta',
+          selectedIcon: Icon(Icons.face),
+        ),
+        const NavigationDestination(
+          icon: Icon(Icons.menu_book),
+          label: 'Revision',
+          selectedIcon: Icon(Icons.menu_book),
+        ),
+    ];
 }

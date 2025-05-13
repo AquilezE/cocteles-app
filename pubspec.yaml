@@ -20,6 +20,7 @@ dependencies:
   connectivity_plus:
   flutter_native_splash:
   flutter_dotenv: ^5.2.1
+  image_picker: ^1.0.0
 
   #Video
   path:
