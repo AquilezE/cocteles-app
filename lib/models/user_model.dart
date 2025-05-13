@@ -6,6 +6,7 @@ class UserModel {
   String? profilePicture;
   String? bio;
   String? role;
+  String? password;
 
   UserModel({
     this.id,
@@ -14,6 +15,7 @@ class UserModel {
     this.profilePicture,
     this.bio,
     this.role,
+    this.password,
   });
   
   static UserModel empty() => UserModel(
@@ -23,6 +25,7 @@ class UserModel {
     profilePicture: '',
     bio: '',
     role: '',
+    password: '',
   );
 
   //Aqui no se como putas le puedas meter lo de la contraseña
@@ -34,6 +37,7 @@ class UserModel {
       'profilePicture': profilePicture,
       'bio': bio,
       'role': role,
+      if (password != null) 'password': password,
     };
   }
 

@@ -16,9 +16,10 @@ class AppHttpHelper{
   };
 
   static Future<Map<String,dynamic>> get(String endpoint, String? jwt) async{
-    if (jwt!= null){
-      headers['Authorization'] = 'Bearer $jwt'; 
-    }
+   if (jwt != null) {
+  headers['Authorization'] = 'Bearer $jwt';
+}
+
 
     final response = await http.get(
         Uri.parse('$baseUrl/$endpoint'),
@@ -29,13 +30,14 @@ class AppHttpHelper{
   }
 
   static Future<Map<String, dynamic>> post(String endpoint, dynamic data, String? jwt) async {
-      
+      print('la url es$baseUrl');
       print('POST: $baseUrl/$endpoint');
       print('DATA: $data');
       
-      if (jwt == null){
-        headers['Authorization'] = 'Bearer $jwt';
-      }
+      if (jwt != null) {
+  headers['Authorization'] = 'Bearer $jwt';
+}
+
 
       final response = await http.post(Uri.parse('$baseUrl/$endpoint'),
           headers: headers,
