@@ -2,11 +2,14 @@ class UserRegistration {
   final String username;
   final String email;
   final String password;
+  final String role;
 
   UserRegistration({
     required this.username,
     required this.email,
     required this.password,
+    this.role = 'user'
+    
   });
 
   Map<String, dynamic> toJson() {
@@ -14,6 +17,7 @@ class UserRegistration {
       'username': username,
       'email': email,
       'password': password,
+      'role': role,
     };
   }
 
@@ -22,6 +26,7 @@ class UserRegistration {
       username: json['username'] ?? '',
       email: json['email'] ?? '',
       password: json['password'] ?? '',
+      role: json['role'] ?? 'user',
     );
   }
 }
