@@ -17,9 +17,22 @@ class CreateCocktailPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: Platform.isWindows || Platform.isMacOS || Platform.isLinux
-          ? _buildDesktopLayout()
-          : _buildMobileLayout(),
+      appBar: AppBar(
+        title: const Text('Crear Coctel'),
+        leading: IconButton(
+          icon: const Icon(Icons.arrow_back),
+          onPressed: () => Get.back(),
+        ),
+      ),
+      body: LayoutBuilder(
+        builder: (context, constraints) {
+          if (constraints.maxWidth >= 600) {
+            return _buildDesktopLayout();
+          } else {
+            return _buildMobileLayout();
+          }
+        },
+      ),
     );
   }
 
@@ -45,24 +58,28 @@ class CreateCocktailPage extends StatelessWidget {
                       borderRadius: BorderRadius.circular(16),
                       color: Colors.white,
                     ),
-                    child: imageFile != null ? ClipRRect(
-                      borderRadius: BorderRadius.circular(16),
-                      child: Image.file(
-                        imageFile,
-                        fit: BoxFit.contain,
-                      ),
-                    ) : const Center(
-                      child: Text(
-                        "Sin imagen seleccionada",
-                        style: TextStyle(fontSize: 16, color: Colors.black54),
-                      ),
-                    ),
+                    child: imageFile != null
+                        ? ClipRRect(
+                            borderRadius: BorderRadius.circular(16),
+                            child: Image.file(
+                              imageFile,
+                              fit: BoxFit.contain,
+                            ),
+                          )
+                        : const Center(
+                            child: Text(
+                              "Sin imagen seleccionada",
+                              style: TextStyle(
+                                  fontSize: 16, color: Colors.black54),
+                            ),
+                          ),
                   ),
                   const SizedBox(height: 24),
                   ElevatedButton.icon(
                     onPressed: () async {
                       final picker = ImagePicker();
-                      final pickedFile = await picker.pickImage(source: ImageSource.gallery);
+                      final pickedFile =
+                          await picker.pickImage(source: ImageSource.gallery);
                       if (pickedFile != null) {
                         controller.setImage(File(pickedFile.path));
                       }
@@ -81,7 +98,7 @@ class CreateCocktailPage extends StatelessWidget {
         ),
       ],
     );
-  } 
+  }
 
   Widget _buildMobileLayout() {
     return SingleChildScrollView(

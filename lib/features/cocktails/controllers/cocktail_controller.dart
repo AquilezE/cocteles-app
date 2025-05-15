@@ -12,11 +12,105 @@ class CocktailController extends GetxController {
 
   final Rx<File?> imageFile = Rx<File?>(null);
 
+  List<CocktailModel> cocktails = [
+    CocktailModel(
+      id: 1,
+      name: "Mojito Clásico",
+      creationSteps: "Macerar menta con azúcar...",
+      preparationTime: 5,
+      isNonAlcoholic: false,
+      alcoholType: "Ron",
+      imageUrl: "https://images.unsplash.com/photo-1551024709-8f23befc6f87",
+      likes: 125,
+    ),
+    CocktailModel(
+      id: 2,
+      name: "Margarita",
+      creationSteps: "Mezclar tequila con limón...",
+      preparationTime: 3,
+      isNonAlcoholic: false,
+      alcoholType: "Tequila",
+      imageUrl: "https://images.unsplash.com/photo-1556855810-ac404aa91e85",
+      likes: 98,
+    ),
+    CocktailModel(
+      id: 3,
+      name: "Piña Colada",
+      creationSteps: "Licuar piña con ron...",
+      preparationTime: 7,
+      isNonAlcoholic: false,
+      alcoholType: "Ron",
+      imageUrl: "https://images.unsplash.com/photo-1551024709-8f23befc6f87",
+      likes: 156,
+    ),
+    CocktailModel(
+      id: 1,
+      name: "Mojito Clásico",
+      creationSteps: "Macerar menta con azúcar...",
+      preparationTime: 5,
+      isNonAlcoholic: false,
+      alcoholType: "Ron",
+      imageUrl: "https://images.unsplash.com/photo-1551024709-8f23befc6f87",
+      likes: 125,
+    ),
+    CocktailModel(
+      id: 2,
+      name: "Margarita",
+      creationSteps: "Mezclar tequila con limón...",
+      preparationTime: 3,
+      isNonAlcoholic: false,
+      alcoholType: "Tequila",
+      imageUrl: "https://images.unsplash.com/photo-1556855810-ac404aa91e85",
+      likes: 98,
+    ),
+    CocktailModel(
+      id: 3,
+      name: "Piña Colada",
+      creationSteps: "Licuar piña con ron...",
+      preparationTime: 7,
+      isNonAlcoholic: false,
+      alcoholType: "Ron",
+      imageUrl: "https://images.unsplash.com/photo-1551024709-8f23befc6f87",
+      likes: 156,
+    ),
+    CocktailModel(
+      id: 1,
+      name: "Mojito Clásico",
+      creationSteps: "Macerar menta con azúcar...",
+      preparationTime: 5,
+      isNonAlcoholic: false,
+      alcoholType: "Ron",
+      imageUrl: "https://images.unsplash.com/photo-1551024709-8f23befc6f87",
+      likes: 125,
+    ),
+    CocktailModel(
+      id: 2,
+      name: "Margarita",
+      creationSteps: "Mezclar tequila con limón...",
+      preparationTime: 3,
+      isNonAlcoholic: false,
+      alcoholType: "Tequila",
+      imageUrl: "https://images.unsplash.com/photo-1556855810-ac404aa91e85",
+      likes: 98,
+    ),
+    CocktailModel(
+      id: 3,
+      name: "Piña Colada",
+      creationSteps: "Licuar piña con ron...",
+      preparationTime: 7,
+      isNonAlcoholic: false,
+      alcoholType: "Ron",
+      imageUrl: "https://images.unsplash.com/photo-1551024709-8f23befc6f87",
+      likes: 156,
+    ),
+  ];
+
   void setImage(File file) async {
     imageFile.value = file;
     final bytes = await file.readAsBytes();
     final base64Image = base64Encode(bytes);
-    imageUrl.text = 'data:image/jpeg;base64,$base64Image'; // asigna directamente a imageUrl
+    imageUrl.text =
+        'data:image/jpeg;base64,$base64Image'; // asigna directamente a imageUrl
   }
 
   final name = TextEditingController();
@@ -31,7 +125,8 @@ class CocktailController extends GetxController {
   var isNonAlcoholic = false.obs;
   var isLoading = false.obs;
 
-  RxList<Map<String, dynamic>> selectedIngredients = <Map<String, dynamic>>[].obs;
+  RxList<Map<String, dynamic>> selectedIngredients =
+      <Map<String, dynamic>>[].obs;
 
   void toggleNonAlcoholic(bool value) {
     isNonAlcoholic.value = value;
