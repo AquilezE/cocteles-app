@@ -1,10 +1,8 @@
 import 'dart:convert';
 import 'dart:io';
-
 import 'package:cocteles_app/models/user_model.dart';
 import 'package:cocteles_app/utils/exceptions/http_exception.dart';
 import 'package:get/get.dart';
-
 import 'package:cocteles_app/utils/http_client.dart';
 import 'package:cocteles_app/features/createUser/models/UserRegistration.dart';
 
@@ -16,7 +14,7 @@ class UserRepository extends GetxController{
     
     try{
     //FALTA PONER UN PUTA ENDPOINT AQUI
-    var endpoint = 'api/v1/user/$username';
+    var endpoint = 'api/v1/usuarios/username/$username';
     final response = await AppHttpHelper.get(endpoint, jwt);
     
     return UserModel.fromJson(response);
@@ -33,19 +31,15 @@ class UserRepository extends GetxController{
     }
   }
 
- Future<UserModel> createUser(UserRegistration user) async {
-  try {
-    const endpoint = 'api/v1/usuarios'; 
-    final response = await AppHttpHelper.post(endpoint, user.toJson(), null);
-    print("metodo de crear");
-    return UserModel.fromJson(response);
-  } catch (e) {
-    print("error al crear el usuario");
-    throw Exception('Failed to create user: $e');
+  Future<UserModel> createUser(UserRegistration user) async {
+    try {
+      const endpoint = 'api/v1/usuarios'; 
+      final response = await AppHttpHelper.post(endpoint, user.toJson(), null);
+      print("metodo de crear");
+      return UserModel.fromJson(response);
+    } catch (e) {
+      print("error al crear el usuario");
+      throw Exception('Failed to create user: $e');
+    }
   }
-}
-
-
-
-
 }

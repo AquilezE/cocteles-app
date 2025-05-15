@@ -16,10 +16,9 @@ class CocktailController extends GetxController {
     imageFile.value = file;
     final bytes = await file.readAsBytes();
     final base64Image = base64Encode(bytes);
-    imageUrl.text = 'data:image/jpeg;base64,$base64Image'; // Asigna directamente a imageUrl
+    imageUrl.text = 'data:image/jpeg;base64,$base64Image'; // asigna directamente a imageUrl
   }
 
-  // Controladores para los campos del formulario
   final name = TextEditingController();
   final creationSteps = TextEditingController();
   final preparationTime = TextEditingController();
@@ -32,7 +31,6 @@ class CocktailController extends GetxController {
   var isNonAlcoholic = false.obs;
   var isLoading = false.obs;
 
-  // Ingredientes: Lista de mapas con id y cantidad
   RxList<Map<String, dynamic>> selectedIngredients = <Map<String, dynamic>>[].obs;
 
   void toggleNonAlcoholic(bool value) {
@@ -43,10 +41,10 @@ class CocktailController extends GetxController {
   RxList<Map<String, dynamic>> manualIngredients = <Map<String, dynamic>>[].obs;
 
   void addManualIngredient(String name, String quantity) {
-  if (name.isNotEmpty && quantity.isNotEmpty) {
-    manualIngredients.add({'name': name, 'quantity': quantity});
+    if (name.isNotEmpty && quantity.isNotEmpty) {
+      manualIngredients.add({'name': name, 'quantity': quantity});
+    }
   }
-}
 
   void clearForm() {
     name.clear();
@@ -61,21 +59,11 @@ class CocktailController extends GetxController {
   }
 
   Future<void> submitCocktail(String? jwt) async {
-    
-    print('Credenciales: ${UserController.instance.userCredentials}');
-    print('UserController.user: ${UserController.instance.user.value}');
-    final userId = UserController.instance.user.value.id;
-    print('UserID usado: $userId');
-    print("🥃 ID usado en receta: ${UserController.instance.user.value.id}");
-
-
-    
     if (!formKey.currentState!.validate()) return;
 
     isLoading.value = true;
 
     try {
-      final username = UserController.instance.userCredentials!.username;
       final userId = UserController.instance.user.value.id;
 
       final cocktail = CocktailModel(

@@ -1,4 +1,3 @@
-
 import 'dart:io';
 import 'package:cocteles_app/features/cocktails/controllers/cocktail_controller.dart';
 import 'package:cocteles_app/features/cocktails/screens/widgets/ingredients_form.dart';
@@ -10,7 +9,6 @@ import 'package:image_picker/image_picker.dart';
 import 'package:iconsax/iconsax.dart';
 import 'package:cocteles_app/features/perzonalization/controllers/user_controller.dart';
 
-
 class CocktailForm extends StatelessWidget {
   const CocktailForm({super.key});
 
@@ -21,35 +19,10 @@ class CocktailForm extends StatelessWidget {
     return SingleChildScrollView(
       child: Form(
         key: controller.formKey,
-      child: Padding(
+        child: Padding(
         padding: const EdgeInsets.symmetric(vertical: Sizes.spaceBtwSections),
         child: Column(
           children: [
-            GestureDetector(
-              onTap: () async {
-                final picker = ImagePicker();
-                final pickedFile = await picker.pickImage(source: ImageSource.gallery);
-                if (pickedFile != null) {
-                  controller.setImage(File(pickedFile.path));
-                }
-              },
-              child: Obx(() => Container(
-                    height: 150,
-                    width: double.infinity,
-                    color: Colors.grey[300],
-                    child: controller.imageFile.value != null
-                        ? Image.file(controller.imageFile.value!, fit: BoxFit.cover)
-                        : const Center(
-                            child: Column(
-                              mainAxisAlignment: MainAxisAlignment.center,
-                              children: [
-                                Icon(Iconsax.image),
-                                Text("Foto del cóctel terminado")
-                              ],
-                            ),
-                          ),
-                  )),
-            ),
             const SizedBox(height: Sizes.spaceBtwInputFields),
 
             TextFormField(
