@@ -4,6 +4,7 @@ import 'dart:ffi';
 import 'package:cocteles_app/features/authentication/models/user_credentials.dart';
 import 'package:cocteles_app/features/cocktails/index_cocktails_page.dart';
 import 'package:cocteles_app/features/cocktails/screens/create_cocktail_page.dart';
+import 'package:cocteles_app/features/livestreams/screens/index_livestream_page.dart';
 import 'package:cocteles_app/features/perzonalization/controllers/user_controller.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
@@ -43,9 +44,11 @@ class NavigationController extends GetxController {
       : screens = userCredentials.role == 'user'
             ? [
                 IndexCocktailsPage(),
+                IndexLivestreamPage(),
               ]
             : [
                 IndexCocktailsPage(),
+                IndexLivestreamPage(),
               ],
         destinations = userCredentials.role == 'user'
             ? [
