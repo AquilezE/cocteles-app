@@ -1,8 +1,16 @@
+import 'package:cocteles_app/features/livestreams/models/livestream_model.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:media_kit/media_kit.dart'; // Provides [Player], [Media], [Playlist] etc.
+import 'package:media_kit_video/media_kit_video.dart'; // Provides [VideoController] & [Video] etc.
+import 'package:socket_io_client/socket_io_client.dart' as IO;
 
-class LivestreamScreen extends StatelessWidget {
-  const LivestreamScreen({super.key});
+class LivestreamScreen extends StatefulWidget {
+  final LivestreamModel livestreamModel;
+
+  const LivestreamScreen({super.key, required this.livestreamModel});
+  @override
+  State<LivestreamScreen> createState() => _LiveStreamState();
 
   @override
   Widget build(BuildContext context) {
@@ -32,5 +40,203 @@ class LivestreamScreen extends StatelessWidget {
 
   Widget _buildMobileLayout() {
     return Center(child: Text('Mobile Layout'));
+  }
+}
+
+class _LiveStreamState extends State<LivestreamScreen> {
+  late final player;
+  late final controller;
+  late final IO.Socket _socket;
+  final RxList<String> messages = <String>[].obs;
+  final TextEditingController _messageController = TextEditingController();
+
+  @override
+  void initState() {
+    super.initState();
+    MediaKit.ensureInitialized();
+    player = Player();
+    controller = VideoController(player);
+    player.open(Media(
+        'http://192.168.1.13:8080/live/${widget.livestreamModel.streamKey}.m3u8'));
+    player.play();
+
+    _socket = IO.io(
+        'http://192.168.1.14:3000',
+        IO.OptionBuilder()
+            .setTransports(['websocket'])
+            .enableAutoConnect()
+            .build());
+    _socket.connect();
+    _socket.onConnect((_) {
+      print('connected');
+      _socket.emit('join', widget.livestreamModel.streamKey);
+    });
+
+    _socket.on('message:${widget.livestreamModel.streamKey}', (data) {
+      messages.add(data['message'].asString());
+    });
+  }
+
+  @override
+  void dispose() {
+    player.dispose();
+    _socket.dispose();
+    _messageController.dispose();
+    super.dispose();
+  }
+
+  void _sendMessage() {
+    final text = _messageController.text.trim();
+    if (text.isEmpty) return;
+    _socket.emit('message', {
+      'channel': widget.livestreamModel.streamKey,
+      'text': text,
+    });
+    _messageController.clear();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(
+        title: Text(widget.livestreamModel.title ?? 'Livestream'),
+        leading: IconButton(
+            icon: const Icon(Icons.arrow_back), onPressed: () => Get.back()),
+      ),
+      body: LayoutBuilder(
+        builder: (context, constraints) {
+          if (constraints.maxWidth >= 600) {
+            // desktop: video + chat lado a lado
+            return Row(
+              children: [
+                Expanded(
+                    flex: 3, child: _videoView(constraints.maxWidth * 0.6)),
+                Expanded(
+                    flex: 2,
+                    child: ChatDesktop(
+                        messages: messages,
+                        controller: _messageController,
+                        onSend: _sendMessage)),
+              ],
+            );
+          } else {
+            // mobile: video arriba, chat debajo
+            return SingleChildScrollView(
+              child: Column(
+                children: [
+                  _videoView(constraints.maxWidth),
+                  ChatMobile(
+                      messages: messages,
+                      controller: _messageController,
+                      onSend: _sendMessage),
+                ],
+              ),
+            );
+          }
+        },
+      ),
+    );
+  }
+
+  Widget _videoView(double width) {
+    final height = width * 9 / 16;
+    return Center(
+      child: SizedBox(
+          width: width, height: height, child: Video(controller: controller)),
+    );
+  }
+}
+
+class ChatDesktop extends StatelessWidget {
+  final RxList<String> messages;
+  final TextEditingController controller;
+  final VoidCallback onSend;
+  const ChatDesktop(
+      {required this.messages,
+      required this.controller,
+      required this.onSend,
+      super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return Column(
+      children: [
+        const Padding(
+          padding: EdgeInsets.all(8),
+          child: Text('Chat',
+              style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
+        ),
+        Expanded(
+          child: Obx(() => ListView.builder(
+                itemCount: messages.length,
+                itemBuilder: (_, i) => ListTile(title: Text(messages[i])),
+              )),
+        ),
+        Padding(
+          padding: const EdgeInsets.all(8),
+          child: Row(
+            children: [
+              Expanded(
+                  child: TextField(
+                      controller: controller,
+                      decoration:
+                          const InputDecoration(hintText: 'Escribe...'))),
+              IconButton(icon: const Icon(Icons.send), onPressed: onSend),
+            ],
+          ),
+        ),
+      ],
+    );
+  }
+}
+
+class ChatMobile extends StatelessWidget {
+  final RxList<String> messages;
+  final TextEditingController controller;
+  final VoidCallback onSend;
+  const ChatMobile(
+      {required this.messages,
+      required this.controller,
+      required this.onSend,
+      super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      height: 400, // o ajusta según prefieras
+      padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+      child: Column(
+        children: [
+          Expanded(
+            child: Obx(() => ListView.builder(
+                  reverse: true,
+                  itemCount: messages.length,
+                  itemBuilder: (_, i) => Align(
+                    alignment:
+                        i.isEven ? Alignment.centerLeft : Alignment.centerRight,
+                    child: Container(
+                      margin: const EdgeInsets.symmetric(vertical: 2),
+                      padding: const EdgeInsets.all(8),
+                      decoration: BoxDecoration(
+                        color: Colors.grey.shade200,
+                        borderRadius: BorderRadius.circular(8),
+                      ),
+                      child: Text(messages[messages.length - 1 - i]),
+                    ),
+                  ),
+                )),
+          ),
+          Row(
+            children: [
+              Expanded(
+                  child: TextField(
+                      controller: controller,
+                      decoration: const InputDecoration(hintText: 'Mensaje'))),
+              IconButton(icon: const Icon(Icons.send), onPressed: onSend),
+            ],
+          ),
+        ],
+      ),
+    );
   }
 }
