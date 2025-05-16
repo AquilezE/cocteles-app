@@ -1,8 +1,7 @@
 import 'dart:io';
-
 import 'package:cocteles_app/features/createUser/screens/widgets/register_form.dart';
-import 'package:cocteles_app/features/authentication/screens/widgets/login_header_desktop.dart';
-import 'package:cocteles_app/features/authentication/screens/widgets/login_header_mobile.dart';
+import 'package:cocteles_app/features/createUser/screens/widgets/register_header_desktop.dart';
+import 'package:cocteles_app/features/createUser/screens/widgets/register_header_mobile.dart';
 import 'package:cocteles_app/utils/constants/spacing_styles.dart';
 import 'package:flutter/material.dart';
 
@@ -30,7 +29,7 @@ class RegisterScreen extends StatelessWidget {
             child: Column(
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
-                LoginHeaderDesktop(),
+                RegisterHeaderDesktop(),
               ],
             ),
           ),
@@ -62,7 +61,7 @@ class RegisterScreen extends StatelessWidget {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: const [
-              LoginHeaderMobile(),
+              RegisterHeaderMobile(),
               RegisterForm(),
             ],
           ),
