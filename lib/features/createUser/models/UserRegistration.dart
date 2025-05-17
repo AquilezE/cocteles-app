@@ -1,8 +1,8 @@
 class UserRegistration {
-  final String username;
-  final String email;
-  final String password;
-  final String role;
+  final String? username;
+  final String? email;
+  final String? password;
+  final String? role;
 
   UserRegistration({
     required this.username,

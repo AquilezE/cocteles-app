@@ -2,7 +2,8 @@ import 'package:cocteles_app/features/authentication/screens/login_page.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:cocteles_app/data/repositories/user/user_repository.dart';
-import 'package:cocteles_app/features/createUser/models/UserRegistration.dart'; 
+import 'package:cocteles_app/features/createUser/models/UserRegistration.dart';
+import 'package:get_storage/get_storage.dart'; 
 
 class RegisterController extends GetxController {
   final formKey = GlobalKey<FormState>();
@@ -45,17 +46,48 @@ class RegisterController extends GetxController {
 
 }
 class ProfileController extends GetxController {
-  static ProfileController get instance => Get.find<ProfileController>();
+  static ProfileController get instance => Get.find();
+
   final Rx<UserRegistration> user = UserRegistration(
-    
-    username: 'Test User',
-    email: 'test@example.com',
-    password: '********',
-    role: 'user',
+    username: '',
+    email: '',
+    password: '',
+    role: '',
   ).obs;
 
-  void updateUser(UserRegistration updatedUser) {
-    user.value = updatedUser;
+  final isLoading = true.obs;
+  final storage = GetStorage();
+
+  @override
+  void onInit() {
+    super.onInit();
+    fetchUserProfile();
+  }
+
+  void fetchUserProfile() async {
+    try {
+      isLoading.value = true;
+
+      final username = storage.read('username');
+      final jwt = storage.read('jwt');
+
+      if (username == null || jwt == null) {
+        throw Exception('No session data found');
+      }
+
+      final userModel = await UserRepository.instance.getUserDetails(username, jwt);
+
+      user.value = UserRegistration(
+        username: userModel.username,
+        email: userModel.email,
+        password: '********',
+        role: userModel.role,
+      );
+    } catch (e) {
+      Get.snackbar('Error', 'No se pudo cargar el perfil: $e');
+    } finally {
+      isLoading.value = false;
+    }
   }
 }
 

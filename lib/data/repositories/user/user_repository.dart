@@ -13,7 +13,6 @@ class UserRepository extends GetxController{
   Future<UserModel> getUserDetails(String username, String? jwt) async{
     
     try{
-    //FALTA PONER UN PUTA ENDPOINT AQUI
     var endpoint = 'api/v1/usuarios/username/$username';
     final response = await AppHttpHelper.get(endpoint, jwt);
     

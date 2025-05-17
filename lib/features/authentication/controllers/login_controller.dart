@@ -81,6 +81,9 @@ class LoginController extends GetxController {
 
       final userCredentials = await AuthenticationRepository.instance.loginWithEmailAndPassword(emailString, passwordString);
 
+      localStorage.write('jwt', userCredentials.jwt);
+      localStorage.write('username', userCredentials.username);
+      
       userController.userCredentials = userCredentials;
       userController.fetchUserData();
 
