@@ -8,6 +8,7 @@ import 'package:cocteles_app/features/livestreams/screens/index_livestream_page.
 import 'package:cocteles_app/features/perzonalization/controllers/user_controller.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:cocteles_app/features/createUser/screens/userProfile_page.dart';
 
 class NavigationMenu extends StatelessWidget {
   const NavigationMenu({super.key});
@@ -45,10 +46,12 @@ class NavigationController extends GetxController {
             ? [
                 IndexCocktailsPage(),
                 IndexLivestreamPage(),
+                ProfileScreen(),
               ]
             : [
                 IndexCocktailsPage(),
                 IndexLivestreamPage(),
+                ProfileScreen(),
               ],
         destinations = userCredentials.role == 'user'
             ? [
@@ -63,15 +66,16 @@ class NavigationController extends GetxController {
                   selectedIcon: Icon(Icons.menu_book),
                 ),
                 const NavigationDestination(
-                  icon: Icon(Icons.menu_book),
-                  label: 'Directos',
-                  selectedIcon: Icon(Icons.menu_book),
-                ),
-                const NavigationDestination(
                   icon: Icon(Icons.face),
                   label: 'Cuenta',
                   selectedIcon: Icon(Icons.face),
                 ),
+                const NavigationDestination(
+                  icon: Icon(Icons.menu_book),
+                  label: 'Directos',
+                  selectedIcon: Icon(Icons.menu_book),
+                ),
+                
               ]
             : [
                 const NavigationDestination(
@@ -83,16 +87,15 @@ class NavigationController extends GetxController {
                   icon: Icon(Icons.menu_book),
                   label: 'Recetas',
                   selectedIcon: Icon(Icons.menu_book),
+                ),const NavigationDestination(
+                  icon: Icon(Icons.face),
+                  label: 'Cuenta',
+                  selectedIcon: Icon(Icons.face),
                 ),
                 const NavigationDestination(
                   icon: Icon(Icons.menu_book),
                   label: 'Directos',
                   selectedIcon: Icon(Icons.menu_book),
-                ),
-                const NavigationDestination(
-                  icon: Icon(Icons.face),
-                  label: 'Cuenta',
-                  selectedIcon: Icon(Icons.face),
                 ),
                 const NavigationDestination(
                   icon: Icon(Icons.menu_book),

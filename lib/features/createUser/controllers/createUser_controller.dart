@@ -41,5 +41,21 @@ class RegisterController extends GetxController {
     password.dispose();
     super.onClose();
   }
+
+
+}
+class ProfileController extends GetxController {
+  static ProfileController get instance => Get.find<ProfileController>();
+  final Rx<UserRegistration> user = UserRegistration(
+    
+    username: 'Test User',
+    email: 'test@example.com',
+    password: '********',
+    role: 'user',
+  ).obs;
+
+  void updateUser(UserRegistration updatedUser) {
+    user.value = updatedUser;
+  }
 }
 
