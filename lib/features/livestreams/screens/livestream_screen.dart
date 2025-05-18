@@ -1,9 +1,11 @@
 import 'package:cocteles_app/features/livestreams/models/livestream_model.dart';
+import 'package:cocteles_app/features/perzonalization/controllers/user_controller.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:media_kit/media_kit.dart'; // Provides [Player], [Media], [Playlist] etc.
 import 'package:media_kit_video/media_kit_video.dart'; // Provides [VideoController] & [Video] etc.
 import 'package:socket_io_client/socket_io_client.dart' as IO;
+import 'package:flutter_dotenv/flutter_dotenv.dart';
 
 class LivestreamScreen extends StatefulWidget {
   final LivestreamModel livestreamModel;
@@ -44,6 +46,8 @@ class LivestreamScreen extends StatefulWidget {
 }
 
 class _LiveStreamState extends State<LivestreamScreen> {
+  final userController = Get.find<UserController>();
+
   late final player;
   late final controller;
   late final IO.Socket _socket;
@@ -53,28 +57,45 @@ class _LiveStreamState extends State<LivestreamScreen> {
   @override
   void initState() {
     super.initState();
-    MediaKit.ensureInitialized();
-    player = Player();
-    controller = VideoController(player);
-    player.open(Media(
-        'http://192.168.1.13:8080/live/${widget.livestreamModel.streamKey}.m3u8'));
-    player.play();
 
     _socket = IO.io(
-        'http://192.168.1.14:3000',
-        IO.OptionBuilder()
-            .setTransports(['websocket'])
-            .enableAutoConnect()
-            .build());
-    _socket.connect();
+      '${dotenv.env['BASE_URL']}/',
+      IO.OptionBuilder()
+          .setTransports(['websocket']) // only use WebSocket
+          .enableForceNew() // create a fresh connection
+          .enableReconnection() // auto-reconnect if dropped
+          .setReconnectionAttempts(5) // try up to 5 times
+          .setReconnectionDelay(2000) // wait 2s between attempts
+          .enableAutoConnect() // connect immediately
+          .build(),
+    );
+
+    // these can help debug
     _socket.onConnect((_) {
       print('connected');
       _socket.emit('join', widget.livestreamModel.streamKey);
     });
+    _socket.onDisconnect((_) => print('disconnected'));
 
     _socket.on('message:${widget.livestreamModel.streamKey}', (data) {
-      messages.add(data['message'].asString());
+      final incoming = data['text'] as String;
+
+      final userMap = Map<String, dynamic>.from(data['user'] as Map);
+      final userId = userMap['id'] as int;
+      final username = userMap['username'] as String;
+
+      final display = '$username: $incoming';
+
+      messages.add(display);
     });
+
+    MediaKit.ensureInitialized();
+    player = Player();
+    controller = VideoController(player);
+
+    player.open(Media(
+        'http://192.168.1.13:8080/live/${widget.livestreamModel.streamKey}.m3u8'));
+    player.play();
   }
 
   @override
@@ -87,10 +108,14 @@ class _LiveStreamState extends State<LivestreamScreen> {
 
   void _sendMessage() {
     final text = _messageController.text.trim();
-    if (text.isEmpty) return;
+
     _socket.emit('message', {
       'channel': widget.livestreamModel.streamKey,
       'text': text,
+      'user': {
+        'id': userController.user.value.id,
+        'username': userController.user.value.username,
+      }
     });
     _messageController.clear();
   }

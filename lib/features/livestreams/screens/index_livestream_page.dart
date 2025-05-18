@@ -3,12 +3,14 @@ import 'package:cocteles_app/features/livestreams/controllers/livestream_control
 import 'package:cocteles_app/features/livestreams/screens/livestream_screen.dart';
 import 'package:cocteles_app/features/livestreams/models/livestream_model.dart';
 import 'package:get/get.dart';
+import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:flutter/material.dart';
 
 class IndexLivestreamPage extends StatelessWidget {
   IndexLivestreamPage({super.key});
 
   final livestreamController = Get.put(LivestreamController());
+  final _titleCtrl = TextEditingController();
 
   @override
   Widget build(BuildContext context) {
@@ -18,14 +20,14 @@ class IndexLivestreamPage extends StatelessWidget {
       floatingActionButton: FloatingActionButton(
         tooltip: 'Crear Livestream',
         child: const Icon(Icons.add),
-        onPressed: () {
-          // AQUI SE DEBE CREAR UN NUEVO LIVESTREAM
-          Get.to(() => ());
-        },
+        onPressed: () => _showCreateDialog(context),
       ),
       body: Padding(
         padding: const EdgeInsets.all(8.0),
         child: Obx(() {
+          if (livestreamController.isLoading.value) {
+            return const Center(child: CircularProgressIndicator());
+          }
           final lives = livestreamController.livestreams;
           return GridView.builder(
             gridDelegate: const SliverGridDelegateWithMaxCrossAxisExtent(
@@ -45,6 +47,58 @@ class IndexLivestreamPage extends StatelessWidget {
             },
           );
         }),
+      ),
+    );
+  }
+
+  void _showCreateDialog(BuildContext context) {
+    _titleCtrl.clear();
+    Get.dialog(
+      AlertDialog(
+        title: const Text('Nuevo Livestream'),
+        content: TextField(
+          controller: _titleCtrl,
+          decoration: const InputDecoration(labelText: 'Título'),
+        ),
+        actions: [
+          TextButton(
+              onPressed: () => Get.back(), child: const Text('Cancelar')),
+          ElevatedButton(
+            onPressed: () async {
+              final title = _titleCtrl.text.trim();
+              if (title.isEmpty) return;
+              Get.back(); // cerrar diálogo de título
+              final session = await livestreamController.createSession(title);
+              if (session != null) {
+                _showInfoDialog(context, session);
+              }
+            },
+            child: const Text('Crear'),
+          ),
+        ],
+      ),
+      barrierDismissible: false,
+    );
+  }
+
+  void _showInfoDialog(BuildContext context, LivestreamModel session) {
+    Get.dialog(
+      AlertDialog(
+        title: const Text('Transmisión creada'),
+        content: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            SelectableText('Servidor:\n${dotenv.env['STREAM_URL']}'),
+            const SizedBox(height: 8),
+            SelectableText('Stream key:\n${session.streamKey}'),
+            const SizedBox(height: 16),
+            const Text(
+                'Configura OBS:\n- Pon la URL en “Media Source”.\n- Copia la clave en “Stream Key”.'),
+          ],
+        ),
+        actions: [
+          TextButton(onPressed: () => Get.back(), child: const Text('OK')),
+        ],
       ),
     );
   }

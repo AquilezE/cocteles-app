@@ -1,36 +1,44 @@
+import 'package:cocteles_app/data/repositories/live_sessions/live_sessions_repository.dart';
 import 'package:cocteles_app/features/livestreams/models/livestream_model.dart';
-import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
 class LivestreamController extends GetxController {
-  final RxList<LivestreamModel> livestreams = <LivestreamModel>[
-    LivestreamModel(
-      id: '1',
-      userId: 'user1',
-      title: 'Live Cooking Show',
-      streamKey: 'abc123',
-      url: 'https://example.com/stream1',
-      startTime: DateTime.now().subtract(Duration(hours: 1)),
-      endTime: DateTime.now().add(Duration(hours: 1)),
-    ),
-    LivestreamModel(
-      id: '2',
-      userId: 'user2',
-      title: 'Cocktail Masterclass',
-      streamKey: 'def456',
-      url: 'https://example.com/stream2',
-      startTime: DateTime.now().subtract(Duration(hours: 2)),
-      endTime: DateTime.now().add(Duration(hours: 2)),
-    ),
-    LivestreamModel(
-      id: '3',
-      userId: 'user3',
-      title: 'Mixology 101',
-      streamKey: 'ghi789',
-      url: 'https://example.com/stream3',
-      startTime: DateTime.now().subtract(Duration(minutes: 30)),
-      endTime: DateTime.now().add(Duration(hours: 3)),
-    ),
-  ].obs;
+  final LiveSessionsRepository _repo = LiveSessionsRepository();
+
+  final RxList<LivestreamModel> livestreams = <LivestreamModel>[].obs;
   final RxBool isLoading = false.obs;
+
+  @override
+  void onInit() {
+    super.onInit();
+    fetchSessions();
+  }
+
+  Future<void> fetchSessions() async {
+    try {
+      isLoading.value = true;
+      final List<LivestreamModel> list = await _repo.fetchActive();
+      livestreams.assignAll(list);
+    } catch (e) {
+      Get.snackbar('Error', 'No se pudo cargar transmisiones');
+      print(e);
+    } finally {
+      isLoading.value = false;
+    }
+  }
+
+  Future<LivestreamModel?> createSession(String title) async {
+    try {
+      isLoading.value = true;
+      final session = await _repo.create(title: title);
+      livestreams.insert(0, session);
+      return session;
+    } catch (e) {
+      print(e);
+      Get.snackbar('Error', 'No se pudo crear la transmisión');
+      return null;
+    } finally {
+      isLoading.value = false;
+    }
+  }
 }

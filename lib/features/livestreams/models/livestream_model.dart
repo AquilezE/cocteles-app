@@ -1,11 +1,11 @@
 class LivestreamModel {
-  final String id;
-  final String userId;
+  final int id;
+  final int userId;
   final String title;
   final String streamKey;
   final String url;
   final DateTime startTime;
-  final DateTime endTime;
+  final DateTime? endTime;
 
   LivestreamModel({
     required this.id,
@@ -14,7 +14,7 @@ class LivestreamModel {
     required this.streamKey,
     required this.url,
     required this.startTime,
-    required this.endTime,
+    this.endTime,
   });
 
   factory LivestreamModel.fromJson(Map<String, dynamic> json) {
@@ -25,7 +25,9 @@ class LivestreamModel {
       streamKey: json['stream_key'],
       url: json['url'],
       startTime: DateTime.parse(json['started_at']),
-      endTime: DateTime.parse(json['ended_at']),
+      endTime: json['ended_at'] != null
+          ? DateTime.parse(json['ended_at'] as String)
+          : null,
     );
   }
 }
