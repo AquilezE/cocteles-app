@@ -1,11 +1,9 @@
-import 'dart:io';
 import 'package:cocteles_app/features/cocktails/controllers/cocktail_controller.dart';
 import 'package:cocteles_app/features/cocktails/screens/widgets/ingredients_form.dart';
 import 'package:cocteles_app/utils/constants/sizes.dart';
 import 'package:cocteles_app/utils/validators/validator.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:image_picker/image_picker.dart';
 import 'package:iconsax/iconsax.dart';
 import 'package:cocteles_app/features/perzonalization/controllers/user_controller.dart';
 

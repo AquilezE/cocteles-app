@@ -1,11 +1,12 @@
 import 'dart:io';
 import 'dart:convert';
 import 'package:cocteles_app/models/cocktail_model.dart';
-import 'package:cocteles_app/data/repositories/user/user_repository.dart';
 import 'package:cocteles_app/data/repositories/cocktails/cocktail_repository.dart';
 import 'package:cocteles_app/features/perzonalization/controllers/user_controller.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:http/http.dart' as http;
+import 'package:image_picker/image_picker.dart';
 
 class CocktailController extends GetxController {
   static CocktailController get instance => Get.find();
@@ -104,13 +105,40 @@ class CocktailController extends GetxController {
       likes: 156,
     ),
   ];
+  
+  Future<String?> uploadImage(File file) async {
+    final uri = Uri.parse('http://192.168.100.41:3000/api/v1/upload');
+    final request = http.MultipartRequest('POST', uri)..files.add(await http.MultipartFile.fromPath('image', file.path));
+    final response = await request.send();
+
+    if (response.statusCode == 200) {
+      final respStr = await response.stream.bytesToString();
+      final data = json.decode(respStr);
+      return "${data['imageUrl']}";
+    } else {
+      print('Error subiendo imagen: ${response.statusCode}');
+      return null;
+    }
+  }
+
+  Future<void> pickAndSetImage() async {
+    final picker = ImagePicker();
+    final picked = await picker.pickImage(source: ImageSource.gallery);
+    if (picked != null) {
+      final file = File(picked.path);
+      setImage(file);
+    }
+  }
 
   void setImage(File file) async {
     imageFile.value = file;
-    final bytes = await file.readAsBytes();
-    final base64Image = base64Encode(bytes);
-    imageUrl.text =
-        'data:image/jpeg;base64,$base64Image'; // asigna directamente a imageUrl
+    final uploadedUrl = await uploadImage(file);
+    if (uploadedUrl != null) {
+      imageUrl.text = uploadedUrl; 
+      print("Imagen subida correctamente: $uploadedUrl");
+    } else {
+      Get.snackbar("Error", "No se pudo subir la imagen");
+    }
   }
 
   final name = TextEditingController();
@@ -119,7 +147,6 @@ class CocktailController extends GetxController {
   final videoUrl = TextEditingController();
   final imageUrl = TextEditingController();
   final alcoholType = TextEditingController();
-
   final formKey = GlobalKey<FormState>();
 
   var isNonAlcoholic = false.obs;
@@ -155,12 +182,10 @@ class CocktailController extends GetxController {
 
   Future<void> submitCocktail(String? jwt) async {
     if (!formKey.currentState!.validate()) return;
-
     isLoading.value = true;
 
     try {
       final userId = UserController.instance.user.value.id;
-
       final cocktail = CocktailModel(
         name: name.text.trim(),
         creationSteps: creationSteps.text.trim(),

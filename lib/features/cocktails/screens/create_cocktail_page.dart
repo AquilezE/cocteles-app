@@ -1,15 +1,10 @@
-import 'dart:io';
 import 'package:cocteles_app/features/cocktails/controllers/cocktail_controller.dart';
 import 'package:flutter/material.dart';
 import 'package:cocteles_app/features/cocktails/screens/widgets/cocktail_form.dart';
-import 'package:cocteles_app/features/authentication/screens/widgets/login_header_desktop.dart';
 import 'package:cocteles_app/features/authentication/screens/widgets/login_header_mobile.dart';
 import 'package:cocteles_app/utils/constants/spacing_styles.dart';
 import 'package:get/get.dart';
-import 'package:get/get_core/src/get_main.dart';
-import 'package:get/get_state_manager/src/rx_flutter/rx_obx_widget.dart';
 import 'package:iconsax/iconsax.dart';
-import 'package:image_picker/image_picker.dart';
 
 class CreateCocktailPage extends StatelessWidget {
   const CreateCocktailPage({super.key});
@@ -76,14 +71,7 @@ class CreateCocktailPage extends StatelessWidget {
                   ),
                   const SizedBox(height: 24),
                   ElevatedButton.icon(
-                    onPressed: () async {
-                      final picker = ImagePicker();
-                      final pickedFile =
-                          await picker.pickImage(source: ImageSource.gallery);
-                      if (pickedFile != null) {
-                        controller.setImage(File(pickedFile.path));
-                      }
-                    },
+                    onPressed: () => controller.pickAndSetImage(),
                     icon: const Icon(Iconsax.image),
                     label: const Text("Seleccionar imagen del cóctel"),
                   ),
