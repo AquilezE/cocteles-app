@@ -78,8 +78,20 @@ class _LiveStreamState extends State<LivestreamScreen> {
     _socket.onDisconnect((_) => print('disconnected'));
 
     _socket.on('message:${widget.livestreamModel.streamKey}', (data) {
-      final incoming = data['text'] as String;
+      print(data);
+      final isActvie = data['isActive'] as bool;
 
+      print(isActvie);
+      if (isActvie == null) {
+        Get.snackbar('Error', 'No se pudo obtener el estado de la transmisión');
+        return;
+      }
+      if (!isActvie) {
+        Get.snackbar('Transemisión finalizada', 'La transmisión ha terminado');
+        return;
+      }
+
+      final incoming = data['text'] as String;
       final userMap = Map<String, dynamic>.from(data['user'] as Map);
       final userId = userMap['id'] as int;
       final username = userMap['username'] as String;
