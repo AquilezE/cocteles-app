@@ -28,7 +28,6 @@ class UserModel {
     password: '',
   );
 
-  //Aqui no se como putas le puedas meter lo de la contraseña
   Map<String,dynamic> toJson(){
     return {
       'id': id,

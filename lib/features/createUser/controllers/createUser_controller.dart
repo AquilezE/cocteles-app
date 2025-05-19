@@ -4,6 +4,7 @@ import 'package:get/get.dart';
 import 'package:cocteles_app/data/repositories/user/user_repository.dart';
 import 'package:cocteles_app/features/createUser/models/UserRegistration.dart';
 import 'package:get_storage/get_storage.dart'; 
+import 'package:cocteles_app/models/user_model.dart';
 
 class RegisterController extends GetxController {
   final formKey = GlobalKey<FormState>();
@@ -11,7 +12,7 @@ class RegisterController extends GetxController {
   final email = TextEditingController();
   final password = TextEditingController();
   final hidePassword = true.obs;
-
+  final box = GetStorage();
   void register() async {
     if (formKey.currentState!.validate()) {
       try {
@@ -34,7 +35,27 @@ class RegisterController extends GetxController {
       }
     }
   }
+void updateProfile(int userId) async {
+    if (formKey.currentState!.validate()) {
+      try {
+        final jwt = box.read('token');
+        final updatedUser = UserModel(
+          id: userId,
+          username: fullName.text.trim(),
+          email: email.text.trim(),
+          password: password.text.isNotEmpty ? password.text.trim() : null,
+        );
 
+        final result = await UserRepository.instance.updateUser(updatedUser, jwt);
+
+        Get.snackbar("Success", "Profile updated successfully",
+          snackPosition: SnackPosition.BOTTOM);
+      } catch (e) {
+        Get.snackbar("Error", "Failed to update profile: $e",
+          snackPosition: SnackPosition.BOTTOM);
+      }
+    }
+  }
   @override
   void onClose() {
     fullName.dispose();

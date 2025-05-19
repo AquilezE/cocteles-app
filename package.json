@@ -1,0 +1,6 @@
+{
+  "dependencies": {
+    "random-words": "^2.0.1",
+    "socket.io": "^4.8.1"
+  }
+}

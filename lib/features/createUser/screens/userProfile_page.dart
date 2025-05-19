@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'dart:io';
 import 'package:cocteles_app/features/perzonalization/controllers/user_controller.dart';
+import 'package:cocteles_app/features/createUser/screens/editProfile_page.dart';
 
 class ProfileScreen extends StatelessWidget {
   const ProfileScreen({super.key});
@@ -18,9 +19,24 @@ class ProfileScreen extends StatelessWidget {
           return const Center(child: CircularProgressIndicator());
         }
 
-        return Platform.isWindows || Platform.isMacOS || Platform.isLinux
-            ? buildDesktopLayout(user)
-            : buildMobileLayout(user);
+        return Column(
+          children: [
+            Expanded(
+              child: Platform.isWindows || Platform.isMacOS || Platform.isLinux
+                  ? buildDesktopLayout(user)
+                  : buildMobileLayout(user),
+            ),
+            ElevatedButton.icon(
+              onPressed: () {
+                Get.to(() => EditProfileScreen(user: user));
+              },
+              icon: const Icon(Icons.edit),
+              label: const Text("Editar perfil"),
+              style: ElevatedButton.styleFrom(padding: const EdgeInsets.all(12)),
+            ),
+            const SizedBox(height: 16),
+          ],
+        );
       }),
     );
   }

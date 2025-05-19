@@ -29,6 +29,22 @@ class UserRepository extends GetxController{
       }
     }
   }
+Future<UserModel> updateUser(UserModel user, String? jwt) async {
+  try {
+    final endpoint = 'api/v1/usuarios/${user.id}';
+    final response = await AppHttpHelper.put(endpoint, user.toJson(), jwt);
+    return UserModel.fromJson(response);
+  } catch (e) {
+    if (e is HttpException) {
+      throw HttpException(
+        e.statusCode,
+        e.responseBody
+      );
+    } else {
+      throw Exception('Failed to update user: $e');
+    }
+  }
+}
 
   Future<UserModel> createUser(UserRegistration user) async {
     try {
