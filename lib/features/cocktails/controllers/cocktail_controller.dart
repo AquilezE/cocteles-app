@@ -114,7 +114,8 @@ class CocktailController extends GetxController {
     if (response.statusCode == 200) {
       final respStr = await response.stream.bytesToString();
       final data = json.decode(respStr);
-      return "${data['imageUrl']}";
+      const baseUrl = 'http://192.168.100.41:3000'; // habrá que ajustar esto
+      return "$baseUrl${data['imageUrl']}";
     } else {
       print('Error subiendo imagen: ${response.statusCode}');
       return null;

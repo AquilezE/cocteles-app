@@ -43,10 +43,10 @@ class CocktailModel {
       imageUrl: json['image_url'],
       createdAt: json['created_at'],
       updatedAt: json['updated_at'],
-      userId: json['user_id'],
-      ingredients: List<Map<String, dynamic>>.from(json['ingredients']),
-      comments: List<Map<String, dynamic>>.from(json['comments']),
-      likes: json['likes'],
+      userId: json['author']?['id'],
+      ingredients: List<Map<String, dynamic>>.from(json['ingredients'] ?? []),
+      comments: List<Map<String, dynamic>>.from(json['comments'] ?? []),
+      likes: json['likes'] ?? 0,
     );
   }
 
@@ -65,19 +65,19 @@ class CocktailModel {
   }
 
   static CocktailModel empty() => CocktailModel(
-        id: 0,
-        name: '',
-        creationSteps: '',
-        preparationTime: 0,
-        isNonAlcoholic: false,
-        alcoholType: '',
-        videoUrl: '',
-        imageUrl: '',
-        createdAt: '',
-        updatedAt: '',
-        userId: 0,
-        ingredients: [],
-        comments: [],
-        likes: 0,
-      );
+    id: 0,
+    name: '',
+    creationSteps: '',
+    preparationTime: 0,
+    isNonAlcoholic: false,
+    alcoholType: '',
+    videoUrl: '',
+    imageUrl: '',
+    createdAt: '',
+    updatedAt: '',
+    userId: 0,
+    ingredients: [],
+    comments: [],
+    likes: 0,
+  );
 }
