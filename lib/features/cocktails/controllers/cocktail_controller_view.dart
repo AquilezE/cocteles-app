@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'package:get/get.dart';
 import 'package:cocteles_app/models/cocktail_model.dart';
+import 'package:flutter_dotenv/flutter_dotenv.dart';
 
 class CocktailDetailController extends GetxController {
   CocktailModel? cocktail;
@@ -10,7 +11,7 @@ class CocktailDetailController extends GetxController {
 
   Future<void> fetchAcceptedCocktails() async {
     try {
-      final response = await http.get(Uri.parse('http://192.168.100.41:3000/api/v1/cocktails'),);
+      final response = await http.get(Uri.parse('${dotenv.env['BASE_URL']}/api/v1/cocktails'),);
 
       debugPrint("GET /cocktails response: ${response.statusCode}");
       debugPrint("Response body: ${response.body}");

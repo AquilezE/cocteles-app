@@ -143,11 +143,10 @@ class _LiveStreamState extends State<LivestreamScreen> {
       body: LayoutBuilder(
         builder: (context, constraints) {
           if (constraints.maxWidth >= 600) {
-            // desktop: video + chat lado a lado
             return Row(
               children: [
                 Expanded(
-                    flex: 3, child: _videoView(constraints.maxWidth * 0.6)),
+                    flex: 3, child: Padding(padding: const EdgeInsets.all(16.0), child: _videoView(constraints.maxWidth * 0.6),), ),
                 Expanded(
                     flex: 2,
                     child: ChatDesktop(
@@ -250,7 +249,7 @@ class ChatMobile extends StatelessWidget {
                   itemCount: messages.length,
                   itemBuilder: (_, i) => Align(
                     alignment:
-                        i.isEven ? Alignment.centerLeft : Alignment.centerRight,
+                        Alignment.centerLeft,
                     child: Container(
                       margin: const EdgeInsets.symmetric(vertical: 2),
                       padding: const EdgeInsets.all(8),

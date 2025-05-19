@@ -52,6 +52,8 @@ class NavigationController extends GetxController {
                 IndexCocktailsPage(),
                 IndexLivestreamPage(),
                 ProfileScreen(),
+                ProfileScreen(),
+                CreateCocktailPage(),
               ],
         destinations = userCredentials.role == 'user'
             ? [

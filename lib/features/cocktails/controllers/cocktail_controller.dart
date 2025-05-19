@@ -7,6 +7,7 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:http/http.dart' as http;
 import 'package:image_picker/image_picker.dart';
+import 'package:flutter_dotenv/flutter_dotenv.dart';
 
 class CocktailController extends GetxController {
   static CocktailController get instance => Get.find();
@@ -107,14 +108,14 @@ class CocktailController extends GetxController {
   ];
   
   Future<String?> uploadImage(File file) async {
-    final uri = Uri.parse('http://192.168.100.41:3000/api/v1/upload');
+    final uri = Uri.parse('${dotenv.env['BASE_URL']}/api/v1/upload');
     final request = http.MultipartRequest('POST', uri)..files.add(await http.MultipartFile.fromPath('image', file.path));
     final response = await request.send();
 
     if (response.statusCode == 200) {
       final respStr = await response.stream.bytesToString();
       final data = json.decode(respStr);
-      const baseUrl = 'http://192.168.100.41:3000'; // habrá que ajustar esto
+      final baseUrl = '${dotenv.env['BASE_URL']}'; // habrá que ajustar esto
       return "$baseUrl${data['imageUrl']}";
     } else {
       print('Error subiendo imagen: ${response.statusCode}');
