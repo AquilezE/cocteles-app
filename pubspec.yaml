@@ -7,6 +7,7 @@ environment:
   sdk: ^3.6.0
 
 dependencies:
+
   flutter:
     sdk: flutter
 
@@ -29,7 +30,8 @@ dependencies:
   media_kit: ^1.1.11
   media_kit_video: ^1.2.5
   media_kit_libs_video: ^1.0.5
-
+  #youtube_player_flutter: ^8.1.2
+  #flutter_inappwebview: ^5.8.0
   #Icons
   iconsax: ^0.0.8
   cupertino_icons: ^1.0.8
