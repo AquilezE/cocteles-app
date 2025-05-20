@@ -1,4 +1,5 @@
 import 'package:cocteles_app/features/authentication/screens/login_page.dart';
+import 'package:cocteles_app/features/perzonalization/controllers/user_controller.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:cocteles_app/data/repositories/user/user_repository.dart';
@@ -36,26 +37,33 @@ class RegisterController extends GetxController {
     }
   }
 void updateProfile(int userId) async {
-    if (formKey.currentState!.validate()) {
-      try {
-        final jwt = box.read('token');
-        final updatedUser = UserModel(
-          id: userId,
-          username: fullName.text.trim(),
-          email: email.text.trim(),
-          password: password.text.isNotEmpty ? password.text.trim() : null,
-        );
+  if (formKey.currentState!.validate()) {
+    try {
+      final jwt = box.read('token');
+      final updatedUser = UserModel(
+        id: userId,
+        username: fullName.text.trim(),
+        email: email.text.trim(),
+        password: password.text.isNotEmpty ? password.text.trim() : null,
+        role: 'user',
+      );
 
-        final result = await UserRepository.instance.updateUser(updatedUser, jwt);
+      final result = await UserRepository.instance.updateUser(updatedUser, jwt);
+      final userController = Get.find<UserController>();
+      userController.user.value = result;
 
-        Get.snackbar("Success", "Profile updated successfully",
+      Get.snackbar("Success", "Profile updated successfully",
           snackPosition: SnackPosition.BOTTOM);
-      } catch (e) {
-        Get.snackbar("Error", "Failed to update profile: $e",
+
+      Get.back();
+
+    } catch (e) {
+      Get.snackbar("Error", "Failed to update profile: $e",
           snackPosition: SnackPosition.BOTTOM);
-      }
     }
   }
+}
+
   @override
   void onClose() {
     fullName.dispose();
@@ -84,6 +92,7 @@ class ProfileController extends GetxController {
     super.onInit();
     fetchUserProfile();
   }
+  
 
   void fetchUserProfile() async {
     try {
