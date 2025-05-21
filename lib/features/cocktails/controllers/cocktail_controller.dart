@@ -115,7 +115,7 @@ class CocktailController extends GetxController {
     if (response.statusCode == 200) {
       final respStr = await response.stream.bytesToString();
       final data = json.decode(respStr);
-      final baseUrl = '${dotenv.env['BASE_URL']}'; // habrá que ajustar esto
+      final baseUrl = '${dotenv.env['BASE_URL']}';
       return "$baseUrl${data['imageUrl']}";
     } else {
       print('Error subiendo imagen: ${response.statusCode}');
@@ -182,7 +182,7 @@ class CocktailController extends GetxController {
     manualIngredients.clear();
   }
 
-  Future<void> submitCocktail(String? jwt) async {
+  Future<void> submitCocktail(String? jwt, BuildContext context) async {
     if (!formKey.currentState!.validate()) return;
     isLoading.value = true;
 
@@ -202,10 +202,18 @@ class CocktailController extends GetxController {
 
       await CocktailRepository.instance.createCocktail(cocktail, jwt);
 
-      Get.snackbar("Éxito", "Receta creada correctamente");
-      clearForm();
+      Get.snackbar("Éxito", "La receta ha sido enviada a revisión por un moderador. Recibirás una notificación con una respuesta tan pronto como sea posible.");
+      
+      await Future.delayed(const Duration(milliseconds: 3000));
+
+      if (Navigator.of(context).canPop()) {
+        Navigator.of(context).pop();
+      } else {
+        Get.offAllNamed('/');
+      }
     } catch (e) {
       Get.snackbar("Error", e.toString());
+      await Future.delayed(const Duration(milliseconds: 3000));
     } finally {
       isLoading.value = false;
     }

@@ -3,12 +3,14 @@ import 'package:cocteles_app/features/perzonalization/controllers/user_controlle
 import 'package:flutter/material.dart';
 import 'package:cocteles_app/models/cocktail_model.dart';
 import 'package:cocteles_app/utils/constants/spacing_styles.dart';
+import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:iconsax/iconsax.dart';
 import 'package:get/get.dart';
 //import 'package:youtube_player_flutter/youtube_player_flutter.dart';
 import 'dart:io' show Platform;
 import 'package:url_launcher/url_launcher.dart';
 import 'package:flutter/foundation.dart' show kIsWeb;
+import 'package:http/http.dart' as http;
 
 class CocktailDetailPage extends StatelessWidget {
   final CocktailModel cocktail;
@@ -168,8 +170,67 @@ class CocktailDetailPage extends StatelessWidget {
             Text("${cocktail.likes ?? 0} likes", style: Theme.of(context).textTheme.titleMedium),
           ],
         )),
+
+        if (UserController.instance.userCredentials?.role != 'user') ...[
+          const SizedBox(height: 24),
+          ElevatedButton.icon(
+            onPressed: () => _confirmAndDelete(context, cocktail.id!),
+            icon: const Icon(Icons.delete),
+            label: const Text("Eliminar cóctel"),
+            style: ElevatedButton.styleFrom(
+              backgroundColor: Colors.red,
+              foregroundColor: Colors.white,
+            ),
+          ),
+        ]
       ],
     );
+  }
+  
+  void _confirmAndDelete(BuildContext context, int cocktailId) async {
+    final jwt = UserController.instance.userCredentials!.jwt;
+
+    final confirm = await showDialog<bool>(
+      context: context,
+      builder: (context) => AlertDialog(
+        title: const Text("Confirmar eliminación"),
+        content: const Text("¿Estás seguro de que deseas eliminar este cóctel? Esta acción no se puede deshacer."),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.pop(context, false),
+            child: const Text("Cancelar"),
+          ),
+          TextButton(
+            onPressed: () => Navigator.pop(context, true),
+            child: const Text("Eliminar", style: TextStyle(color: Colors.red)),
+          ),
+        ],
+      ),
+    );
+
+    if (confirm != true) return;
+
+    final url = '${dotenv.env['BASE_URL']}/api/v1/cocktails/$cocktailId';
+    final response = await http.delete(
+      Uri.parse(url),
+      headers: {
+        'Authorization': 'Bearer $jwt',
+      },
+    );
+
+    if (response.statusCode == 200) {
+      Get.snackbar("Éxito", "El cóctel ha sido eliminado correctamente.");
+    
+      await Future.delayed(const Duration(milliseconds: 3000));
+    
+      if (Navigator.of(context).canPop()) {
+        Navigator.of(context).pop();
+      } else {
+        Get.offAllNamed('/');
+      }
+    } else {
+      Get.snackbar("Error", "No se pudo eliminar el cóctel.");
+    }
   }
 }
 /*

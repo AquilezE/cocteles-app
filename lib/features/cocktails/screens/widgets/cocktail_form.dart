@@ -103,7 +103,7 @@ class CocktailForm extends StatelessWidget {
             SizedBox(
               width: double.infinity,
               child: ElevatedButton(
-                onPressed: () => controller.submitCocktail(UserController.instance.userCredentials!.jwt),
+                onPressed: () => controller.submitCocktail(UserController.instance.userCredentials!.jwt, context),
                 child: const Text("Publicar receta"),
               ),
             ),
