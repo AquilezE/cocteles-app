@@ -16,8 +16,12 @@ class ProfileScreen extends StatelessWidget {
       body: Obx(() {
         final user = controller.user.value;
         if (user == null) {
+          print("DEBUG: user es null");
           return const Center(child: CircularProgressIndicator());
         }
+
+        print("DEBUG: user.username = ${user.username}");
+        print("DEBUG: user.profilePicture = ${user.profilePicture}");
 
         return Column(
           children: [
@@ -42,13 +46,34 @@ class ProfileScreen extends StatelessWidget {
   }
 
   Widget buildDesktopLayout(dynamic user) {
+    final hasProfilePicture = user.profilePicture != null && user.profilePicture!.isNotEmpty;
+    print("DEBUG (Desktop): ¿Tiene foto? $hasProfilePicture");
+
     return Row(
       mainAxisAlignment: MainAxisAlignment.center,
       children: [
-        const Expanded(
+        Expanded(
           flex: 1,
           child: Center(
-            child: Icon(Icons.account_circle, size: 120, color: Colors.grey),
+            child: hasProfilePicture
+                ? ClipOval(
+                    child: Image.network(
+                      user.profilePicture!,
+                      width: 120,
+                      height: 120,
+                      fit: BoxFit.cover,
+                      errorBuilder: (context, error, stackTrace) {
+                        print("ERROR (Desktop): No se pudo cargar la imagen: $error");
+                        return const Icon(Icons.account_circle, size: 120, color: Colors.grey);
+                      },
+                      loadingBuilder: (context, child, loadingProgress) {
+                        if (loadingProgress == null) return child;
+                        print("DEBUG (Desktop): Cargando imagen...");
+                        return const CircularProgressIndicator();
+                      },
+                    ),
+                  )
+                : const Icon(Icons.account_circle, size: 120, color: Colors.grey),
           ),
         ),
         Expanded(
@@ -75,12 +100,33 @@ class ProfileScreen extends StatelessWidget {
   }
 
   Widget buildMobileLayout(dynamic user) {
+    final hasProfilePicture = user.profilePicture != null && user.profilePicture!.isNotEmpty;
+    print("DEBUG (Mobile): ¿Tiene foto? $hasProfilePicture");
+
     return SingleChildScrollView(
       child: Padding(
         padding: const EdgeInsets.all(20.0),
         child: Column(
           children: [
-            const Icon(Icons.account_circle, size: 100, color: Colors.grey),
+            hasProfilePicture
+                ? ClipOval(
+                    child: Image.network(
+                      user.profilePicture!,
+                      width: 100,
+                      height: 100,
+                      fit: BoxFit.cover,
+                      errorBuilder: (context, error, stackTrace) {
+                        print("ERROR (Mobile): No se pudo cargar la imagen: $error");
+                        return const Icon(Icons.account_circle, size: 100, color: Colors.grey);
+                      },
+                      loadingBuilder: (context, child, loadingProgress) {
+                        if (loadingProgress == null) return child;
+                        print("DEBUG (Mobile): Cargando imagen...");
+                        return const CircularProgressIndicator();
+                      },
+                    ),
+                  )
+                : const Icon(Icons.account_circle, size: 100, color: Colors.grey),
             const SizedBox(height: 20),
             const Text('Información', style: TextStyle(fontSize: 22, fontWeight: FontWeight.bold)),
             const SizedBox(height: 30),
@@ -103,4 +149,3 @@ class ProfileScreen extends StatelessWidget {
     );
   }
 }
-

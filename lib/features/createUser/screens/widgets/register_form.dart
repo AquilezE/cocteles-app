@@ -18,7 +18,6 @@ class RegisterForm extends StatelessWidget {
         padding: const EdgeInsets.symmetric(vertical: Sizes.spaceBtwSections),
         child: Column(
           children: [
-
             TextFormField(
               controller: controller.fullName,
               validator: (value) => Validator.validateEmptyText('Full Name', value),
@@ -54,10 +53,28 @@ class RegisterForm extends StatelessWidget {
             )),
             const SizedBox(height: Sizes.spaceBtwSections),
 
+            Row(
+              children: [
+                ElevatedButton.icon(
+                  onPressed: () => controller.pickImage(),
+                  icon: const Icon(Iconsax.gallery),
+                  label: const Text('Choose Photo'),
+                ),
+                const SizedBox(width: 10),
+                Obx(() {
+                  final image = controller.selectedImage.value;
+                  return image != null
+                      ? Image.file(image, width: 50, height: 50)
+                      : const Text('No image selected');
+                }),
+              ],
+            ),
+            const SizedBox(height: Sizes.spaceBtwSections),
+
             SizedBox(
               width: double.infinity,
               child: ElevatedButton(
-                onPressed: () => controller.register(),
+                onPressed: () => controller.register(controller.selectedImage.value),
                 child: const Text("Create Account"),
               ),
             ),
