@@ -33,7 +33,7 @@ class UserModel {
       'id': id,
       'username': username,
       'email': email,
-      'profilePicture': profilePicture,
+      'profile_picture_path': profilePicture,
       'bio': bio,
       'role': role,
       if (password != null) 'password': password,
@@ -45,7 +45,7 @@ class UserModel {
       id: json['id'] as int?,
       username: json['username'] as String?,
       email: json['email'] as String?,
-      profilePicture: json['profilePicture'] as String?,
+      profilePicture: json['profile_picture_path'] as String?,
       bio: json['bio'] as String?,
       role: json['role'] as String?,
     );
