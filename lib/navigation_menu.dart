@@ -1,7 +1,5 @@
-import 'dart:async';
-import 'dart:ffi';
-
 import 'package:cocteles_app/features/authentication/models/user_credentials.dart';
+import 'package:cocteles_app/features/authentication/screens/login_page.dart';
 import 'package:cocteles_app/features/cocktails/index_cocktails_page.dart';
 import 'package:cocteles_app/features/cocktails/screens/create_cocktail_page.dart';
 import 'package:cocteles_app/features/livestreams/screens/index_livestream_page.dart';
@@ -24,8 +22,14 @@ class NavigationMenu extends StatelessWidget {
           height: 80,
           elevation: 0,
           selectedIndex: controller.selectedIndex.value,
-          onDestinationSelected: (index) =>
-              controller.selectedIndex.value = index,
+          onDestinationSelected: (index) {
+            final label = controller.destinations[index].label;
+            if (label == 'Salir') {
+              controller.logout();
+            } else {
+              controller.selectedIndex.value = index;
+            }
+          },
           backgroundColor: Colors.white,
           indicatorColor: Colors.deepOrange,
           destinations: controller.destinations,
@@ -38,71 +42,118 @@ class NavigationMenu extends StatelessWidget {
 
 class NavigationController extends GetxController {
   final Rx<int> selectedIndex = 0.obs;
-  final List<Widget> screens;
-  final List<NavigationDestination> destinations;
+  late final List<Widget> screens;
+  late final List<NavigationDestination> destinations;
 
-  NavigationController(UserCredentials userCredentials)
-      : screens = userCredentials.role == 'user'
-            ? [
-                IndexCocktailsPage(),
-                IndexLivestreamPage(),
-                ProfileScreen(),
-              ]
-            : [
-                IndexCocktailsPage(),
-                IndexLivestreamPage(),
-                ProfileScreen(),
-                ProfileScreen(),
-                CreateCocktailPage(),
-              ],
-        destinations = userCredentials.role == 'user'
-            ? [
-                const NavigationDestination(
-                  icon: Icon(Icons.home),
-                  label: 'Home',
-                  selectedIcon: Icon(Icons.home_filled),
-                ),
-                const NavigationDestination(
-                  icon: Icon(Icons.menu_book),
-                  label: 'Recetas',
-                  selectedIcon: Icon(Icons.menu_book),
-                ),
-                const NavigationDestination(
-                  icon: Icon(Icons.face),
-                  label: 'Cuenta',
-                  selectedIcon: Icon(Icons.face),
-                ),
-                const NavigationDestination(
-                  icon: Icon(Icons.menu_book),
-                  label: 'Directos',
-                  selectedIcon: Icon(Icons.menu_book),
-                ),
-                
-              ]
-            : [
-                const NavigationDestination(
-                  icon: Icon(Icons.home),
-                  label: 'Home',
-                  selectedIcon: Icon(Icons.home_filled),
-                ),
-                const NavigationDestination(
-                  icon: Icon(Icons.menu_book),
-                  label: 'Recetas',
-                  selectedIcon: Icon(Icons.menu_book),
-                ),const NavigationDestination(
-                  icon: Icon(Icons.face),
-                  label: 'Cuenta',
-                  selectedIcon: Icon(Icons.face),
-                ),
-                const NavigationDestination(
-                  icon: Icon(Icons.menu_book),
-                  label: 'Directos',
-                  selectedIcon: Icon(Icons.menu_book),
-                ),
-                const NavigationDestination(
-                  icon: Icon(Icons.menu_book),
-                  label: 'Revision',
-                  selectedIcon: Icon(Icons.menu_book),
-                ),
-              ];
+  NavigationController(UserCredentials userCredentials) {
+    if (userCredentials.role == 'user') {
+      screens = [
+        PlaceholderScreen(title: 'Home'), 
+        IndexCocktailsPage(),             
+        ProfileScreen(),                  
+        IndexLivestreamPage(),            
+        LogoutScreen(),                   
+      ];
+
+      destinations = [
+        const NavigationDestination(
+          icon: Icon(Icons.home),
+          label: 'Home',
+          selectedIcon: Icon(Icons.home_filled),
+        ),
+        const NavigationDestination(
+          icon: Icon(Icons.menu_book),
+          label: 'Recetas',
+          selectedIcon: Icon(Icons.menu_book),
+        ),
+        const NavigationDestination(
+          icon: Icon(Icons.face),
+          label: 'Cuenta',
+          selectedIcon: Icon(Icons.face),
+        ),
+        const NavigationDestination(
+          icon: Icon(Icons.live_tv),
+          label: 'Directos',
+          selectedIcon: Icon(Icons.live_tv),
+        ),
+        const NavigationDestination(
+          icon: Icon(Icons.logout),
+          label: 'Salir',
+          selectedIcon: Icon(Icons.logout),
+        ),
+      ];
+    } else {
+      screens = [
+        PlaceholderScreen(title: 'Home'), 
+        IndexCocktailsPage(),             
+        ProfileScreen(),                  
+        IndexLivestreamPage(),            
+        ProfileScreen(),                  
+        CreateCocktailPage(),             
+        LogoutScreen(),                   
+      ];
+
+      destinations = [
+        const NavigationDestination(
+          icon: Icon(Icons.home),
+          label: 'Home',
+          selectedIcon: Icon(Icons.home_filled),
+        ),
+        const NavigationDestination(
+          icon: Icon(Icons.menu_book),
+          label: 'Recetas',
+          selectedIcon: Icon(Icons.menu_book),
+        ),
+        const NavigationDestination(
+          icon: Icon(Icons.face),
+          label: 'Cuenta',
+          selectedIcon: Icon(Icons.face),
+        ),
+        const NavigationDestination(
+          icon: Icon(Icons.live_tv),
+          label: 'Directos',
+          selectedIcon: Icon(Icons.live_tv),
+        ),
+        const NavigationDestination(
+          icon: Icon(Icons.rate_review),
+          label: 'Revision',
+          selectedIcon: Icon(Icons.rate_review),
+        ),
+        const NavigationDestination(
+          icon: Icon(Icons.add),
+          label: 'Crear',
+          selectedIcon: Icon(Icons.add),
+        ),
+        const NavigationDestination(
+          icon: Icon(Icons.logout),
+          label: 'Salir',
+          selectedIcon: Icon(Icons.logout),
+        ),
+      ];
+    }
+  }
+
+  void logout() {
+    Get.offAll(() => const LoginPage());
+  }
+}
+
+class PlaceholderScreen extends StatelessWidget {
+  final String title;
+
+  const PlaceholderScreen({super.key, required this.title});
+
+  @override
+  Widget build(BuildContext context) {
+    return Center(child: Text('Pantalla $title'));
+  }
+}
+
+class LogoutScreen extends StatelessWidget {
+  @override
+  Widget build(BuildContext context) {
+    return const Center(
+      child: Text('Saliendo...'),
+    );
+  }
 }
