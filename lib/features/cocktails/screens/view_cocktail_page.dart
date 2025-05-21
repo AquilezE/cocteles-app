@@ -1,8 +1,14 @@
+import 'package:cocteles_app/features/cocktails/controllers/cocktail_controller_view.dart';
+import 'package:cocteles_app/features/perzonalization/controllers/user_controller.dart';
 import 'package:flutter/material.dart';
 import 'package:cocteles_app/models/cocktail_model.dart';
 import 'package:cocteles_app/utils/constants/spacing_styles.dart';
 import 'package:iconsax/iconsax.dart';
 import 'package:get/get.dart';
+//import 'package:youtube_player_flutter/youtube_player_flutter.dart';
+import 'dart:io' show Platform;
+import 'package:url_launcher/url_launcher.dart';
+import 'package:flutter/foundation.dart' show kIsWeb;
 
 class CocktailDetailPage extends StatelessWidget {
   final CocktailModel cocktail;
@@ -99,6 +105,12 @@ class CocktailDetailPage extends StatelessWidget {
   }
 
   Widget _buildCocktailInfo(BuildContext context) {
+    final detailController = Get.find<CocktailDetailController>();
+    final jwt = UserController.instance.userCredentials!.jwt;
+    final userId = UserController.instance.user.value.id;
+
+    detailController.checkIfLiked(cocktail.id!, userId!);
+
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
@@ -116,10 +128,10 @@ class CocktailDetailPage extends StatelessWidget {
         const SizedBox(height: 16),
         Text("Ingredientes", style: Theme.of(context).textTheme.titleMedium),
         ...?cocktail.ingredients?.map((i) => ListTile(
-              leading: const Icon(Iconsax.flag),
-              title: Text(i['name']),
-              subtitle: Text('Cantidad: ${i['CocktailIngredient']?['quantity'] ?? 'No especificado'}'),
-            )),
+          leading: const Icon(Iconsax.flag),
+          title: Text(i['name']),
+          subtitle: Text('Cantidad: ${i['CocktailIngredient']?['quantity'] ?? 'No especificado'}'),
+        )),
 
         const SizedBox(height: 16),
         Text("¿Es sin alcohol?", style: Theme.of(context).textTheme.titleMedium),
@@ -137,13 +149,95 @@ class CocktailDetailPage extends StatelessWidget {
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               Text("Video de preparación", style: Theme.of(context).textTheme.titleMedium),
-              Text(cocktail.videoUrl!, style: const TextStyle(color: Colors.blue)),
+              const SizedBox(height: 12),
+              //SmartYouTubePlayer(url: cocktail.videoUrl!),
             ],
           ),
 
         const SizedBox(height: 24),
-        Text("Likes: ${cocktail.likes ?? 0}", style: Theme.of(context).textTheme.titleMedium),
+
+        Obx(() => Row(
+          children: [
+            IconButton(
+              icon: Icon(
+                detailController.hasLiked.value ? Icons.favorite : Icons.favorite_border,
+                color: detailController.hasLiked.value ? Colors.red : null,
+              ),
+              onPressed: () => detailController.toggleLike(cocktail.id!, jwt),
+            ),
+            Text("${cocktail.likes ?? 0} likes", style: Theme.of(context).textTheme.titleMedium),
+          ],
+        )),
       ],
     );
   }
 }
+/*
+
+class SmartYouTubePlayer extends StatefulWidget {
+  final String url;
+  const SmartYouTubePlayer({super.key, required this.url});
+
+  @override
+  State<SmartYouTubePlayer> createState() => _SmartYouTubePlayerState();
+}
+
+class _SmartYouTubePlayerState extends State<SmartYouTubePlayer> {
+  late YoutubePlayerController _controller;
+
+  bool get isSupportedPlatform {
+    return kIsWeb || Platform.isAndroid || Platform.isIOS;
+  }
+
+  String? get videoId => YoutubePlayer.convertUrlToId(widget.url);
+
+  @override
+  void initState() {
+    super.initState();
+
+    if (isSupportedPlatform && videoId != null) {
+      _controller = YoutubePlayerController(
+        initialVideoId: videoId!,
+        flags: const YoutubePlayerFlags(
+          autoPlay: false,
+          mute: false,
+        ),
+      );
+    }
+  }
+
+  @override
+  void dispose() {
+    if (isSupportedPlatform && mounted) {
+      _controller.dispose();
+    }
+    super.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    if (!isSupportedPlatform || videoId == null) {
+      return Container(
+        padding: const EdgeInsets.all(16),
+        color: Colors.red.shade100,
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            const Text(
+              "Este video solo está disponible en la versión móvil o web.",
+              style: TextStyle(color: Colors.black87),
+            ),
+            const SizedBox(height: 8),
+            ElevatedButton.icon(
+              onPressed: () => launchUrl(Uri.parse(widget.url)),
+              icon: const Icon(Icons.open_in_browser),
+              label: const Text("Abrir en navegador"),
+            )
+          ],
+        ),
+      );
+    }
+
+    return YoutubePlayer( controller: _controller,showVideoProgressIndicator: true, width: double.infinity,aspectRatio: 16 / 9,);
+  }
+}*/
