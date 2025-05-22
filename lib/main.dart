@@ -15,7 +15,7 @@ Future<void> main() async {
 
   final WidgetsBinding widgetsBinding = WidgetsFlutterBinding.ensureInitialized();
 
-  MediaKit.ensureInitialized(); // ✅ Esto inicializa media_kit correctamente
+  MediaKit.ensureInitialized();
 
   await GetStorage.init();
 

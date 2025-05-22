@@ -1,7 +1,6 @@
 import 'package:cocteles_app/features/authentication/models/user_credentials.dart';
 import 'package:cocteles_app/features/authentication/screens/login_page.dart';
 import 'package:cocteles_app/features/cocktails/index_cocktails_page.dart';
-import 'package:cocteles_app/features/cocktails/screens/create_cocktail_page.dart';
 import 'package:cocteles_app/features/livestreams/screens/index_livestream_page.dart';
 import 'package:cocteles_app/features/perzonalization/controllers/user_controller.dart';
 import 'package:flutter/material.dart';
@@ -31,7 +30,7 @@ class NavigationMenu extends StatelessWidget {
             }
           },
           backgroundColor: Colors.white,
-          indicatorColor: Colors.deepOrange,
+          indicatorColor: const Color.fromARGB(255, 232, 164, 143),
           destinations: controller.destinations,
         ),
       ),
@@ -89,7 +88,6 @@ class NavigationController extends GetxController {
         ProfileScreen(),                  
         IndexLivestreamPage(),            
         ProfileScreen(),                  
-        CreateCocktailPage(),             
         LogoutScreen(),                   
       ];
 
@@ -118,11 +116,6 @@ class NavigationController extends GetxController {
           icon: Icon(Icons.rate_review),
           label: 'Revision',
           selectedIcon: Icon(Icons.rate_review),
-        ),
-        const NavigationDestination(
-          icon: Icon(Icons.add),
-          label: 'Crear',
-          selectedIcon: Icon(Icons.add),
         ),
         const NavigationDestination(
           icon: Icon(Icons.logout),

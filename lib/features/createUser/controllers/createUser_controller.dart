@@ -92,10 +92,18 @@ void updateProfile(int userId, String currentPhotoUrl) async {
       final userController = Get.find<UserController>();
       userController.user.value = result;
 
-      Get.snackbar("Éxito", "Perfil actualizado correctamente",
-          snackPosition: SnackPosition.BOTTOM);
-      Get.back();
+      Get.snackbar(
+        "Éxito",
+        "Perfil actualizado correctamente",
+        snackPosition: SnackPosition.BOTTOM,
+        duration: const Duration(seconds: 2),
+      );
+      await Future.delayed(const Duration(seconds: 2));
 
+      if (Get.overlayContext != null && Navigator.of(Get.overlayContext!).canPop()) {
+        Navigator.of(Get.overlayContext!).pop();
+      }
+      
     } catch (e) {
       Get.snackbar("Error", "Error al actualizar el perfil: $e",
           snackPosition: SnackPosition.BOTTOM);
