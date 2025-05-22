@@ -27,6 +27,47 @@ class CocktailDetailController extends GetxController {
       Get.snackbar("Error", "No fue posible conectar con el servidor: $e");
     }
   }
+  Future<void> fetchFilteredCocktails({
+  String? alcoholType,
+  String? name,
+  int? maxPreparationTime,
+  bool? isNonAlcoholic,
+}) async {
+  try {
+    final queryParams = <String, String>{};
+
+    if (alcoholType != null && alcoholType.isNotEmpty) {
+      queryParams['alcoholType'] = alcoholType;
+    }
+    if (name != null && name.isNotEmpty) {
+      queryParams['name'] = name;
+    }
+    if (maxPreparationTime != null) {
+      queryParams['maxPreparationTime'] = maxPreparationTime.toString();
+    }
+    if (isNonAlcoholic != null) {
+      queryParams['isNonAlcoholic'] = isNonAlcoholic.toString();
+    }
+
+    final uri = Uri.parse('${dotenv.env['BASE_URL']}/api/v1/cocktails')
+        .replace(queryParameters: queryParams);
+
+    final response = await http.get(uri);
+
+    debugPrint("GET /cocktails with filters response: ${response.statusCode}");
+    debugPrint("Response body: ${response.body}");
+
+    if (response.statusCode == 200) {
+      final List<dynamic> data = json.decode(response.body);
+      cocktails.value = data.map((e) => CocktailModel.fromJson(e)).toList();
+    } else {
+      Get.snackbar("Error", "No se pudieron cargar los cócteles con filtros");
+    }
+  } catch (e) {
+    Get.snackbar("Error", "Fallo de conexión: $e");
+  }
+}
+
 
   Future<void> checkIfLiked(int cocktailId, int userId) async {
     final url = '${dotenv.env['BASE_URL']}/api/v1/likes/$cocktailId/hasLiked?userId=$userId';

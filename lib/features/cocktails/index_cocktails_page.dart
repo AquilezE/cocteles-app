@@ -15,9 +15,30 @@ class IndexCocktailsPage extends StatefulWidget {
 class _IndexCocktailsPageState extends State<IndexCocktailsPage> {
   final cocktailController = Get.put(CocktailDetailController());
 
+  final TextEditingController nameController = TextEditingController();
+  String? selectedAlcohol;
+  bool isNonAlcoholic = false;
+
   @override
   void initState() {
     super.initState();
+    cocktailController.fetchAcceptedCocktails();
+  }
+
+  void _applyFilters() {
+    cocktailController.fetchFilteredCocktails(
+      name: nameController.text.trim().isNotEmpty ? nameController.text.trim() : null,
+      alcoholType: selectedAlcohol,
+      isNonAlcoholic: isNonAlcoholic ? true : null,
+    );
+  }
+
+  void _clearFilters() {
+    setState(() {
+      nameController.clear();
+      selectedAlcohol = null;
+      isNonAlcoholic = false;
+    });
     cocktailController.fetchAcceptedCocktails();
   }
 
@@ -32,30 +53,93 @@ class _IndexCocktailsPageState extends State<IndexCocktailsPage> {
           Get.to(() => const CreateCocktailPage());
         },
       ),
-      body: Obx(() {
-        final cocktails = cocktailController.cocktails;
+      body: Column(
+        children: [
+          _buildFilters(),
+          Expanded(
+            child: Obx(() {
+              final cocktails = cocktailController.cocktails;
 
-        if (cocktails.isEmpty) {
-          return const Center(child: Text("No hay cócteles disponibles."));
-        }
+              if (cocktails.isEmpty) {
+                return const Center(child: Text("No hay cócteles disponibles."));
+              }
 
-        return Padding(
-          padding: const EdgeInsets.all(8.0),
-          child: GridView.builder(
-            gridDelegate: const SliverGridDelegateWithMaxCrossAxisExtent(
-              maxCrossAxisExtent: 200,
-              childAspectRatio: 0.65,
-              crossAxisSpacing: 8,
-              mainAxisSpacing: 8,
+              return Padding(
+                padding: const EdgeInsets.all(8.0),
+                child: GridView.builder(
+                  gridDelegate: const SliverGridDelegateWithMaxCrossAxisExtent(
+                    maxCrossAxisExtent: 200,
+                    childAspectRatio: 0.65,
+                    crossAxisSpacing: 8,
+                    mainAxisSpacing: 8,
+                  ),
+                  itemCount: cocktails.length,
+                  itemBuilder: (context, index) {
+                    final cocktail = cocktails[index];
+                    return CocktailCard(cocktail: cocktail);
+                  },
+                ),
+              );
+            }),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildFilters() {
+    return Padding(
+      padding: const EdgeInsets.all(12),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          TextField(
+            controller: nameController,
+            decoration: const InputDecoration(
+              labelText: 'Buscar por nombre',
+              border: OutlineInputBorder(),
             ),
-            itemCount: cocktails.length,
-            itemBuilder: (context, index) {
-              final cocktail = cocktails[index];
-              return CocktailCard(cocktail: cocktail);
+            onSubmitted: (_) => _applyFilters(),
+          ),
+          const SizedBox(height: 8),
+          DropdownButtonFormField<String>(
+            value: selectedAlcohol,
+            decoration: const InputDecoration(
+              labelText: 'Tipo de alcohol',
+              border: OutlineInputBorder(),
+            ),
+            items: ['Ron', 'Vodka', 'Tequila', 'Whisky']
+                .map((type) => DropdownMenuItem(value: type, child: Text(type)))
+                .toList(),
+            onChanged: (value) {
+              setState(() {
+                selectedAlcohol = value;
+              });
+              _applyFilters();
             },
           ),
-        );
-      }),
+          const SizedBox(height: 8),
+          Row(
+            children: [
+              const Text('¿Sin alcohol?'),
+              Checkbox(
+                value: isNonAlcoholic,
+                onChanged: (value) {
+                  setState(() {
+                    isNonAlcoholic = value ?? false;
+                  });
+                  _applyFilters();
+                },
+              ),
+              const Spacer(),
+              TextButton(
+                onPressed: _clearFilters,
+                child: const Text("Limpiar filtros"),
+              )
+            ],
+          ),
+        ],
+      ),
     );
   }
 }
@@ -97,7 +181,7 @@ class CocktailCard extends StatelessWidget {
                   ),
                   const SizedBox(height: 2),
                   Text(
-                    cocktail.alcoholType ?? 'Sin alcohol',
+                    cocktail.alcoholType ?? (cocktail.isNonAlcoholic == true ? "Sin alcohol" : "Desconocido"),
                     style: TextStyle(color: Colors.grey[600], fontSize: 10),
                   ),
                   const SizedBox(height: 2),
