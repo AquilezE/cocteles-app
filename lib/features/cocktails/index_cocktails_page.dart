@@ -45,17 +45,16 @@ class _IndexCocktailsPageState extends State<IndexCocktailsPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      floatingActionButtonLocation: FloatingActionButtonLocation.endTop,
+      appBar: AppBar(title: const Text("Cócteles")),
       floatingActionButton: FloatingActionButton(
         tooltip: 'Crear cóctel',
         child: const Icon(Icons.add),
-        onPressed: () {
-          Get.to(() => const CreateCocktailPage());
-        },
+        onPressed: () => Get.to(() => const CreateCocktailPage()),
       ),
       body: Column(
         children: [
           _buildFilters(),
+          const Divider(height: 1),
           Expanded(
             child: Obx(() {
               final cocktails = cocktailController.cocktails;
@@ -89,52 +88,64 @@ class _IndexCocktailsPageState extends State<IndexCocktailsPage> {
 
   Widget _buildFilters() {
     return Padding(
-      padding: const EdgeInsets.all(12),
+      padding: const EdgeInsets.fromLTRB(12, 8, 12, 4),
       child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          TextField(
-            controller: nameController,
-            decoration: const InputDecoration(
-              labelText: 'Buscar por nombre',
-              border: OutlineInputBorder(),
-            ),
-            onSubmitted: (_) => _applyFilters(),
-          ),
-          const SizedBox(height: 8),
-          DropdownButtonFormField<String>(
-            value: selectedAlcohol,
-            decoration: const InputDecoration(
-              labelText: 'Tipo de alcohol',
-              border: OutlineInputBorder(),
-            ),
-            items: ['Ron', 'Vodka', 'Tequila', 'Whisky']
-                .map((type) => DropdownMenuItem(value: type, child: Text(type)))
-                .toList(),
-            onChanged: (value) {
-              setState(() {
-                selectedAlcohol = value;
-              });
-              _applyFilters();
-            },
+          Row(
+            children: [
+              Expanded(
+                child: TextField(
+                  controller: nameController,
+                  decoration: const InputDecoration(
+                    labelText: 'Buscar por nombre',
+                    border: OutlineInputBorder(),
+                  ),
+                  onSubmitted: (_) => _applyFilters(),
+                ),
+              ),
+              const SizedBox(width: 8),
+              IconButton(
+                icon: const Icon(Icons.search),
+                onPressed: _applyFilters,
+                tooltip: "Buscar",
+              ),
+            ],
           ),
           const SizedBox(height: 8),
           Row(
             children: [
-              const Text('¿Sin alcohol?'),
-              Checkbox(
-                value: isNonAlcoholic,
-                onChanged: (value) {
-                  setState(() {
-                    isNonAlcoholic = value ?? false;
-                  });
-                  _applyFilters();
-                },
+              Expanded(
+                child: DropdownButtonFormField<String>(
+                  value: selectedAlcohol,
+                  decoration: const InputDecoration(
+                    labelText: 'Tipo de alcohol',
+                    border: OutlineInputBorder(),
+                  ),
+                  items: ['Ron', 'Vodka', 'Tequila', 'Whisky']
+                      .map((type) => DropdownMenuItem(value: type, child: Text(type)))
+                      .toList(),
+                  onChanged: (value) {
+                    setState(() => selectedAlcohol = value);
+                    _applyFilters();
+                  },
+                ),
               ),
-              const Spacer(),
+              const SizedBox(width: 8),
+              Column(
+                children: [
+                  const Text('¿Sin alcohol?'),
+                  Checkbox(
+                    value: isNonAlcoholic,
+                    onChanged: (value) {
+                      setState(() => isNonAlcoholic = value ?? false);
+                      _applyFilters();
+                    },
+                  ),
+                ],
+              ),
               TextButton(
                 onPressed: _clearFilters,
-                child: const Text("Limpiar filtros"),
+                child: const Text("Limpiar"),
               )
             ],
           ),
@@ -152,9 +163,7 @@ class CocktailCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return GestureDetector(
-      onTap: () {
-        Get.to(() => CocktailDetailPage(cocktail: cocktail));
-      },
+      onTap: () => Get.to(() => CocktailDetailPage(cocktail: cocktail)),
       child: Card(
         elevation: 4,
         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
@@ -171,29 +180,29 @@ class CocktailCard extends StatelessWidget {
               ),
             ),
             Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 4.0, vertical: 6.0),
+              padding: const EdgeInsets.symmetric(horizontal: 6.0, vertical: 6.0),
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Text(
                     cocktail.name ?? 'Sin nombre',
-                    style: const TextStyle(fontSize: 12, fontWeight: FontWeight.bold),
+                    style: const TextStyle(fontSize: 13, fontWeight: FontWeight.bold),
                   ),
                   const SizedBox(height: 2),
                   Text(
                     cocktail.alcoholType ?? (cocktail.isNonAlcoholic == true ? "Sin alcohol" : "Desconocido"),
-                    style: TextStyle(color: Colors.grey[600], fontSize: 10),
+                    style: TextStyle(color: Colors.grey[600], fontSize: 11),
                   ),
                   const SizedBox(height: 2),
                   Row(
                     children: [
                       const Icon(Icons.timer, size: 14),
                       const SizedBox(width: 4),
-                      Text('${cocktail.preparationTime} min', style: const TextStyle(fontSize: 10)),
+                      Text('${cocktail.preparationTime} min', style: const TextStyle(fontSize: 11)),
                       const Spacer(),
                       const Icon(Icons.favorite, size: 14, color: Colors.red),
                       const SizedBox(width: 4),
-                      Text('${cocktail.likes}', style: const TextStyle(fontSize: 10)),
+                      Text('${cocktail.likes}', style: const TextStyle(fontSize: 11)),
                     ],
                   ),
                 ],

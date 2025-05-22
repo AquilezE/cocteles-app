@@ -1,9 +1,8 @@
+import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:cocteles_app/features/createUser/controllers/createUser_controller.dart';
 import 'package:cocteles_app/models/user_model.dart';
-import 'package:flutter/material.dart';
-import 'package:get/get.dart';
 
 class EditProfileScreen extends StatelessWidget {
   final UserModel user;
@@ -17,134 +16,150 @@ class EditProfileScreen extends StatelessWidget {
     controller.email.text = user.email ?? '';
 
     return Scaffold(
+      backgroundColor: const Color(0xFFF9FAFB),
       appBar: AppBar(
-        title: const Text("Editar Perfil"),
+        title: const Text("Editar Perfil", style: TextStyle(fontWeight: FontWeight.w600)),
         centerTitle: true,
-        backgroundColor: const Color.fromARGB(255, 235, 102, 61),
-        elevation: 4,
+        backgroundColor: Colors.white,
+        foregroundColor: Colors.black87,
+        elevation: 1,
       ),
       body: SingleChildScrollView(
-        padding: const EdgeInsets.all(24),
+        padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 32),
         child: Form(
           key: controller.formKey,
           child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
+            crossAxisAlignment: CrossAxisAlignment.center,
             children: [
-              Center(
-                child: Obx(() {
-                  final imageFile = controller.selectedImage.value;
-                  final hasNewImage = imageFile != null;
-                  final currentPhoto = user.profilePicture;
-
-                  return GestureDetector(
-                    onTap: controller.pickImage,
-                    child: CircleAvatar(
-                      radius: 50,
-                      backgroundColor: const Color.fromARGB(255, 239, 103, 62),
-                      backgroundImage: hasNewImage
-                          ? FileImage(imageFile)
-                          : (currentPhoto != null && currentPhoto.isNotEmpty
-                              ? NetworkImage(currentPhoto)
-                              : null) as ImageProvider?,
-                      child: (!hasNewImage && (currentPhoto == null || currentPhoto.isEmpty))
-                          ? const Icon(Icons.person, size: 50, color: Colors.white)
-                          : null,
-                    ),
-                  );
-                }),
+              _buildAvatar(user),
+              const SizedBox(height: 16),
+              const Text(
+                "Toca la imagen para actualizarla",
+                style: TextStyle(fontSize: 13, color: Colors.grey),
               ),
-              const SizedBox(height: 8),
-              const Center(child: Text("Toca la imagen para cambiarla")),
-              const SizedBox(height: 24),
+              const SizedBox(height: 32),
 
-              ProfileInputCard(
-                icon: Icons.person_outline,
-                label: 'Nombre de usuario',
+              _buildInputField(
                 controller: controller.fullName,
-                validator: (value) =>
-                    value!.isEmpty ? 'Campo requerido' : null,
+                label: "Nombre de usuario",
+                icon: Icons.person,
+                validator: (value) => value!.isEmpty ? 'Campo obligatorio' : null,
               ),
-              const SizedBox(height: 16),
-              ProfileInputCard(
-                icon: Icons.email_outlined,
-                label: 'Correo electrónico',
+              const SizedBox(height: 20),
+
+              _buildInputField(
                 controller: controller.email,
-                validator: (value) =>
-                    value!.isEmpty ? 'Campo requerido' : null,
+                label: "Correo electrónico",
+                icon: Icons.email,
+                validator: (value) => value!.isEmpty ? 'Campo obligatorio' : null,
               ),
-              const SizedBox(height: 16),
-              Obx(() => ProfileInputCard(
-                    icon: Icons.lock_outline,
-                    label: 'Nueva contraseña (opcional)',
+              const SizedBox(height: 20),
+
+              Obx(() => _buildInputField(
                     controller: controller.password,
+                    label: "Nueva contraseña (opcional)",
+                    icon: Icons.lock,
                     obscureText: controller.hidePassword.value,
-                    suffixIcon: IconButton(
-                      icon: Icon(controller.hidePassword.value
-                          ? Icons.visibility
-                          : Icons.visibility_off),
+                    suffix: IconButton(
+                      icon: Icon(
+                        controller.hidePassword.value
+                            ? Icons.visibility_off
+                            : Icons.visibility,
+                        color: Colors.grey.shade600,
+                      ),
                       onPressed: () {
                         controller.hidePassword.value =
                             !controller.hidePassword.value;
                       },
                     ),
                   )),
-              const SizedBox(height: 32),
-              Center(
-  child: SizedBox(
-    width: double.infinity,
-    child: ElevatedButton.icon(
-      onPressed: () => controller.updateProfile(user.id!, user.profilePicture ?? ''),
-      icon: const Icon(Icons.save),
-      label: const Text('Guardar cambios'),
-      style: ElevatedButton.styleFrom(
-        backgroundColor: Colors.red,
-        padding: const EdgeInsets.symmetric(vertical: 16),
-        textStyle: const TextStyle(fontSize: 16),
-        shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(12),
-        ),
-      ),
-    ),
-  ),
-),
 
+              const SizedBox(height: 36),
+              _buildSaveButton(user),
             ],
           ),
         ),
       ),
     );
   }
-}
-class ProfileInputCard extends StatelessWidget {
-  final IconData icon;
-  final String label;
-  final TextEditingController controller;
-  final bool obscureText;
-  final Widget? suffixIcon;
-  final String? Function(String?)? validator;
 
-  const ProfileInputCard({
-    Key? key,
-    required this.icon,
-    required this.label,
-    required this.controller,
-    this.obscureText = false,
-    this.suffixIcon,
-    this.validator,
-  }) : super(key: key);
+  Widget _buildAvatar(UserModel user) {
+    return Obx(() {
+      final imageFile = controller.selectedImage.value;
+      final profilePicture = user.profilePicture;
 
-  @override
-  Widget build(BuildContext context) {
+      return GestureDetector(
+        onTap: controller.pickImage,
+        child: CircleAvatar(
+          radius: 60,
+          backgroundColor: Colors.grey.shade200,
+          backgroundImage: imageFile != null
+              ? FileImage(imageFile)
+              : (profilePicture != null && profilePicture.isNotEmpty
+                  ? NetworkImage(profilePicture)
+                  : null) as ImageProvider?,
+          child: (imageFile == null &&
+                  (profilePicture == null || profilePicture.isEmpty))
+              ? const Icon(Icons.person, size: 60, color: Colors.grey)
+              : null,
+        ),
+      );
+    });
+  }
+
+  Widget _buildInputField({
+    required TextEditingController controller,
+    required String label,
+    required IconData icon,
+    bool obscureText = false,
+    Widget? suffix,
+    String? Function(String?)? validator,
+  }) {
     return TextFormField(
       controller: controller,
       obscureText: obscureText,
       validator: validator,
+      style: const TextStyle(fontSize: 15),
       decoration: InputDecoration(
-        prefixIcon: Icon(icon),
+        prefixIcon: Icon(icon, color: Colors.grey.shade700),
+        suffixIcon: suffix,
         labelText: label,
-        suffixIcon: suffixIcon,
+        labelStyle: const TextStyle(color: Colors.black54),
+        filled: true,
+        fillColor: Colors.white,
+        contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 20),
         border: OutlineInputBorder(
-          borderRadius: BorderRadius.circular(12),
+          borderRadius: BorderRadius.circular(14),
+          borderSide: const BorderSide(color: Colors.transparent),
+        ),
+        enabledBorder: OutlineInputBorder(
+          borderRadius: BorderRadius.circular(14),
+          borderSide: const BorderSide(color: Colors.transparent),
+        ),
+        focusedBorder: OutlineInputBorder(
+          borderRadius: BorderRadius.circular(14),
+          borderSide: const BorderSide(color: Colors.black),
+        ),
+      ),
+    );
+  }
+
+  Widget _buildSaveButton(UserModel user) {
+    return SizedBox(
+      width: double.infinity,
+      height: 52,
+      child: ElevatedButton.icon(
+        onPressed: () =>
+            controller.updateProfile(user.id!, user.profilePicture ?? ''),
+        icon: const Icon(Icons.save_alt),
+        label: const Text("Guardar cambios"),
+        style: ElevatedButton.styleFrom(
+          backgroundColor: Colors.black,
+          foregroundColor: Colors.white,
+          textStyle: const TextStyle(fontSize: 16, fontWeight: FontWeight.w600),
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(14),
+          ),
         ),
       ),
     );
