@@ -1,14 +1,25 @@
 import 'dart:convert';
+import 'package:cocteles_app/data/repositories/cocktails/cocktail_repository.dart';
+import 'package:cocteles_app/features/perzonalization/controllers/user_controller.dart';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'package:get/get.dart';
 import 'package:cocteles_app/models/cocktail_model.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
+import 'package:image_picker/image_picker.dart';
 
 class CocktailDetailController extends GetxController {
+
+  static UserController get userController => Get.find<UserController>();
   CocktailModel? cocktail;
   RxList<CocktailModel> cocktails = <CocktailModel>[].obs;
   RxBool hasLiked = false.obs;
+  late String videoUrl;
+
+  XFile? video;
+  Future<XFile> getVideoDownloadedFuture(String videoUrl, String jwt) async {
+    return CocktailRepository.instance.downloadVideo(videoUrl, jwt);
+  }
 
   Future<void> fetchAcceptedCocktails() async {
     try {
@@ -68,7 +79,6 @@ class CocktailDetailController extends GetxController {
   }
 }
 
-
   Future<void> checkIfLiked(int cocktailId, int userId) async {
     final url = '${dotenv.env['BASE_URL']}/api/v1/likes/$cocktailId/hasLiked?userId=$userId';
     final response = await http.get(Uri.parse(url));
@@ -96,4 +106,7 @@ class CocktailDetailController extends GetxController {
     } 
     cocktails.refresh();
   }
+
+
+
 }

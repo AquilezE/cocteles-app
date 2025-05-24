@@ -59,16 +59,6 @@ class CocktailForm extends StatelessWidget {
             ),
             const SizedBox(height: Sizes.spaceBtwInputFields),
 
-            TextFormField(
-              controller: controller.videoUrl,
-              validator: (value) => Validator.validateUrl(value),
-              decoration: const InputDecoration(
-                labelText: "URL del video",
-                prefixIcon: Icon(Iconsax.video),
-              ),
-            ),
-            const SizedBox(height: Sizes.spaceBtwInputFields),
-
             Obx(() => CheckboxListTile(
               title: const Text("Sin alcohol"),
               value: controller.isNonAlcoholic.value,

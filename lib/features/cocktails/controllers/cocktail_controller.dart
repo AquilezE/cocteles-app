@@ -8,11 +8,18 @@ import 'package:get/get.dart';
 import 'package:http/http.dart' as http;
 import 'package:image_picker/image_picker.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
+import 'package:path/path.dart' as path; 
 
 class CocktailController extends GetxController {
   static CocktailController get instance => Get.find();
 
   final Rx<File?> imageFile = Rx<File?>(null);
+  XFile? video;
+
+  Future<XFile> getVideoDownloadedFuture(String videoUrl, String jwt) async {
+    return CocktailRepository.instance.downloadVideo(videoUrl, jwt);
+  }
+
 
   List<CocktailModel> cocktails = [
     CocktailModel(
@@ -132,6 +139,21 @@ class CocktailController extends GetxController {
     }
   }
 
+  Future<void> pickAndSetVideo() async {
+    print("Controller hashCode: ${this.hashCode}");
+    
+    final picker = ImagePicker();
+    final picked = await picker.pickVideo(source: ImageSource.gallery);
+    if (picked != null) {
+      video = picked;
+      if (video == null) {
+        Get.snackbar("Error", "No se pudo seleccionar el video");
+      } else {
+        print("Video seleccionado: ${video!.path}");
+      }
+    }
+  }
+
   void setImage(File file) async {
     imageFile.value = file;
     final uploadedUrl = await uploadImage(file);
@@ -146,7 +168,6 @@ class CocktailController extends GetxController {
   final name = TextEditingController();
   final creationSteps = TextEditingController();
   final preparationTime = TextEditingController();
-  final videoUrl = TextEditingController();
   final imageUrl = TextEditingController();
   final alcoholType = TextEditingController();
   final formKey = GlobalKey<FormState>();
@@ -174,7 +195,6 @@ class CocktailController extends GetxController {
     name.clear();
     creationSteps.clear();
     preparationTime.clear();
-    videoUrl.clear();
     imageUrl.clear();
     alcoholType.clear();
     isNonAlcoholic.value = false;
@@ -182,9 +202,13 @@ class CocktailController extends GetxController {
     manualIngredients.clear();
   }
 
-  Future<void> submitCocktail(String? jwt, BuildContext context) async {
+  Future<void> submitCocktail(String jwt, BuildContext context) async {
     if (!formKey.currentState!.validate()) return;
     isLoading.value = true;
+
+        print("Controller hashCode: ${this.hashCode}");
+
+    final videoUrlString = '${DateTime.now()}-${name.text}${path.extension(video!.name)}'.replaceAll(' ', '');
 
     try {
       final userId = UserController.instance.user.value.id;
@@ -194,13 +218,27 @@ class CocktailController extends GetxController {
         preparationTime: int.tryParse(preparationTime.text.trim()),
         isNonAlcoholic: isNonAlcoholic.value,
         alcoholType: isNonAlcoholic.value ? null : alcoholType.text.trim(),
-        videoUrl: videoUrl.text.trim(),
+        videoUrl: videoUrlString,
         imageUrl: imageUrl.text.trim(),
         userId: userId,
         ingredients: manualIngredients,
       );
 
       await CocktailRepository.instance.createCocktail(cocktail, jwt);
+
+      if (video == null) {
+          Get.snackbar("Error", "No se pudo subir el video");
+          return;
+      }
+
+
+      print(jwt);
+      print(videoUrlString);
+      print(video!.path);
+
+
+      await CocktailRepository.instance.uploadVideo(video!, videoUrlString, jwt);
+
 
       Get.snackbar("Éxito", "La receta ha sido enviada a revisión por un moderador. Recibirás una notificación con una respuesta tan pronto como sea posible.");
       
@@ -218,4 +256,6 @@ class CocktailController extends GetxController {
       isLoading.value = false;
     }
   }
+
+
 }

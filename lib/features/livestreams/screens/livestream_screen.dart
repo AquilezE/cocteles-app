@@ -105,8 +105,11 @@ class _LiveStreamState extends State<LivestreamScreen> {
     player = Player();
     controller = VideoController(player);
 
+
+    print('${dotenv.env['LIVE_URL']}${widget.livestreamModel.streamKey}.m3u8');
+
     player.open(Media(
-        'http://192.168.1.13:8080/live/${widget.livestreamModel.streamKey}.m3u8'));
+        '${dotenv.env['LIVE_URL']}${widget.livestreamModel.streamKey}.m3u8'));
     player.play();
   }
 
