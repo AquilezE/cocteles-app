@@ -47,11 +47,11 @@ class NavigationController extends GetxController {
   NavigationController(UserCredentials userCredentials) {
     if (userCredentials.role == 'user') {
       screens = [
-        PlaceholderScreen(title: 'Home'), 
-        IndexCocktailsPage(),             
-        ProfileScreen(),                  
-        IndexLivestreamPage(),            
-        LogoutScreen(),                   
+        PlaceholderScreen(title: 'Home'),
+        IndexCocktailsPage(),
+        ProfileScreen(),
+        IndexLivestreamPage(),
+        LogoutScreen(),
       ];
 
       destinations = [
@@ -83,12 +83,12 @@ class NavigationController extends GetxController {
       ];
     } else {
       screens = [
-        PlaceholderScreen(title: 'Home'), 
-        IndexCocktailsPage(),             
-        ProfileScreen(),                  
-        IndexLivestreamPage(),            
-        ProfileScreen(),                  
-        LogoutScreen(),                   
+        PlaceholderScreen(title: 'Home'),
+        IndexCocktailsPage(),
+        ProfileScreen(),
+        IndexLivestreamPage(),
+        ProfileScreen(),
+        LogoutScreen(),
       ];
 
       destinations = [
@@ -127,6 +127,10 @@ class NavigationController extends GetxController {
   }
 
   void logout() {
+    final userController = Get.find<UserController>();
+
+    userController.logOut();
+
     Get.offAll(() => const LoginPage());
   }
 }

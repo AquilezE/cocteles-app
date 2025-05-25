@@ -1,3 +1,5 @@
+import 'dart:io';
+
 import 'package:cocteles_app/app.dart';
 import 'package:cocteles_app/data/repositories/authentication/authentication_repository.dart';
 import 'package:cocteles_app/data/repositories/user/user_repository.dart';
@@ -10,26 +12,28 @@ import 'package:flutter_native_splash/flutter_native_splash.dart';
 import 'package:get_storage/get_storage.dart';
 import 'package:get/get.dart';
 import 'package:media_kit/media_kit.dart';
+import 'package:cocteles_app/firebase_options.dart';
 
 Future<void> main() async {
-
-
-
   await dotenv.load(fileName: ".env");
 
-  final WidgetsBinding widgetsBinding = WidgetsFlutterBinding.ensureInitialized();
+  final WidgetsBinding widgetsBinding =
+      WidgetsFlutterBinding.ensureInitialized();
   await GetStorage.init();
+
   Get.put(AuthenticationRepository());
   Get.put(UserRepository());
   Get.put(CocktailRepository());
 
-  await Firebase.initializeApp();
-  await FirebaseApi().init();
-  MediaKit.ensureInitialized();
+  if (Platform.isAndroid || Platform.isIOS || Platform.isWindows) {
+    await Firebase.initializeApp(
+      options: DefaultFirebaseOptions.currentPlatform,
+    );
 
-  FlutterNativeSplash.preserve(widgetsBinding: widgetsBinding);
+    MediaKit.ensureInitialized();
 
-  runApp(const App());
+    FlutterNativeSplash.preserve(widgetsBinding: widgetsBinding);
+
+    runApp(const App());
+  }
 }
-
-

@@ -16,8 +16,7 @@ import 'package:cocteles_app/features/perzonalization/controllers/user_controlle
 import 'package:cocteles_app/utils/network_manager.dart';
 
 class LoginController extends GetxController {
-  final UserController userController = Get.put(UserController());
-
+  final UserController userController = Get.find<UserController>();
   final rememberMe = false.obs;
   final hidePassword = true.obs;
   final localStorage = GetStorage();
@@ -26,31 +25,44 @@ class LoginController extends GetxController {
   GlobalKey<FormState> formKey = GlobalKey<FormState>();
   final FirebaseApi firebaseApi = FirebaseApi();
 
+  var userCredentials;
+
   @override
-  void onInit() {
+  void onInit() async {
     var emailFromLocalStorage = localStorage.read('EMAIL_RECUERDAME');
     var passwordFromLocalStorage = localStorage.read('PASSWORD_RECUERDAME');
     if (emailFromLocalStorage != null && emailFromLocalStorage != null) {
       email.text = emailFromLocalStorage;
       password.text = passwordFromLocalStorage;
       rememberMe.value = true;
+
+      userCredentials = await AuthenticationRepository.instance
+          .loginWithEmailAndPassword(
+              emailFromLocalStorage, passwordFromLocalStorage);
     }
 
     final jwt = localStorage.read<String>('jwt');
     if (jwt != null) {
+      if (Platform.isWindows) {
+        return;
+      }
       firebaseApi.tokenRefreshStream.listen((newToken) {
         firebaseApi.registerDevice(jwt);
       });
     }
 
     super.onInit();
+
+    if (jwt != null) {
+      userController.userCredentials = userCredentials;
+      userController.fetchUserData();
+      Get.to(() => NavigationMenu());
+    }
   }
 
   Future<void> signIn() async {
     try {
       final isConnected = await NetworkManager.instance.isConnected();
-
-      print('isConnected: $isConnected');
 
       if (!isConnected) {
         Get.snackbar('No Internet', 'Please check your internet connection');
@@ -76,13 +88,12 @@ class LoginController extends GetxController {
       if (rememberMe.value) {
         localStorage.write("EMAIL_RECUERDAME", emailString);
         localStorage.write("PASSWORD_RECUERDAME", passwordString);
+        localStorage.write("REMEMBER_ME", true);
       } else {
         localStorage.remove("EMAIL_RECUERDAME");
         localStorage.remove("PASSWORD_RECUERDAME");
+        localStorage.write("REMEMBER_ME", false);
       }
-
-      print('Email: $emailString');
-      print('Password: $passwordString');
 
       final userCredentials = await AuthenticationRepository.instance
           .loginWithEmailAndPassword(emailString, passwordString);

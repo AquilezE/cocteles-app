@@ -5,11 +5,7 @@ import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:get_storage/get_storage.dart';
 import 'package:uuid/uuid.dart';
 
-Future<void> handlerBackgroundMessage(RemoteMessage message) async {
-  print('Title: ${message.notification?.title}');
-  print('Body: ${message.notification?.body}');
-  print('Payload: ${message.data}');
-}
+Future<void> handlerBackgroundMessage(RemoteMessage message) async {}
 
 class FirebaseApi {
   final _firebaseMessaging = FirebaseMessaging.instance;
@@ -17,16 +13,16 @@ class FirebaseApi {
   final _deviceIdKey = 'device_id';
 
   Future<void> init() async {
+    if (Platform.isWindows || Platform.isLinux) {
+      return;
+    }
     NotificationSettings settings = await _firebaseMessaging.requestPermission(
       alert: true,
       badge: true,
       sound: true,
     );
-    print('FCM permission status: ${settings.authorizationStatus}');
 
-    FirebaseMessaging.instance.onTokenRefresh.listen((newToken) {
-      print('FCM token refreshed: $newToken');
-    });
+    FirebaseMessaging.instance.onTokenRefresh.listen((newToken) {});
 
     FirebaseMessaging.onBackgroundMessage(handlerBackgroundMessage);
   }
@@ -43,6 +39,10 @@ class FirebaseApi {
   }
 
   Future<void> registerDevice(String jwt) async {
+    if (Platform.isWindows || Platform.isLinux) {
+      return;
+    }
+
     final deviceID = await getDeviceId();
 
     final settings = await _firebaseMessaging.getNotificationSettings();
@@ -69,6 +69,9 @@ class FirebaseApi {
   }
 
   Future<void> unregisterDevice(String jwt) async {
+    if (Platform.isWindows || Platform.isLinux) {
+      return;
+    }
     final deviceID = await getDeviceId();
 
     await AppHttpHelper.delete('api/v1/devices/$deviceID', jwt);
