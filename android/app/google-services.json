@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "976286983451",
+    "project_id": "cocteles-app",
+    "storage_bucket": "cocteles-app.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:976286983451:android:7955c501ee1de625fedfbe",
+        "android_client_info": {
+          "package_name": "com.example.cocteles_app"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDUnir2_r-7VK1wZyViDgzZROjpyXHMA2M"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

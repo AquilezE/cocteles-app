@@ -35,8 +35,8 @@ class AppHttpHelper{
       print('DATA: $data');
       
       if (jwt != null) {
-  headers['Authorization'] = 'Bearer $jwt';
-}
+      headers['Authorization'] = 'Bearer $jwt';
+      }
 
 
       final response = await http.post(Uri.parse('$baseUrl/$endpoint'),

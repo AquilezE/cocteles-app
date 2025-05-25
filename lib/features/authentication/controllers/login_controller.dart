@@ -1,6 +1,8 @@
 import 'dart:io';
 import 'dart:convert';
 import 'package:cocteles_app/navigation_menu.dart';
+import 'package:cocteles_app/utils/http_client.dart';
+import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/widgets.dart';
 import 'package:http/http.dart' as http;
 import 'package:http_parser/http_parser.dart';
@@ -81,11 +83,13 @@ class LoginController extends GetxController {
 
       final userCredentials = await AuthenticationRepository.instance.loginWithEmailAndPassword(emailString, passwordString);
 
+
       localStorage.write('jwt', userCredentials.jwt);
       localStorage.write('username', userCredentials.username);
       
       userController.userCredentials = userCredentials;
       userController.fetchUserData();
+
 
       Get.to(() => NavigationMenu());
 
