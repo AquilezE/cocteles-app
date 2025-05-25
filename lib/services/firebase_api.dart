@@ -5,23 +5,18 @@ import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:get_storage/get_storage.dart';
 import 'package:uuid/uuid.dart';
 
-
 Future<void> handlerBackgroundMessage(RemoteMessage message) async {
   print('Title: ${message.notification?.title}');
   print('Body: ${message.notification?.body}');
   print('Payload: ${message.data}');
-
 }
-
 
 class FirebaseApi {
   final _firebaseMessaging = FirebaseMessaging.instance;
   final _storage = GetStorage();
   final _deviceIdKey = 'device_id';
 
-
   Future<void> init() async {
-
     NotificationSettings settings = await _firebaseMessaging.requestPermission(
       alert: true,
       badge: true,
@@ -39,10 +34,10 @@ class FirebaseApi {
   Future<String?> getDeviceId() async {
     String? deviceId = _storage.read(_deviceIdKey);
 
-    if(deviceId != null && deviceId.isNotEmpty){
+    if (deviceId != null && deviceId.isNotEmpty) {
       return deviceId;
     }
-    deviceId =  const Uuid().v4();
+    deviceId = const Uuid().v4();
     await _storage.write(_deviceIdKey, deviceId);
     return deviceId;
   }
@@ -57,7 +52,6 @@ class FirebaseApi {
     }
     final fcmToken = await FirebaseMessaging.instance.getToken();
     if (fcmToken == null) {
-
       return;
     }
 
@@ -65,22 +59,21 @@ class FirebaseApi {
       return;
     }
 
-    var body ={
+    var body = {
       'deviceId': deviceID,
       'registrationToken': fcmToken,
       'platform': Platform.operatingSystem,
     };
 
     await AppHttpHelper.post('api/v1/devices/', body, jwt);
-
   }
 
   Future<void> unregisterDevice(String jwt) async {
     final deviceID = await getDeviceId();
 
     await AppHttpHelper.delete('api/v1/devices/$deviceID', jwt);
-
   }
-  
 
+  Stream<String> get tokenRefreshStream =>
+      FirebaseMessaging.instance.onTokenRefresh;
 }
