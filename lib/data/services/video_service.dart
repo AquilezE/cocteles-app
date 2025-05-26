@@ -27,7 +27,13 @@ class VideoService {
     );
 
     final request = DownloadVideoRequest(name: fileName);
-    final file = File('${(await getTemporaryDirectory()).path}/$fileName');
+    var file;
+    if(Platform.isWindows){
+      file = File('${(await getTemporaryDirectory()).path}\\$fileName');
+    } else {
+      file = File('${(await getTemporaryDirectory()).path}/$fileName');
+    }
+
     final fileSink = file.openWrite();
 
     try {

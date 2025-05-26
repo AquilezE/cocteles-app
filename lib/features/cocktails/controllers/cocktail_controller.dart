@@ -206,9 +206,9 @@ class CocktailController extends GetxController {
     if (!formKey.currentState!.validate()) return;
     isLoading.value = true;
 
-        print("Controller hashCode: ${this.hashCode}");
+    print("Controller hashCode: ${this.hashCode}");
 
-    final videoUrlString = '${DateTime.now()}-${name.text}${path.extension(video!.name)}'.replaceAll(' ', '');
+    final videoUrlString = '${DateTime.now()}-${name.text}${path.extension(video!.name)}'.replaceAll(' ', '').replaceAll(':', '');
 
     try {
       final userId = UserController.instance.user.value.id;

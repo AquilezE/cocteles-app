@@ -28,7 +28,7 @@ class LoginController extends GetxController {
   var userCredentials;
 
   @override
-  void onInit() async {
+  void onInit() async { 
     var emailFromLocalStorage = localStorage.read('EMAIL_RECUERDAME');
     var passwordFromLocalStorage = localStorage.read('PASSWORD_RECUERDAME');
     if (emailFromLocalStorage != null && emailFromLocalStorage != null) {
@@ -42,6 +42,7 @@ class LoginController extends GetxController {
     }
 
     final jwt = localStorage.read<String>('jwt');
+    print(jwt);
     if (jwt != null) {
       if (Platform.isWindows) {
         return;
