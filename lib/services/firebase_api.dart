@@ -26,7 +26,7 @@ class FirebaseApi {
   final _deviceIdKey = 'device_id';
 
   Future<void> init() async {
-    if (Platform.isWindows || Platform.isLinux) {
+    if (Platform.isWindows || Platform.isLinux || Platform.isMacOS || Platform.isIOS) {
       return;
     }
     NotificationSettings settings = await _firebaseMessaging.requestPermission(
@@ -72,7 +72,7 @@ class FirebaseApi {
   }
 
   Future<void> registerDevice(String jwt) async {
-    if (Platform.isWindows || Platform.isLinux) {
+    if (Platform.isWindows || Platform.isLinux || Platform.isMacOS || Platform.isIOS) {
       return;
     }
 
@@ -102,7 +102,7 @@ class FirebaseApi {
   }
 
   Future<void> unregisterDevice(String jwt) async {
-    if (Platform.isWindows || Platform.isLinux) {
+    if (Platform.isWindows || Platform.isLinux || Platform.isMacOS || Platform.isIOS) {
       return;
     }
     final deviceID = await getDeviceId();

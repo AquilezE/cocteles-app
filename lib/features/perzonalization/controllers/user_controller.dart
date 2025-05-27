@@ -42,7 +42,7 @@ class UserController extends GetxController {
       localStorage.remove("jwt");
       localStorage.remove("username");
 
-      if (!Platform.isWindows && !Platform.isLinux) {
+      if (!Platform.isWindows && !Platform.isLinux && !Platform.isMacOS && !Platform.isIOS) {
         final firebaseApi = FirebaseApi();
         firebaseApi.unregisterDevice(userCredentials!.jwt);
         final _deviceIdKey = 'device_id';

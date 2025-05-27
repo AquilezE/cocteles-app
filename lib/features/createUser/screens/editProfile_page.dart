@@ -55,6 +55,35 @@ class EditProfileScreen extends StatelessWidget {
               ),
               const SizedBox(height: 20),
 
+              // Campo de contraseña actual (nuevo)
+              Obx(() => _buildInputField(
+                    controller: controller.currentPassword,
+                    label: "Contraseña actual",
+                    icon: Icons.lock_outline,
+                    obscureText: controller.hideCurrentPassword.value,
+                    validator: (value) {
+  if (controller.password.text.isNotEmpty) {
+    if (value == null || value.isEmpty) {
+      return 'Debe ingresar la contraseña actual';
+    }
+  }
+  return null;
+},
+
+                    suffix: IconButton(
+                      icon: Icon(
+                        controller.hideCurrentPassword.value
+                            ? Icons.visibility_off
+                            : Icons.visibility,
+                        color: Colors.grey.shade600,
+                      ),
+                      onPressed: () {
+                        controller.hideCurrentPassword.value =
+                            !controller.hideCurrentPassword.value;
+                      },
+                    ),
+                  )),
+              const SizedBox(height: 20),
               Obx(() => _buildInputField(
                     controller: controller.password,
                     label: "Nueva contraseña (opcional)",
@@ -144,24 +173,28 @@ class EditProfileScreen extends StatelessWidget {
     );
   }
 
-  Widget _buildSaveButton(UserModel user) {
-    return SizedBox(
-      width: double.infinity,
-      height: 52,
-      child: ElevatedButton.icon(
-        onPressed: () =>
-            controller.updateProfile(user.id!, user.profilePicture ?? ''),
-        icon: const Icon(Icons.save_alt),
-        label: const Text("Guardar cambios"),
-        style: ElevatedButton.styleFrom(
-          backgroundColor: Colors.black,
-          foregroundColor: Colors.white,
-          textStyle: const TextStyle(fontSize: 16, fontWeight: FontWeight.w600),
-          shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(14),
-          ),
+ Widget _buildSaveButton(UserModel user) {
+  return SizedBox(
+    width: double.infinity,
+    height: 52,
+    child: ElevatedButton.icon(
+      onPressed: () => controller.updateProfile(
+        user.id!,
+        user.profilePicture ?? '',
+        user.role ?? '',
+      ),
+      icon: const Icon(Icons.save_alt),
+      label: const Text("Guardar cambios"),
+      style: ElevatedButton.styleFrom(
+        backgroundColor: Colors.black,
+        foregroundColor: Colors.white,
+        textStyle: const TextStyle(fontSize: 16, fontWeight: FontWeight.w600),
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(14),
         ),
       ),
-    );
-  }
+    ),
+  );
+}
+
 }

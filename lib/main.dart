@@ -44,7 +44,7 @@ Future<void> main() async {
   Get.put(UserRepository());
   Get.put(CocktailRepository());
 
-  if (Platform.isAndroid || Platform.isIOS || Platform.isWindows) {
+  if (Platform.isAndroid || Platform.isIOS || Platform.isWindows || Platform.isMacOS) {
     await Firebase.initializeApp(
       options: DefaultFirebaseOptions.currentPlatform,
     );

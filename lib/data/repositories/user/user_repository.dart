@@ -48,7 +48,39 @@ class UserRepository extends GetxController{
     }
   }
 }
-  
+ Future<void> changePassword({
+  required int userId,
+  required String currentPassword,
+  required String newPassword,
+  required String? jwt,
+}) async {
+  try {
+    final endpoint = 'api/v1/usuarios/$userId/change.password';
+
+    final data = {
+      'currentPassword': currentPassword,
+      'newPassword': newPassword,
+    };
+
+    final response = await AppHttpHelper.put(endpoint, data, jwt);
+
+    if (response is Map<String, dynamic>) {
+      if (response['success'] == false) {
+        throw Exception(response['message'] ?? 'Error al cambiar contraseña');
+      }
+    } else {
+    }
+
+  } catch (e) {
+    if (e is HttpException) {
+      throw HttpException(e.statusCode, e.responseBody);
+    } else {
+      throw Exception('Error al cambiar contraseña: $e');
+    }
+  }
+}
+
+
   Future<String?> uploadUserPhoto(File imageFile) async {
     try {
       final uri = Uri.parse('${dotenv.env['BASE_URL']}/api/v1/upload');

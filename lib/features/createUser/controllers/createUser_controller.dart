@@ -20,6 +20,26 @@ class RegisterController extends GetxController {
   final hidePassword = true.obs;
   final box = GetStorage();
   final selectedImage = Rx<File?>(null);
+  final currentPassword = TextEditingController();
+  final newPassword = TextEditingController();
+  RxBool hideCurrentPassword = true.obs; 
+
+  void changeUserPassword(int userId) async {
+  final jwt = box.read('token');
+
+  try {
+    await UserRepository.instance.changePassword(
+      userId: userId,
+      currentPassword: currentPassword.text.trim(),
+      newPassword: newPassword.text.trim(),
+      jwt: jwt,
+    );
+
+    Get.snackbar("Éxito", "Contraseña actualizada correctamente", snackPosition: SnackPosition.BOTTOM);
+  } catch (e) {
+    Get.snackbar("Error", "No se pudo cambiar la contraseña: $e", snackPosition: SnackPosition.BOTTOM);
+  }
+}
 
 void pickImage() async {
   if (Platform.isMacOS || Platform.isWindows || Platform.isLinux) {
@@ -66,50 +86,61 @@ void register(File? photoFile) async {
     }
   }
 }
+void updateProfile(int userId, String currentPhotoUrl, String currentRole) async {
+  if (!formKey.currentState!.validate()) return;
 
-void updateProfile(int userId, String currentPhotoUrl) async {
-  if (formKey.currentState!.validate()) {
-    try {
-      final jwt = box.read('token');
-      String? photoUrl;
+  try {
+    final jwt = box.read('token');
+    String? photoUrl = currentPhotoUrl;
 
-      if (selectedImage.value != null) {
-        photoUrl = await UserRepository.instance.uploadUserPhoto(selectedImage.value!);
-        print("Nueva imagen subida: $photoUrl");
-        selectedImage.value = null;
-      }
-
-      final updatedUser = UserModel(
-        id: userId,
-        username: fullName.text.trim(),
-        email: email.text.trim(),
-        password: password.text.isNotEmpty ? password.text.trim() : null,
-        role: 'user',
-        profilePicture: photoUrl ?? currentPhotoUrl,
-      );
-
-      final result = await UserRepository.instance.updateUser(updatedUser, jwt);
-      final userController = Get.find<UserController>();
-      userController.user.value = result;
-
-      Get.snackbar(
-        "Éxito",
-        "Perfil actualizado correctamente",
-        snackPosition: SnackPosition.BOTTOM,
-        duration: const Duration(seconds: 2),
-      );
-      await Future.delayed(const Duration(seconds: 2));
-
-      if (Get.overlayContext != null && Navigator.of(Get.overlayContext!).canPop()) {
-        Navigator.of(Get.overlayContext!).pop();
-      }
-      
-    } catch (e) {
-      Get.snackbar("Error", "Error al actualizar el perfil: $e",
-          snackPosition: SnackPosition.BOTTOM);
+    if (selectedImage.value != null) {
+      photoUrl = await UserRepository.instance.uploadUserPhoto(selectedImage.value!);
+      selectedImage.value = null;
     }
+    if (password.text.isNotEmpty) {
+      if (currentPassword.text.isEmpty) {
+        Get.snackbar("Error", "Debe ingresar la contraseña actual para cambiar la contraseña");
+        return;
+      }
+
+      try {
+        await UserRepository.instance.changePassword(
+          userId: userId,
+          currentPassword: currentPassword.text.trim(),
+          newPassword: password.text.trim(),
+          jwt: jwt,
+        );
+        Get.snackbar("Éxito", "Contraseña actualizada correctamente", snackPosition: SnackPosition.BOTTOM);
+      } catch (e) {
+        Get.snackbar("Error", "No se pudo cambiar la contraseña: $e", snackPosition: SnackPosition.BOTTOM);
+        return;
+      }
+    }
+
+    final updatedUser = UserModel(
+      id: userId,
+      username: fullName.text.trim(),
+      email: email.text.trim(),
+      profilePicture: photoUrl,
+      role: currentRole,
+    );
+    final result = await UserRepository.instance.updateUser(updatedUser, jwt);
+    final userController = Get.find<UserController>();
+    userController.user.value = result;
+
+    Get.snackbar("Éxito", "Perfil actualizado correctamente", snackPosition: SnackPosition.BOTTOM);
+    await Future.delayed(const Duration(seconds: 2));
+    if (Get.overlayContext != null && Navigator.of(Get.overlayContext!).canPop()) {
+      Navigator.of(Get.overlayContext!).pop();
+    }
+
+  } catch (e) {
+    Get.snackbar("Error", "Error al actualizar el perfil: $e", snackPosition: SnackPosition.BOTTOM);
   }
 }
+
+
+
 
   @override
   void onClose() {
