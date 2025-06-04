@@ -70,6 +70,7 @@ class AuthenticationRepository extends GetxController {
       if (e is HttpException) {
         throw HttpException(e.statusCode, e.responseBody);
       } else {
+        Get.offAll(() => const LoginPage());
         throw Exception('Failed to login');
       }
     }

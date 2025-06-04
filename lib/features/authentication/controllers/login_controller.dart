@@ -1,5 +1,6 @@
 import 'dart:io';
 import 'dart:convert';
+import 'package:cocteles_app/features/authentication/screens/login_page.dart';
 import 'package:cocteles_app/navigation_menu.dart';
 import 'package:cocteles_app/utils/http_client.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
@@ -28,38 +29,43 @@ class LoginController extends GetxController {
   var userCredentials;
 
   @override
-  void onInit() async { 
-    var emailFromLocalStorage = localStorage.read('EMAIL_RECUERDAME');
-    var passwordFromLocalStorage = localStorage.read('PASSWORD_RECUERDAME');
-    if (emailFromLocalStorage != null && emailFromLocalStorage != null) {
-      email.text = emailFromLocalStorage;
-      password.text = passwordFromLocalStorage;
-      rememberMe.value = true;
+void onInit() async {
+  super.onInit();
 
-      userCredentials = await AuthenticationRepository.instance
-          .loginWithEmailAndPassword(
-              emailFromLocalStorage, passwordFromLocalStorage);
-    }
+  var emailFromLocalStorage = localStorage.read('EMAIL_RECUERDAME');
+  var passwordFromLocalStorage = localStorage.read('PASSWORD_RECUERDAME');
 
-    final jwt = localStorage.read<String>('jwt');
-    print(jwt);
-    if (jwt != null) {
-      if (Platform.isWindows) {
-        return;
-      }
+  if (emailFromLocalStorage != null && passwordFromLocalStorage != null) {
+    email.text = emailFromLocalStorage;
+    password.text = passwordFromLocalStorage;
+    rememberMe.value = true;
+
+    try{
+    userCredentials = await AuthenticationRepository.instance
+        .loginWithEmailAndPassword(
+            emailFromLocalStorage, passwordFromLocalStorage);
+            }catch(ex){
+                  Get.to(() => LoginPage());
+
+            }
+  }
+
+  final jwt = localStorage.read<String>('jwt');
+  print(jwt);
+  if (jwt != null) {
+    if (!Platform.isWindows) {
       firebaseApi.tokenRefreshStream.listen((newToken) {
         firebaseApi.registerDevice(jwt);
       });
     }
-
-    super.onInit();
-
-    if (jwt != null) {
-      userController.userCredentials = userCredentials;
-      userController.fetchUserData();
-      Get.to(() => NavigationMenu());
-    }
   }
+
+  if (jwt != null && userCredentials != null) { 
+    userController.userCredentials = userCredentials;
+    userController.fetchUserData();
+    Get.to(() => LoginPage());
+  }
+}
 
   Future<void> signIn() async {
     try {
