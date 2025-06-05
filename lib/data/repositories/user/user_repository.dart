@@ -12,6 +12,42 @@ class UserRepository extends GetxController{
 
   static UserRepository get instance => Get.find();
   
+Future<void> sendVerificationEmail(String email) async {
+  try {
+    final endpoint = 'api/v1/verification/send';
+    final response = await AppHttpHelper.post(endpoint, {'email': email}, null);
+    print('Correo de verificación enviado: $response');
+  } catch (e) {
+    print("Error al enviar verificación: $e");
+    throw Exception('Error al enviar verificación');
+  }
+}
+
+Future<void> verifyEmailCode(String email, String code) async {
+  try {
+    final endpoint = 'api/v1/verification/verify';
+    final response = await AppHttpHelper.post(endpoint, {
+      'email': email,
+      'code': code,
+    }, null);
+    print('Código verificado correctamente: $response');
+  } catch (e) {
+    print("Código incorrecto o expirado: $e");
+    throw Exception('Código incorrecto o expirado');
+  }
+}
+Future<UserModel> createUser(UserRegistration user) async {
+  try {
+    const endpoint = 'api/v1/usuarios';
+    final response = await AppHttpHelper.post(endpoint, user.toJson(), null);
+    print("Usuario creado: $response");
+    return UserModel.fromJson(response);
+  } catch (e, stacktrace) {
+    print("Error al crear el usuario: ");
+    print(stacktrace);
+    throw Exception('Failed to create user: ');
+  }
+}
 
   Future<UserModel> getUserDetails(String username, String? jwt) async{
     
@@ -44,7 +80,7 @@ class UserRepository extends GetxController{
         e.responseBody
       );
     } else {
-      throw Exception('Failed to update user: $e');
+      throw Exception('Failed to update user');
     }
   }
 }
@@ -77,7 +113,7 @@ Future<bool> changePassword({
     if (e is HttpException) {
       throw HttpException(e.statusCode, e.responseBody);
     } else {
-      throw Exception('Error al cambiar contraseña: $e');
+      throw Exception('Error al cambiar contraseña');
     }
   }
 }
@@ -98,23 +134,13 @@ Future<bool> changePassword({
         final String? imageUrl = jsonResponse['imageUrl'];
         return imageUrl != null ? "${dotenv.env['BASE_URL']}$imageUrl" : null;
       } else {
-        throw Exception("Error uploading image: ${response.statusCode}");
+        throw Exception("Error uploading image");
       }
     } catch (e) {
-      throw Exception("Upload failed: $e");
+      throw Exception("Upload failed");
     }
   }
 
-  Future<UserModel> createUser(UserRegistration user) async {
-    try {
-      const endpoint = 'api/v1/usuarios'; 
-      final response = await AppHttpHelper.post(endpoint, user.toJson(), null);
-      print("metodo de crear");
-      return UserModel.fromJson(response);
-    } catch (e) {
-      print("error al crear el usuario");
-      throw Exception('Failed to create user: $e');
-    }
-  }
+  
   
 }
