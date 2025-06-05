@@ -15,6 +15,7 @@ class CocktailDetailController extends GetxController {
   RxList<CocktailModel> cocktails = <CocktailModel>[].obs;
   RxBool hasLiked = false.obs;
   late String videoUrl;
+  var isLoading = false.obs;
 
   XFile? video;
   Future<XFile> getVideoDownloadedFuture(String videoUrl, String jwt) async {
@@ -22,28 +23,34 @@ class CocktailDetailController extends GetxController {
   }
 
   Future<void> fetchAcceptedCocktails() async {
-    try {
-      final response = await http.get(Uri.parse('${dotenv.env['BASE_URL']}/api/v1/cocktails'),);
+  isLoading.value = true;
+  try {
+    final response = await http.get(Uri.parse('${dotenv.env['BASE_URL']}/api/v1/cocktails'));
 
-      debugPrint("GET /cocktails response: ${response.statusCode}");
-      debugPrint("Response body: ${response.body}");
+    debugPrint("GET /cocktails response: ${response.statusCode}");
+    debugPrint("Response body: ${response.body}");
 
-      if (response.statusCode == 200) {
-        final List<dynamic> data = json.decode(response.body);
-        cocktails.value = data.map((e) => CocktailModel.fromJson(e)).toList();
-      } else {
-        Get.snackbar("Error", "No se pudieron cargar los cócteles aceptados");
-      }
-    } catch (e) {
-      Get.snackbar("Error", "No fue posible conectar con el servidor: $e");
+    if (response.statusCode == 200) {
+      final List<dynamic> data = json.decode(response.body);
+      cocktails.value = data.map((e) => CocktailModel.fromJson(e)).toList();
+    } else {
+      Get.snackbar("Error", "No se pudieron cargar los cócteles aceptados");
     }
+  } catch (e) {
+    Get.snackbar("Error", "No fue posible conectar con el servidor: $e");
+  } finally {
+    isLoading.value = false;
   }
-  Future<void> fetchFilteredCocktails({
+}
+
+
+ Future<void> fetchFilteredCocktails({
   String? alcoholType,
   String? name,
   int? maxPreparationTime,
   bool? isNonAlcoholic,
 }) async {
+  isLoading.value = true;
   try {
     final queryParams = <String, String>{};
 
@@ -76,8 +83,11 @@ class CocktailDetailController extends GetxController {
     }
   } catch (e) {
     Get.snackbar("Error", "Fallo de conexión: $e");
+  } finally {
+    isLoading.value = false;
   }
 }
+
 
   Future<void> checkIfLiked(int cocktailId, int userId) async {
     final url = '${dotenv.env['BASE_URL']}/api/v1/likes/$cocktailId/hasLiked?userId=$userId';

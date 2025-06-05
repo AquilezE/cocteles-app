@@ -48,29 +48,31 @@ class UserRepository extends GetxController{
     }
   }
 }
- Future<void> changePassword({
+Future<bool> changePassword({
   required int userId,
   required String currentPassword,
   required String newPassword,
   required String? jwt,
 }) async {
   try {
-    final endpoint = 'api/v1/usuarios/$userId/change.password';
+    final endpoint = 'api/v1/usuarios/$userId/change-password';
 
     final data = {
       'currentPassword': currentPassword,
       'newPassword': newPassword,
     };
 
-    final response = await AppHttpHelper.put(endpoint, data, jwt);
+    final response = await AppHttpHelper.patch(endpoint, data, jwt);
 
     if (response is Map<String, dynamic>) {
-      if (response['success'] == false) {
+      if (response['message'] == "Contraseña actualizada correctamente") {
+        return true; // Éxito
+      } else {
         throw Exception(response['message'] ?? 'Error al cambiar contraseña');
       }
     } else {
+      throw Exception('Respuesta inesperada del servidor');
     }
-
   } catch (e) {
     if (e is HttpException) {
       throw HttpException(e.statusCode, e.responseBody);
@@ -79,7 +81,6 @@ class UserRepository extends GetxController{
     }
   }
 }
-
 
   Future<String?> uploadUserPhoto(File imageFile) async {
     try {

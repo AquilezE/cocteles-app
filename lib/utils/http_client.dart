@@ -46,6 +46,20 @@ class AppHttpHelper{
 
       return _handleResponse(response);
   }
+  static Future<Map<String, dynamic>> patch(String endpoint, dynamic data, String? jwt) async {
+  if (jwt != null) {
+    headers['Authorization'] = 'Bearer $jwt';
+  }
+
+  final response = await http.patch(
+    Uri.parse('$baseUrl/$endpoint'),
+    headers: headers,
+    body: json.encode(data),
+  );
+
+  return _handleResponse(response);
+}
+
 
     static Future<Map<String, dynamic>> put(String endpoint, dynamic data, String? jwt) async {
 

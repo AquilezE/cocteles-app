@@ -1,5 +1,3 @@
-import 'dart:io';
-
 import 'package:cocteles_app/features/authentication/screens/login_page.dart';
 import 'package:cocteles_app/features/perzonalization/controllers/user_controller.dart';
 import 'package:flutter/material.dart';
@@ -23,23 +21,33 @@ class RegisterController extends GetxController {
   final currentPassword = TextEditingController();
   final newPassword = TextEditingController();
   RxBool hideCurrentPassword = true.obs; 
+  final GlobalKey<FormState> changePassFormKey = GlobalKey<FormState>();
 
-  void changeUserPassword(int userId) async {
+Future<bool> changeUserPassword(int userId) async {
   final jwt = box.read('token');
 
   try {
-    await UserRepository.instance.changePassword(
+    final success = await UserRepository.instance.changePassword(
       userId: userId,
       currentPassword: currentPassword.text.trim(),
-      newPassword: newPassword.text.trim(),
+      newPassword: password.text.trim(),
       jwt: jwt,
     );
 
-    Get.snackbar("Éxito", "Contraseña actualizada correctamente", snackPosition: SnackPosition.BOTTOM);
+    if (success) {
+      currentPassword.clear();
+      password.clear();
+      return true;
+    } else {
+      return false;
+    }
   } catch (e) {
     Get.snackbar("Error", "No se pudo cambiar la contraseña: $e", snackPosition: SnackPosition.BOTTOM);
+    return false;
   }
 }
+
+
 
 void pickImage() async {
   if (Platform.isMacOS || Platform.isWindows || Platform.isLinux) {
@@ -97,25 +105,6 @@ void updateProfile(int userId, String currentPhotoUrl, String currentRole) async
       photoUrl = await UserRepository.instance.uploadUserPhoto(selectedImage.value!);
       selectedImage.value = null;
     }
-    if (password.text.isNotEmpty) {
-      if (currentPassword.text.isEmpty) {
-        Get.snackbar("Error", "Debe ingresar la contraseña actual para cambiar la contraseña");
-        return;
-      }
-
-      try {
-        await UserRepository.instance.changePassword(
-          userId: userId,
-          currentPassword: currentPassword.text.trim(),
-          newPassword: password.text.trim(),
-          jwt: jwt,
-        );
-        Get.snackbar("Éxito", "Contraseña actualizada correctamente", snackPosition: SnackPosition.BOTTOM);
-      } catch (e) {
-        Get.snackbar("Error", "No se pudo cambiar la contraseña: $e", snackPosition: SnackPosition.BOTTOM);
-        return;
-      }
-    }
 
     final updatedUser = UserModel(
       id: userId,
@@ -139,9 +128,6 @@ void updateProfile(int userId, String currentPhotoUrl, String currentRole) async
   }
 }
 
-
-
-
   @override
   void onClose() {
     fullName.dispose();
@@ -149,7 +135,6 @@ void updateProfile(int userId, String currentPhotoUrl, String currentRole) async
     password.dispose();
     super.onClose();
   }
-
 
 }
 class ProfileController extends GetxController {
@@ -186,12 +171,12 @@ class ProfileController extends GetxController {
       final userModel = await UserRepository.instance.getUserDetails(username, jwt);
 
       user.value = UserRegistration(
-  username: userModel.username,
-  email: userModel.email,
-  password: '********',
-  role: userModel.role,
-  profile_picture_path: userModel.profilePicture,
-);
+      username: userModel.username,
+      email: userModel.email,
+      password: '********',
+      role: userModel.role,
+      profile_picture_path: userModel.profilePicture,
+      );
 
     } catch (e) {
       Get.snackbar('Error', 'No se pudo cargar el perfil: $e');
