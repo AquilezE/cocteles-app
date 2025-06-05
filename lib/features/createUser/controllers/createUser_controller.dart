@@ -9,6 +9,7 @@ import 'package:cocteles_app/models/user_model.dart';
 import 'package:image_picker/image_picker.dart';
 import 'dart:io' show File, Platform;
 import 'package:file_selector/file_selector.dart';
+import 'dart:async';
 
 class RegisterController extends GetxController {
   final formKey = GlobalKey<FormState>();
@@ -22,6 +23,105 @@ class RegisterController extends GetxController {
   final newPassword = TextEditingController();
   RxBool hideCurrentPassword = true.obs; 
   final GlobalKey<FormState> changePassFormKey = GlobalKey<FormState>();
+
+Future<bool> showCodeVerificationDialog() {
+  final codeController = TextEditingController();
+  final completer = Completer<bool>();
+
+  Get.defaultDialog(
+    title: 'Verificación de correo',
+    content: Column(
+      children: [
+        Text('Ingresa el código que te enviamos al correo.'),
+        TextField(
+          controller: codeController,
+          decoration: const InputDecoration(
+            labelText: 'Código',
+          ),
+        ),
+      ],
+    ),
+    textConfirm: 'Verificar',
+    textCancel: 'Cancelar',
+    onConfirm: () async {
+      bool success = await verifyCode(codeController.text.trim());
+      if (success) {
+        Get.back();
+        if (!completer.isCompleted) {
+          completer.complete(true);
+        }
+      } else {
+        Get.snackbar("Error", "Código incorrecto o expirado", snackPosition: SnackPosition.BOTTOM);
+      }
+    },
+    onCancel: () {
+      if (!completer.isCompleted) {
+        completer.complete(false);
+      }
+      Get.back();
+    },
+    barrierDismissible: false,
+  );
+
+  return completer.future;
+}
+
+  Future<void> sendVerificationCode() async {
+    try {
+      await UserRepository.instance.sendVerificationEmail(email.text.trim());
+      Get.snackbar("Éxito", "Código de verificación enviado al correo", snackPosition: SnackPosition.BOTTOM);
+    } catch (e) {
+      Get.snackbar("Error", "No se pudo enviar el código", snackPosition: SnackPosition.BOTTOM);
+    }
+  }
+
+  Future<bool> verifyCode(String code) async {
+    try {
+      await UserRepository.instance.verifyEmailCode(email.text.trim(), code);
+      Get.snackbar("Éxito", "Correo verificado correctamente", snackPosition: SnackPosition.BOTTOM);
+      return true;
+    } catch (e) {
+      Get.snackbar("Error", "Código incorrecto o expirado", snackPosition: SnackPosition.BOTTOM);
+      return false;
+    }
+  }
+  void register(File? photoFile) async {
+  if (formKey.currentState!.validate()) {
+    try {
+      await sendVerificationCode();
+
+      final verified = await showCodeVerificationDialog();
+
+      if (!verified) {
+        Get.snackbar("Error", "La verificación no fue exitosa.", snackPosition: SnackPosition.BOTTOM);
+        return;
+      }
+
+      String? photoUrl;
+
+      if (photoFile != null) {
+        photoUrl = await UserRepository.instance.uploadUserPhoto(photoFile);
+        print("Imagen subida: $photoUrl");
+      }
+
+      final newUser = UserRegistration(
+        username: fullName.text.trim(),
+        email: email.text.trim(),
+        password: password.text.trim(),
+        profile_picture_path: photoUrl,
+      );
+
+      await UserRepository.instance.createUser(newUser);
+
+      Get.snackbar("Éxito", "Cuenta creada correctamente", snackPosition: SnackPosition.BOTTOM);
+      Get.to(() => LoginPage());
+
+    } catch (e) {
+      Get.snackbar("Error", "No se pudo crear la cuenta, correo o nombre de usuarios repetidos", snackPosition: SnackPosition.BOTTOM);
+    }
+  }
+}
+
 
 Future<bool> changeUserPassword(int userId) async {
   final jwt = box.read('token');
@@ -42,7 +142,7 @@ Future<bool> changeUserPassword(int userId) async {
       return false;
     }
   } catch (e) {
-    Get.snackbar("Error", "No se pudo cambiar la contraseña: $e", snackPosition: SnackPosition.BOTTOM);
+    Get.snackbar("Error", "No se pudo cambiar la contraseña", snackPosition: SnackPosition.BOTTOM);
     return false;
   }
 }
@@ -68,32 +168,6 @@ void pickImage() async {
   }
 }
 
-void register(File? photoFile) async {
-  if (formKey.currentState!.validate()) {
-    try {
-      String? photoUrl;
-
-      if(photoFile != null) {
-        photoUrl = await UserRepository.instance.uploadUserPhoto(photoFile);
-        print("Imagen subida: $photoUrl"); 
-      }
-
-      final newUser = UserRegistration(
-      username: fullName.text.trim(),
-      email: email.text.trim(),
-      password: password.text.trim(),
-      profile_picture_path: photoUrl,
-      );
-      await UserRepository.instance.createUser(newUser);
-
-      Get.snackbar("Éxito", "Cuenta creada correctamente", snackPosition: SnackPosition.BOTTOM);
-      Get.to(() => LoginPage());
-
-    } catch (e) {
-      Get.snackbar("Error", "No se pudo crear la cuenta: $e", snackPosition: SnackPosition.BOTTOM);
-    }
-  }
-}
 void updateProfile(int userId, String currentPhotoUrl, String currentRole) async {
   if (!formKey.currentState!.validate()) return;
 
