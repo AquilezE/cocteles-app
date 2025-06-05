@@ -53,7 +53,12 @@ class _IndexCocktailsPageState extends State<IndexCocktailsPage> {
       ),
       body: Column(
         children: [
-          _buildFilters(),
+          Obx(() {
+            return cocktailController.isLoading.value
+                ? const LinearProgressIndicator()
+                : const SizedBox.shrink();
+          }),
+          _buildFilterPanel(),
           const Divider(height: 1),
           Expanded(
             child: Obx(() {
@@ -86,71 +91,92 @@ class _IndexCocktailsPageState extends State<IndexCocktailsPage> {
     );
   }
 
-  Widget _buildFilters() {
-    return Padding(
-      padding: const EdgeInsets.fromLTRB(12, 8, 12, 4),
-      child: Column(
-        children: [
-          Row(
+  Widget _buildFilterPanel() {
+    return ExpansionTile(
+      title: const Text("Filtros de búsqueda"),
+      initiallyExpanded: true,
+      children: [
+        Padding(
+          padding: const EdgeInsets.all(12.0),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              Expanded(
-                child: TextField(
-                  controller: nameController,
-                  decoration: const InputDecoration(
-                    labelText: 'Buscar por nombre',
-                    border: OutlineInputBorder(),
-                  ),
-                  onSubmitted: (_) => _applyFilters(),
+              TextField(
+                controller: nameController,
+                decoration: const InputDecoration(
+                  labelText: 'Buscar por nombre',
+                  hintText: 'Ej. Margarita',
+                  prefixIcon: Icon(Icons.search),
+                  border: OutlineInputBorder(),
                 ),
+                onSubmitted: (_) => _applyFilters(),
               ),
-              const SizedBox(width: 8),
-              IconButton(
-                icon: const Icon(Icons.search),
-                onPressed: _applyFilters,
-                tooltip: "Buscar",
-              ),
-            ],
-          ),
-          const SizedBox(height: 8),
-          Row(
-            children: [
-              Expanded(
-                child: DropdownButtonFormField<String>(
-                  value: selectedAlcohol,
-                  decoration: const InputDecoration(
-                    labelText: 'Tipo de alcohol',
-                    border: OutlineInputBorder(),
-                  ),
-                  items: ['Ron', 'Vodka', 'Tequila', 'Whisky']
-                      .map((type) => DropdownMenuItem(value: type, child: Text(type)))
-                      .toList(),
-                  onChanged: (value) {
-                    setState(() => selectedAlcohol = value);
-                    _applyFilters();
-                  },
-                ),
-              ),
-              const SizedBox(width: 8),
-              Column(
+              const SizedBox(height: 12),
+              Row(
                 children: [
-                  const Text('¿Sin alcohol?'),
-                  Checkbox(
-                    value: isNonAlcoholic,
-                    onChanged: (value) {
-                      setState(() => isNonAlcoholic = value ?? false);
-                      _applyFilters();
-                    },
+                  Expanded(
+                    child: DropdownButtonFormField<String>(
+                      value: selectedAlcohol,
+                      decoration: const InputDecoration(
+                        labelText: 'Tipo de alcohol',
+                        border: OutlineInputBorder(),
+                      ),
+                      items: ['Ron', 'Vodka', 'Tequila', 'Whisky']
+                          .map((type) => DropdownMenuItem(
+                                value: type,
+                                child: Text(type),
+                              ))
+                          .toList(),
+                      onChanged: (value) {
+                        setState(() {
+                          selectedAlcohol = value;
+                          isNonAlcoholic = false; 
+                        });
+                        _applyFilters();
+                      },
+                    ),
+                  ),
+                  const SizedBox(width: 12),
+                  Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      const Text('¿Sin alcohol?'),
+                      Checkbox(
+                        value: isNonAlcoholic,
+                        onChanged: (value) {
+                          setState(() {
+                            isNonAlcoholic = value ?? false;
+                            if (isNonAlcoholic) {
+                              selectedAlcohol = null; 
+                            }
+                          });
+                          _applyFilters();
+                        },
+                      ),
+                    ],
                   ),
                 ],
               ),
-              TextButton(
-                onPressed: _clearFilters,
-                child: const Text("Limpiar"),
-              )
+              const SizedBox(height: 12),
+              Row(
+                children: [
+                  ElevatedButton.icon(
+                    icon: const Icon(Icons.check),
+                    label: const Text("Aplicar"),
+                    onPressed: _applyFilters,
+                  ),
+                  const SizedBox(width: 12),
+                  OutlinedButton.icon(
+                    icon: const Icon(Icons.clear),
+                    label: const Text("Limpiar"),
+                    onPressed: _clearFilters,
+                  ),
+                ],
+              ),
             ],
           ),
-        ],
-      ),
+        )
+      ],
     );
   }
 }

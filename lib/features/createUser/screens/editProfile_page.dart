@@ -16,12 +16,9 @@ class EditProfileScreen extends StatelessWidget {
     controller.email.text = user.email ?? '';
 
     return Scaffold(
-      backgroundColor: const Color(0xFFF9FAFB),
       appBar: AppBar(
         title: const Text("Editar Perfil", style: TextStyle(fontWeight: FontWeight.w600)),
         centerTitle: true,
-        backgroundColor: Colors.white,
-        foregroundColor: Colors.black87,
         elevation: 1,
       ),
       body: SingleChildScrollView(
@@ -35,7 +32,6 @@ class EditProfileScreen extends StatelessWidget {
               const SizedBox(height: 16),
               const Text(
                 "Toca la imagen para actualizarla",
-                style: TextStyle(fontSize: 13, color: Colors.grey),
               ),
               const SizedBox(height: 32),
 
@@ -55,27 +51,57 @@ class EditProfileScreen extends StatelessWidget {
               ),
               const SizedBox(height: 20),
 
-              // Campo de contraseña actual (nuevo)
+              // Botón para abrir diálogo cambiar contraseña
+              SizedBox(
+                width: double.infinity,
+                height: 52,
+                child: OutlinedButton.icon(
+                  onPressed: () => _showChangePasswordDialog(context),
+                  icon: const Icon(Icons.lock_reset),
+                  label: const Text("Cambiar Contraseña"),
+                ),
+              ),
+
+              const SizedBox(height: 36),
+
+              _buildSaveButton(user),
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+
+  void _showChangePasswordDialog(BuildContext context) {
+    final controller = this.controller;
+
+    controller.currentPassword.clear();
+    controller.password.clear();
+    controller.hideCurrentPassword.value = true;
+    controller.hidePassword.value = true;
+
+    showDialog(
+      context: context,
+      builder: (_) => AlertDialog(
+        title: const Text("Cambiar Contraseña"),
+        content: Form(
+          key: controller.changePassFormKey,
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
               Obx(() => _buildInputField(
                     controller: controller.currentPassword,
                     label: "Contraseña actual",
                     icon: Icons.lock_outline,
                     obscureText: controller.hideCurrentPassword.value,
-                    validator: (value) {
-  if (controller.password.text.isNotEmpty) {
-    if (value == null || value.isEmpty) {
-      return 'Debe ingresar la contraseña actual';
-    }
-  }
-  return null;
-},
-
+                    validator: (value) => (value == null || value.isEmpty)
+                        ? 'Campo obligatorio'
+                        : null,
                     suffix: IconButton(
                       icon: Icon(
                         controller.hideCurrentPassword.value
                             ? Icons.visibility_off
                             : Icons.visibility,
-                        color: Colors.grey.shade600,
                       ),
                       onPressed: () {
                         controller.hideCurrentPassword.value =
@@ -86,15 +112,17 @@ class EditProfileScreen extends StatelessWidget {
               const SizedBox(height: 20),
               Obx(() => _buildInputField(
                     controller: controller.password,
-                    label: "Nueva contraseña (opcional)",
+                    label: "Nueva contraseña",
                     icon: Icons.lock,
                     obscureText: controller.hidePassword.value,
+                    validator: (value) => (value == null || value.isEmpty)
+                        ? 'Campo obligatorio'
+                        : null,
                     suffix: IconButton(
                       icon: Icon(
                         controller.hidePassword.value
                             ? Icons.visibility_off
                             : Icons.visibility,
-                        color: Colors.grey.shade600,
                       ),
                       onPressed: () {
                         controller.hidePassword.value =
@@ -102,12 +130,25 @@ class EditProfileScreen extends StatelessWidget {
                       },
                     ),
                   )),
-
-              const SizedBox(height: 36),
-              _buildSaveButton(user),
             ],
           ),
         ),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.of(context).pop(),
+            child: const Text("Cancelar"),
+          ),
+          ElevatedButton(
+            onPressed: () async {
+              final success =  controller.changeUserPassword(user.id!);
+              if (await success) {
+                Navigator.of(context).pop();
+                Get.snackbar("Éxito", "Contraseña actualizada correctamente");
+              }
+            },
+            child: const Text("Guardar"),
+          ),
+        ],
       ),
     );
   }
@@ -121,7 +162,6 @@ class EditProfileScreen extends StatelessWidget {
         onTap: controller.pickImage,
         child: CircleAvatar(
           radius: 60,
-          backgroundColor: Colors.grey.shade200,
           backgroundImage: imageFile != null
               ? FileImage(imageFile)
               : (profilePicture != null && profilePicture.isNotEmpty
@@ -155,46 +195,39 @@ class EditProfileScreen extends StatelessWidget {
         labelText: label,
         labelStyle: const TextStyle(color: Colors.black54),
         filled: true,
-        fillColor: Colors.white,
         contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 20),
         border: OutlineInputBorder(
           borderRadius: BorderRadius.circular(14),
-          borderSide: const BorderSide(color: Colors.transparent),
         ),
         enabledBorder: OutlineInputBorder(
           borderRadius: BorderRadius.circular(14),
-          borderSide: const BorderSide(color: Colors.transparent),
         ),
         focusedBorder: OutlineInputBorder(
           borderRadius: BorderRadius.circular(14),
-          borderSide: const BorderSide(color: Colors.black),
         ),
       ),
     );
   }
 
- Widget _buildSaveButton(UserModel user) {
-  return SizedBox(
-    width: double.infinity,
-    height: 52,
-    child: ElevatedButton.icon(
-      onPressed: () => controller.updateProfile(
-        user.id!,
-        user.profilePicture ?? '',
-        user.role ?? '',
-      ),
-      icon: const Icon(Icons.save_alt),
-      label: const Text("Guardar cambios"),
-      style: ElevatedButton.styleFrom(
-        backgroundColor: Colors.black,
-        foregroundColor: Colors.white,
-        textStyle: const TextStyle(fontSize: 16, fontWeight: FontWeight.w600),
-        shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(14),
+  Widget _buildSaveButton(UserModel user) {
+    return SizedBox(
+      width: double.infinity,
+      height: 52,
+      child: ElevatedButton.icon(
+        onPressed: () => controller.updateProfile(
+          user.id!,
+          user.profilePicture ?? '',
+          user.role ?? '',
+        ),
+        icon: const Icon(Icons.save_alt),
+        label: const Text("Guardar cambios"),
+        style: ElevatedButton.styleFrom(
+          textStyle: const TextStyle(fontSize: 16, fontWeight: FontWeight.w600),
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(14),
+          ),
         ),
       ),
-    ),
-  );
-}
-
+    );
+  }
 }
