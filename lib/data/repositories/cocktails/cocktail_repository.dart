@@ -1,4 +1,7 @@
+import 'dart:convert';
+import 'package:http/http.dart' as http;
 import 'package:cocteles_app/models/cocktail_model.dart';
+import 'package:cocteles_app/models/comment_model.dart';
 import 'package:cocteles_app/utils/http_client.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:cocteles_app/data/services/video_service.dart';
@@ -23,12 +26,43 @@ class CocktailRepository extends GetxController {
     await AppHttpHelper.delete(endpoint, jwt);
   }
 
-    
   Future<void> uploadVideo(XFile video, String videoUrl, String jwt) async {
     VideoService videoService = VideoService(jwt: jwt, videoUrl: videoUrl, videoFile: video);
     return videoService.startUpload();
   }
 
+  Future<void> addComment({
+    required int cocktailId,
+    required int userId,
+    required String text,
+    required String jwt,
+  }) async {
+    const endpoint = 'api/v1/comments';
+    final data = {
+      'cocktail_id': cocktailId,
+      'user_id': userId,
+      'text': text,
+    };
+    await AppHttpHelper.post(endpoint, data, jwt);
+  } 
+
+  Future<List<CommentModel>> getCommentsByCocktailId(int cocktailId, String jwt) async {
+    final endpoint = 'api/v1/comments/cocktail/$cocktailId';
+    final uri = Uri.parse('${AppHttpHelper.baseUrl}/$endpoint');
+    final response = await http.get(
+      uri,
+      headers: {
+        'Authorization': 'Bearer $jwt',
+      },
+    );
+
+    if (response.statusCode == 200) {
+      final List<dynamic> decoded = json.decode(response.body);
+      return decoded.map((e) => CommentModel.fromJson(e as Map<String, dynamic>)).toList();
+    } else {
+      throw Exception('Error al obtener comentarios: ${response.statusCode}');
+    }
+  }
 
   Future<XFile> downloadVideo(String videoUrl, String jwt) async {
     VideoService videoService = VideoService(jwt: jwt);
