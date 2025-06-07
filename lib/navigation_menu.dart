@@ -6,6 +6,7 @@ import 'package:cocteles_app/features/perzonalization/controllers/user_controlle
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:cocteles_app/features/createUser/screens/userProfile_page.dart';
+import 'package:cocteles_app/features/stats/screens/UserStatsPage.dart';
 
 class NavigationMenu extends StatelessWidget {
   const NavigationMenu({super.key});
@@ -48,6 +49,7 @@ class NavigationController extends GetxController {
     if (userCredentials.role == 'user') {
       screens = [
         PlaceholderScreen(title: 'Home'),
+        UserStatsPage(),
         IndexCocktailsPage(),
         ProfileScreen(),
         IndexLivestreamPage(),
@@ -59,6 +61,11 @@ class NavigationController extends GetxController {
           icon: Icon(Icons.home),
           label: 'Home',
           selectedIcon: Icon(Icons.home_filled),
+        ),
+        const NavigationDestination(
+          icon: Icon(Icons.bar_chart),
+          label: 'Estadísticas',
+          selectedIcon: Icon(Icons.bar_chart),
         ),
         const NavigationDestination(
           icon: Icon(Icons.menu_book),
@@ -82,47 +89,43 @@ class NavigationController extends GetxController {
         ),
       ];
     } else {
-      screens = [
-        PlaceholderScreen(title: 'Home'),
-        IndexCocktailsPage(),
-        ProfileScreen(),
-        IndexLivestreamPage(),
-        ProfileScreen(),
-        LogoutScreen(),
-      ];
+screens = [
+PlaceholderScreen(title: 'Home'),
+  UserStatsPage(),        // Pantalla de estadísticas
+  IndexCocktailsPage(),   // Recetas
+  ProfileScreen(),        // Cuenta
+  IndexLivestreamPage(),  // Directos
+  LogoutScreen(),         // Salir
+];
 
-      destinations = [
-        const NavigationDestination(
-          icon: Icon(Icons.home),
-          label: 'Home',
-          selectedIcon: Icon(Icons.home_filled),
-        ),
-        const NavigationDestination(
-          icon: Icon(Icons.menu_book),
-          label: 'Recetas',
-          selectedIcon: Icon(Icons.menu_book),
-        ),
-        const NavigationDestination(
-          icon: Icon(Icons.face),
-          label: 'Cuenta',
-          selectedIcon: Icon(Icons.face),
-        ),
-        const NavigationDestination(
-          icon: Icon(Icons.live_tv),
-          label: 'Directos',
-          selectedIcon: Icon(Icons.live_tv),
-        ),
-        const NavigationDestination(
-          icon: Icon(Icons.rate_review),
-          label: 'Revision',
-          selectedIcon: Icon(Icons.rate_review),
-        ),
-        const NavigationDestination(
-          icon: Icon(Icons.logout),
-          label: 'Salir',
-          selectedIcon: Icon(Icons.logout),
-        ),
-      ];
+destinations = [
+  const NavigationDestination(
+    icon: Icon(Icons.bar_chart),  // Ícono de estadísticas
+    label: 'Estadísticas',
+    selectedIcon: Icon(Icons.bar_chart),
+  ),
+  const NavigationDestination(
+    icon: Icon(Icons.menu_book),
+    label: 'Recetas',
+    selectedIcon: Icon(Icons.menu_book),
+  ),
+  const NavigationDestination(
+    icon: Icon(Icons.face),
+    label: 'Cuenta',
+    selectedIcon: Icon(Icons.face),
+  ),
+  const NavigationDestination(
+    icon: Icon(Icons.live_tv),
+    label: 'Directos',
+    selectedIcon: Icon(Icons.live_tv),
+  ),
+  const NavigationDestination(
+    icon: Icon(Icons.logout),
+    label: 'Salir',
+    selectedIcon: Icon(Icons.logout),
+  ),
+];
+
     }
   }
 

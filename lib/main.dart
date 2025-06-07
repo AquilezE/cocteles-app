@@ -2,8 +2,10 @@ import 'dart:io';
 
 import 'package:cocteles_app/app.dart';
 import 'package:cocteles_app/data/repositories/authentication/authentication_repository.dart';
+import 'package:cocteles_app/data/repositories/stats/StatsRepository.dart';
 import 'package:cocteles_app/data/repositories/user/user_repository.dart';
 import 'package:cocteles_app/data/repositories/cocktails/cocktail_repository.dart';
+import 'package:cocteles_app/features/stats/controllers/StatsController.dart';
 import 'package:cocteles_app/services/firebase_api.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
@@ -14,7 +16,7 @@ import 'package:get/get.dart';
 import 'package:media_kit/media_kit.dart';
 import 'package:cocteles_app/firebase_options.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
-
+import 'package:cocteles_app/features/stats/screens/UserStatsPage.dart';
 final flutterLocal = FlutterLocalNotificationsPlugin();
 
 Future<void> main() async {
@@ -43,6 +45,9 @@ Future<void> main() async {
   Get.put(AuthenticationRepository());
   Get.put(UserRepository());
   Get.put(CocktailRepository());
+  Get.put(StatsRepository());
+  Get.put(StatsController());
+
 
   if (Platform.isAndroid || Platform.isIOS || Platform.isWindows || Platform.isMacOS) {
     await Firebase.initializeApp(

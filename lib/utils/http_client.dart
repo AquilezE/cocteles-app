@@ -28,6 +28,18 @@ class AppHttpHelper{
     
     return _handleResponse(response);
   }
+static Future<dynamic> getList(String endpoint, String? jwt) async {
+  if (jwt != null) {
+    headers['Authorization'] = 'Bearer $jwt';
+  }
+
+  final response = await http.get(
+    Uri.parse('$baseUrl/$endpoint'),
+    headers: headers,
+  );
+
+  return _handleResponseDynamic(response);
+}
 
   static Future<Map<String, dynamic>> post(String endpoint, dynamic data, String? jwt) async {
       print('la url es$baseUrl');
@@ -171,6 +183,23 @@ class AppHttpHelper{
     );
   }
 
+static dynamic _handleResponseDynamic(http.Response? response) {
+  if (response!.statusCode == 204 || response.statusCode == 404) {
+    return {}; // o return null;
+  }
+
+  if (response.statusCode >= 200 && response.statusCode < 300) {
+    if (response.headers.containsKey('set-authorization')) {
+      UserController.instance.userCredentials!.jwt =
+          response.headers['set-authorization']!;
+    }
+
+    // Aquí decodifica JSON como dynamic (puede ser Map o List)
+    return json.decode(response.body);
+  }
+
+  throw HttpException(response.statusCode, response.body);
+}
 
 
 
