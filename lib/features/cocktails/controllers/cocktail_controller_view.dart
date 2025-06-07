@@ -1,6 +1,7 @@
 import 'dart:convert';
 import 'package:cocteles_app/data/repositories/cocktails/cocktail_repository.dart';
 import 'package:cocteles_app/features/perzonalization/controllers/user_controller.dart';
+import 'package:cocteles_app/features/stats/controllers/StatsController.dart';
 import 'package:cocteles_app/models/comment_model.dart';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
@@ -18,6 +19,8 @@ class CocktailDetailController extends GetxController {
   late String videoUrl;
   var isLoading = false.obs;
   XFile? video;
+  static StatsController get statsController => Get.find<StatsController>();
+
 
   Future<XFile> getVideoDownloadedFuture(String videoUrl, String jwt) async {
     return CocktailRepository.instance.downloadVideo(videoUrl, jwt);
@@ -112,6 +115,7 @@ class CocktailDetailController extends GetxController {
       }
     } 
     cocktails.refresh();
+    await statsController.fetchTopLikedRecipes();
   }
 
   Future<void> fetchComments(int cocktailId, String jwt) async {
