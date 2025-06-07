@@ -8,21 +8,16 @@ import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:iconsax/iconsax.dart';
 import 'package:get/get.dart';
 import 'package:cocteles_app/features/cocktails/screens/widgets/video_player_widget.dart';
-import 'dart:io' show Platform;
 import 'package:http/http.dart' as http;
 import 'package:image_picker/image_picker.dart';
+import 'package:cocteles_app/features/cocktails/screens/widgets/comments_cocktail.dart';
 
 class CocktailDetailPage extends StatelessWidget {
   final CocktailModel cocktail;
-
-
-
   const CocktailDetailPage({super.key, required this.cocktail});
-
 
   @override
   Widget build(BuildContext context) {
-
     return Scaffold(
       appBar: AppBar(
         title: Text(cocktail.name ?? 'Detalle del Cóctel'),
@@ -109,17 +104,15 @@ class CocktailDetailPage extends StatelessWidget {
       ),
     );
   }
-
+  
   Widget _buildCocktailInfo(BuildContext context) {
     final detailController = Get.find<CocktailDetailController>();
+    detailController.cocktail = cocktail; 
     final jwt = UserController.instance.userCredentials!.jwt;
+    detailController.fetchComments(cocktail.id!, jwt);
     final userId = UserController.instance.user.value.id;
     final videoNotifier = ValueNotifier<XFile?>(null);
-    final videoFuture = cocktail != null
-        ? detailController.getVideoDownloadedFuture(cocktail!.videoUrl!,jwt)
-        : Future.value(null);
-
-
+    final videoFuture = cocktail != null ? detailController.getVideoDownloadedFuture(cocktail!.videoUrl!, jwt) : Future.value(null);
     detailController.checkIfLiked(cocktail.id!, userId!);
 
     return Column(
@@ -155,63 +148,40 @@ class CocktailDetailPage extends StatelessWidget {
         ],
 
         const SizedBox(height: 16),
-
-          if (cocktail.videoUrl != null && cocktail.videoUrl!.isNotEmpty) ...[
-            Text(
-              "Video de preparación",
-              style: Theme.of(context).textTheme.titleMedium,
-            ),
-            const SizedBox(height: 12),
-
-                    FutureBuilder<XFile?>(
-                        future: videoFuture,
-                        builder: (context, snapshot) {
-                          if (snapshot.connectionState ==
-                              ConnectionState.waiting) {
-                            return const CircularProgressIndicator(
-                                color: Colors.orange);
-                          } else if (snapshot.hasError) {
-                            return Text("Error: ${snapshot.error}");
-                          } else {
-                            final video = snapshot.data;
-                            if (video != null) {
-                            return VideoPlayerWidget(
-                              url: video.path,                       // <-- use the downloaded file
-                            );
-                            } else {
-                              return const Text(
-                                "No se pudo descargar el video",
-                                style: TextStyle(color: Colors.red),
-                              );
-                            }
-                          }
-                        })
-          ]else ...[
-
-                  const SizedBox(height: Sizes.spaceBtwSections),
-
-                  ValueListenableBuilder<XFile?>(
-                    valueListenable: videoNotifier,
-                    builder: (context, video, child) {
-                      if (video != null) {
-                        detailController.video = video;
-                      }
-                      return const SizedBox.shrink();
-                    },
-                  )
-          ],
+        if (cocktail.videoUrl != null && cocktail.videoUrl!.isNotEmpty) ...[
+          Text("Video de preparación", style: Theme.of(context).textTheme.titleMedium),
+          const SizedBox(height: 12),
+          FutureBuilder<XFile?>(
+            future: videoFuture,
+            builder: (context, snapshot) {
+              if (snapshot.connectionState == ConnectionState.waiting) {
+                return const CircularProgressIndicator(color: Colors.orange);
+              } else if (snapshot.hasError) {
+                return Text("Error: ${snapshot.error}");
+              } else {
+                final video = snapshot.data;
+                if (video != null) {
+                  return VideoPlayerWidget(url: video.path);
+                } else {
+                  return const Text("No se pudo descargar el video", style: TextStyle(color: Colors.red));
+                }
+              }
+            },
+          )
+        ] else ...[
+          const SizedBox(height: Sizes.spaceBtwSections),
+          ValueListenableBuilder<XFile?>(
+            valueListenable: videoNotifier,
+            builder: (context, video, child) {
+              if (video != null) {
+                detailController.video = video;
+              }
+              return const SizedBox.shrink();
+            },
+          )
+        ],
 
         const SizedBox(height: 24),
-        ValueListenableBuilder<XFile?>(
-                    valueListenable: videoNotifier,
-                    builder: (context, video, child) {
-                      if (video != null) {
-                        detailController.video = video;
-                      }
-                      return const SizedBox.shrink();
-                    },
-                  ),
-
         Obx(() => Row(
           children: [
             IconButton(
@@ -225,6 +195,8 @@ class CocktailDetailPage extends StatelessWidget {
           ],
         )),
 
+        CommentsWidget(cocktailId: cocktail.id!),
+
         if (UserController.instance.userCredentials?.role != 'user') ...[
           const SizedBox(height: 24),
           ElevatedButton.icon(
@@ -235,8 +207,9 @@ class CocktailDetailPage extends StatelessWidget {
               backgroundColor: Colors.red,
               foregroundColor: Colors.white,
             ),
-          ),]
-    ],
+          ),
+        ],
+      ],
     );
   }
   
@@ -286,72 +259,3 @@ class CocktailDetailPage extends StatelessWidget {
     }
   }
 }
-/*
-
-class SmartYouTubePlayer extends StatefulWidget {
-  final String url;
-  const SmartYouTubePlayer({super.key, required this.url});
-
-  @override
-  State<SmartYouTubePlayer> createState() => _SmartYouTubePlayerState();
-}
-
-class _SmartYouTubePlayerState extends State<SmartYouTubePlayer> {
-  late YoutubePlayerController _controller;
-
-  bool get isSupportedPlatform {
-    return kIsWeb || Platform.isAndroid || Platform.isIOS;
-  }
-
-  String? get videoId => YoutubePlayer.convertUrlToId(widget.url);
-
-  @override
-  void initState() {
-    super.initState();
-
-    if (isSupportedPlatform && videoId != null) {
-      _controller = YoutubePlayerController(
-        initialVideoId: videoId!,
-        flags: const YoutubePlayerFlags(
-          autoPlay: false,
-          mute: false,
-        ),
-      );
-    }
-  }
-
-  @override
-  void dispose() {
-    if (isSupportedPlatform && mounted) {
-      _controller.dispose();
-    }
-    super.dispose();
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    if (!isSupportedPlatform || videoId == null) {
-      return Container(
-        padding: const EdgeInsets.all(16),
-        color: Colors.red.shade100,
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            const Text(
-              "Este video solo está disponible en la versión móvil o web.",
-              style: TextStyle(color: Colors.black87),
-            ),
-            const SizedBox(height: 8),
-            ElevatedButton.icon(
-              onPressed: () => launchUrl(Uri.parse(widget.url)),
-              icon: const Icon(Icons.open_in_browser),
-              label: const Text("Abrir en navegador"),
-            )
-          ],
-        ),
-      );
-    }
-
-    return YoutubePlayer( controller: _controller,showVideoProgressIndicator: true, width: double.infinity,aspectRatio: 16 / 9,);
-  }
-}*/
