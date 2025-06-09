@@ -42,8 +42,7 @@ class VideoService {
         fileSink.add(dataChunk);
       }
     } catch (e) {
-      fileSink.close();
-      await file.delete();
+      await fileSink.close();
     }
 
     await fileSink.close();

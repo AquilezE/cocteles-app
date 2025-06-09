@@ -10,6 +10,7 @@ class CocktailModel {
   String? createdAt;
   String? updatedAt;
   int? userId;
+  String? authorName;
   List<Map<String, dynamic>>? ingredients;
   int? likes;
 
@@ -25,6 +26,7 @@ class CocktailModel {
     this.createdAt,
     this.updatedAt,
     this.userId,
+    this.authorName,
     this.ingredients,
     this.likes,
   });
@@ -42,6 +44,7 @@ class CocktailModel {
       createdAt: json['created_at'],
       updatedAt: json['updated_at'],
       userId: json['author']?['id'],
+      authorName: json['author']?['username'],
       ingredients: List<Map<String, dynamic>>.from(json['ingredients'] ?? []),
       likes: json['likes'] ?? 0,
     );

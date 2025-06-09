@@ -1,5 +1,6 @@
 import 'package:cocteles_app/features/authentication/models/user_credentials.dart';
 import 'package:cocteles_app/features/authentication/screens/login_page.dart';
+import 'package:cocteles_app/features/cocktails/cocktail_approval_page.dart';
 import 'package:cocteles_app/features/cocktails/index_cocktails_page.dart';
 import 'package:cocteles_app/features/livestreams/screens/index_livestream_page.dart';
 import 'package:cocteles_app/features/perzonalization/controllers/user_controller.dart';
@@ -83,64 +84,71 @@ class NavigationController extends GetxController {
           selectedIcon: Icon(Icons.live_tv),
         ),
         const NavigationDestination(
+          icon: Icon(Icons.checklist),
+          label: "Revisión",
+          selectedIcon: Icon(Icons.checklist),
+        ),
+        const NavigationDestination(
           icon: Icon(Icons.logout),
           label: 'Salir',
           selectedIcon: Icon(Icons.logout),
         ),
       ];
     } else {
-screens = [
-PlaceholderScreen(title: 'Home'),
-  UserStatsPage(),        // Pantalla de estadísticas
-  IndexCocktailsPage(),   // Recetas
-  ProfileScreen(),        // Cuenta
-  IndexLivestreamPage(),  // Directos
-  LogoutScreen(),         // Salir
-];
+      screens = [
+        PlaceholderScreen(title: 'Home'),
+        UserStatsPage(),        
+        IndexCocktailsPage(),   
+        ProfileScreen(),        
+        IndexLivestreamPage(),  
+        CocktailApprovalPage(),
+        LogoutScreen(),         
+      ];
 
-destinations = [
-  const NavigationDestination(
-    icon: Icon(Icons.bar_chart),  // Ícono de estadísticas
-    label: 'Estadísticas',
-    selectedIcon: Icon(Icons.bar_chart),
-  ),
-  const NavigationDestination(
-    icon: Icon(Icons.menu_book),
-    label: 'Recetas',
-    selectedIcon: Icon(Icons.menu_book),
-  ),
-  const NavigationDestination(
-    icon: Icon(Icons.face),
-    label: 'Cuenta',
-    selectedIcon: Icon(Icons.face),
-  ),
-  const NavigationDestination(
-    icon: Icon(Icons.live_tv),
-    label: 'Directos',
-    selectedIcon: Icon(Icons.live_tv),
-  ),
-  const NavigationDestination(
-    icon: Icon(Icons.logout),
-    label: 'Salir',
-    selectedIcon: Icon(Icons.logout),
-  ),
-];
-
+      destinations = [
+        const NavigationDestination(
+          icon: Icon(Icons.bar_chart),
+          label: 'Estadísticas',
+          selectedIcon: Icon(Icons.bar_chart),
+        ),
+        const NavigationDestination(
+          icon: Icon(Icons.menu_book),
+          label: 'Recetas',
+          selectedIcon: Icon(Icons.menu_book),
+        ),
+        const NavigationDestination(
+          icon: Icon(Icons.face),
+          label: 'Cuenta',
+          selectedIcon: Icon(Icons.face),
+        ),
+        const NavigationDestination(
+          icon: Icon(Icons.live_tv),
+          label: 'Directos',
+          selectedIcon: Icon(Icons.live_tv),
+        ),
+        const NavigationDestination(
+          icon: Icon(Icons.checklist),
+          label: "Revisión",
+          selectedIcon: Icon(Icons.checklist),
+        ),
+        const NavigationDestination(
+          icon: Icon(Icons.logout),
+          label: 'Salir',
+          selectedIcon: Icon(Icons.logout),
+        ),
+      ];
     }
   }
 
   void logout() {
     final userController = Get.find<UserController>();
-
     userController.logOut();
-
     Get.offAll(() => const LoginPage());
   }
 }
 
 class PlaceholderScreen extends StatelessWidget {
   final String title;
-
   const PlaceholderScreen({super.key, required this.title});
 
   @override
