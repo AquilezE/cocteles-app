@@ -88,8 +88,8 @@ class CocktailForm extends StatelessWidget {
                 ),
               ),
             )),
-            const SizedBox(height: Sizes.spaceBtwSections),
 
+            const SizedBox(height: Sizes.spaceBtwSections),
             SizedBox(
               width: double.infinity,
               child: ElevatedButton(
@@ -97,10 +97,61 @@ class CocktailForm extends StatelessWidget {
                 child: const Text("Publicar receta"),
               ),
             ),
+
+            const SizedBox(height: Sizes.spaceBtwItems),
+            TextButton.icon(
+              icon: const Icon(Icons.rule, color: Colors.brown),
+              label: const Text("Ver reglas de publicación"),
+              onPressed: () => _showRulesDialog(context),
+            ),
           ],
         ),
       ),
       )
+    );
+  }
+
+  void _showRulesDialog(BuildContext context) {
+    showDialog(
+      context: context,
+      builder: (context) => AlertDialog(
+        title: const Text("Reglas para publicar un cóctel"),
+        content: SingleChildScrollView(
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: const [
+              Text("📝 Requisitos mínimos:"),
+              SizedBox(height: 6),
+              Text("- Nombre claro del cóctel"),
+              Text("- Imagen obligatoria"),
+              Text("- Video obligatorio"),
+              Text("- Pasos de preparación bien descritos"),
+              Text("- Tiempo estimado válido"),
+              Text("- Al menos 1 ingrediente con nombre y cantidad"),
+              SizedBox(height: 12),
+              Text("🚫 No se permite:"),
+              SizedBox(height: 6),
+              Text("- Contenido ofensivo"),
+              Text("- Recetas duplicadas"),
+              Text("- Nombres o ingredientes genéricos como 'cosa', 'eso'"),
+              Text("- Imágenes tomadas de internet sin contexto"),
+              Text("- Marcas comerciales innecesarias"),
+              SizedBox(height: 12),
+              Text("✅ Buenas prácticas:"),
+              SizedBox(height: 6),
+              Text("- Usa nombres comunes y bien escritos"),
+              Text("- Organiza los pasos en orden lógico"),
+              Text("- Usa cantidades claras (ml, oz, cucharadas)"),
+            ],
+          ),
+        ),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.of(context).pop(),
+            child: const Text("Cerrar"),
+          ),
+        ],
+      ),
     );
   }
 }

@@ -68,4 +68,42 @@ class CocktailRepository extends GetxController {
     VideoService videoService = VideoService(jwt: jwt);
     return videoService.startDownload(videoUrl);
   }
+
+  Future<CocktailModel> getFullCocktailById(int id, String jwt) async {
+    final url = Uri.parse('${AppHttpHelper.baseUrl}/api/v1/cocktails/full/$id');
+    final response = await http.get(url, headers: {
+      'Authorization': 'Bearer $jwt',
+    });
+
+    if (response.statusCode == 200) {
+      final data = json.decode(response.body);
+      return CocktailModel.fromJson(data);
+    } else {
+      throw Exception('Error al obtener detalle completo: ${response.statusCode}');
+    }
+  }
+
+  Future<List<CocktailModel>> getPendingCocktails(String jwt) async {
+    const endpoint = 'api/v1/cocktails/pending';
+    final uri = Uri.parse('${AppHttpHelper.baseUrl}/$endpoint');
+    
+    print("URL de petición: $uri");
+
+    final response = await http.get(
+      uri,
+      headers: {
+        'Authorization': 'Bearer $jwt',
+      },
+    );
+
+    print("STATUS: ${response.statusCode}");
+    print("BODY: ${response.body}");
+
+    if (response.statusCode == 200) {
+      final List<dynamic> decoded = json.decode(response.body);
+      return decoded.map((e) => CocktailModel.fromJson(e as Map<String, dynamic>)).toList();
+    } else {
+      throw Exception('Error al obtener cócteles pendientes: ${response.statusCode}');
+    }
+  }
 }

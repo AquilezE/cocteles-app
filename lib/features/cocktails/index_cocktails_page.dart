@@ -14,7 +14,6 @@ class IndexCocktailsPage extends StatefulWidget {
 
 class _IndexCocktailsPageState extends State<IndexCocktailsPage> {
   final cocktailController = Get.put(CocktailDetailController());
-
   final TextEditingController nameController = TextEditingController();
   String? selectedAlcohol;
   bool isNonAlcoholic = false;
@@ -183,7 +182,6 @@ class _IndexCocktailsPageState extends State<IndexCocktailsPage> {
 
 class CocktailCard extends StatelessWidget {
   final CocktailModel cocktail;
-
   const CocktailCard({super.key, required this.cocktail});
 
   @override
