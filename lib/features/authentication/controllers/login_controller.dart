@@ -72,7 +72,7 @@ void onInit() async {
       final isConnected = await NetworkManager.instance.isConnected();
 
       if (!isConnected) {
-        Get.snackbar('No Internet', 'Please check your internet connection');
+        Get.snackbar('Sin internet', 'Por favor revisa tu conexión a internet');
         return;
       }
 
@@ -116,7 +116,7 @@ void onInit() async {
       Get.to(() => NavigationMenu());
     } catch (e) {
       print('Error: $e');
-      Get.snackbar('Error', 'An error occurred while signing in');
+      Get.snackbar('Error', 'Ocurrió un error al intenter inicar sesión');
     }
   }
 }

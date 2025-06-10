@@ -9,7 +9,7 @@ class RegisterHeaderDesktop extends StatelessWidget {
       crossAxisAlignment: CrossAxisAlignment.start,
       children: const [
         Text(
-          'Create your account',
+          'Crea tu cuenta',
           style: TextStyle(
             fontSize: 32.0,
             fontWeight: FontWeight.bold,
@@ -17,7 +17,7 @@ class RegisterHeaderDesktop extends StatelessWidget {
         ),
         SizedBox(height: 10),
         Text(
-          'Enter the following information to create your account',
+          'Ingresa la siguiente información',
           style: TextStyle(
             fontSize: 18.0,
             color: Colors.grey,

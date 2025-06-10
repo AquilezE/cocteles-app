@@ -256,7 +256,7 @@ class ProfileController extends GetxController {
       final jwt = storage.read('jwt');
 
       if (username == null || jwt == null) {
-        throw Exception('No session data found');
+        throw Exception('Si información de la sesión');
       }
 
       final userModel = await UserRepository.instance.getUserDetails(username, jwt);

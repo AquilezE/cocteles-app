@@ -10,7 +10,7 @@ class LoginHeaderMobile extends StatelessWidget{
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         const Text(
-          'Bienvenido de nuevo',
+          'Bienvenido',
           style: TextStyle(
             fontSize: Sizes.fontSizeMd,
             fontWeight: FontWeight.bold,

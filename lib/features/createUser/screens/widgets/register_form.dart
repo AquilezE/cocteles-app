@@ -23,7 +23,7 @@ class RegisterForm extends StatelessWidget {
               validator: (value) =>
                   Validator.validateEmptyText('Full Name', value),
               decoration: const InputDecoration(
-                labelText: "Full Name",
+                labelText: "Nombre completo",
                 prefixIcon: Icon(Iconsax.user),
               ),
             ),
@@ -33,7 +33,7 @@ class RegisterForm extends StatelessWidget {
               controller: controller.email,
               validator: (value) => Validator.validateEmail(value),
               decoration: const InputDecoration(
-                labelText: "Email",
+                labelText: "Correo",
                 prefixIcon: Icon(Iconsax.direct),
               ),
             ),
@@ -45,7 +45,7 @@ class RegisterForm extends StatelessWidget {
                 obscureText: controller.hidePassword.value,
                 validator: (value) => Validator.validateLenght(value),
                 decoration: InputDecoration(
-                  labelText: "Password",
+                  labelText: "Contraseña",
                   prefixIcon: const Icon(Iconsax.password_check),
                   suffixIcon: IconButton(
                     onPressed: () => controller.hidePassword.value =
@@ -104,7 +104,7 @@ class RegisterForm extends StatelessWidget {
                       ElevatedButton.icon(
                         onPressed: () => controller.pickImage(),
                         icon: const Icon(Iconsax.gallery_add),
-                        label: const Text('Select'),
+                        label: const Text('Seleccionar'),
                       ),
                     ],
                   );
@@ -134,7 +134,7 @@ class RegisterForm extends StatelessWidget {
               child: ElevatedButton(
                 onPressed: () =>
                     controller.register(controller.selectedImage.value),
-                child: const Text("Create Account"),
+                child: const Text("Crear cuenta"),
               ),
             ),
           ],

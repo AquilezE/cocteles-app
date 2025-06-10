@@ -49,7 +49,7 @@ class NavigationController extends GetxController {
   NavigationController(UserCredentials userCredentials) {
     if (userCredentials.role == 'user') {
       screens = [
-        PlaceholderScreen(title: 'Home'),
+        PlaceholderScreen(title: 'Hogar'),
         UserStatsPage(),
         IndexCocktailsPage(),
         ProfileScreen(),
@@ -60,7 +60,7 @@ class NavigationController extends GetxController {
       destinations = [
         const NavigationDestination(
           icon: Icon(Icons.home),
-          label: 'Home',
+          label: 'Hogar',
           selectedIcon: Icon(Icons.home_filled),
         ),
         const NavigationDestination(
@@ -96,7 +96,7 @@ class NavigationController extends GetxController {
       ];
     } else {
       screens = [
-        PlaceholderScreen(title: 'Home'),
+        PlaceholderScreen(title: 'Hogar'),
         UserStatsPage(),        
         IndexCocktailsPage(),   
         ProfileScreen(),        

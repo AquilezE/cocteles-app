@@ -12,39 +12,52 @@ class RegisterScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       body: Platform.isWindows || Platform.isMacOS || Platform.isLinux
-          ? buildDesktopLayout()
-          : buildMobileLayout(),
+          ? buildDesktopLayout(context)
+          : buildMobileLayout(context),
     );
   }
 
-  Widget buildDesktopLayout() {
-    return const Row(
-      mainAxisAlignment: MainAxisAlignment.center,
-      crossAxisAlignment: CrossAxisAlignment.center,
-      children:[
-        Expanded(
-          flex: 1,
-          child: Padding(
-            padding: EdgeInsets.all(20.0),
-            child: Column(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                RegisterHeaderDesktop(),
-              ],
+  Widget buildDesktopLayout(BuildContext context) {
+    return Stack(
+      children: [
+        Row(
+          mainAxisAlignment: MainAxisAlignment.center,
+          crossAxisAlignment: CrossAxisAlignment.center,
+          children:[
+            Expanded(
+              flex: 1,
+              child: Padding(
+                padding: const EdgeInsets.all(20.0),
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: const [
+                    RegisterHeaderDesktop(),
+                  ],
+                ),
+              ),
             ),
-          ),
+            Expanded(
+              flex: 1,
+              child: Padding(
+                padding: const EdgeInsets.all(20.0),
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: const [
+                    Text('Crear cuenta', style: TextStyle(fontSize: 20.0)),
+                    SizedBox(height: 10.0),
+                    RegisterForm(),
+                  ],
+                ),
+              ),
+            ),
+          ],
         ),
-        Expanded(
-          flex: 1,
-          child: Padding(
-            padding: EdgeInsets.all(20.0),
-            child: Column(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                Text('Create Account', style: TextStyle(fontSize: 20.0)),
-                SizedBox(height: 10.0),
-                RegisterForm(),
-              ],
+        SafeArea(
+          child: Align(
+            alignment: Alignment.topLeft,
+            child: IconButton(
+              icon: const Icon(Icons.arrow_back),
+              onPressed: () => Navigator.pop(context),
             ),
           ),
         ),
@@ -52,21 +65,34 @@ class RegisterScreen extends StatelessWidget {
     );
   }
 
-  Widget buildMobileLayout() {
-    return SingleChildScrollView(
-      child: Padding(
-        padding: SpacingStyles.paddingWithAppBarHeight,
-        child: Align(
-          alignment: Alignment.centerLeft,
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: const [
-              RegisterHeaderMobile(),
-              RegisterForm(),
-            ],
+  Widget buildMobileLayout(BuildContext context) {
+    return Stack(
+      children: [
+        SingleChildScrollView(
+          child: Padding(
+            padding: SpacingStyles.paddingWithAppBarHeight,
+            child: Align(
+              alignment: Alignment.centerLeft,
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: const [
+                  RegisterHeaderMobile(),
+                  RegisterForm(),
+                ],
+              ),
+            ),
           ),
         ),
-      ),
+        SafeArea(
+          child: Align(
+            alignment: Alignment.topLeft,
+            child: IconButton(
+              icon: const Icon(Icons.arrow_back),
+              onPressed: () => Navigator.pop(context),
+            ),
+          ),
+        ),
+      ],
     );
   }
 }

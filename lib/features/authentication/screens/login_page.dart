@@ -1,11 +1,9 @@
 import 'dart:io';
-
 import 'package:cocteles_app/features/authentication/screens/widgets/login_form.dart';
 import 'package:cocteles_app/features/authentication/screens/widgets/login_header_desktop.dart';
 import 'package:cocteles_app/features/authentication/screens/widgets/login_header_mobile.dart';
 import 'package:cocteles_app/utils/constants/spacing_styles.dart';
 import 'package:flutter/material.dart';
-import 'package:provider/provider.dart';
 
 class LoginPage extends StatelessWidget {
   const LoginPage({super.key});
@@ -44,7 +42,7 @@ class LoginPage extends StatelessWidget {
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
                 Text(
-                  'Login',
+                  'Inicio de sesión',
                   style: TextStyle(fontSize: 20.0)
                 ),
                 SizedBox(height: 10.0),

@@ -27,7 +27,7 @@ class LoginForm extends StatelessWidget {
                 validator: (value) =>  Validator.validateEmail(value),
                 decoration: const InputDecoration(
                     prefixIcon: Icon(Iconsax.direct_right),
-                    labelText: "Email",),
+                    labelText: "Correo",),
               ),
               const SizedBox(height: Sizes.spaceBtwInputFields),
               Obx(
@@ -36,7 +36,7 @@ class LoginForm extends StatelessWidget {
                   validator: (value) => Validator.validateLenght(value),
                   obscureText: controller.hidePassword.value,
                   decoration: InputDecoration(
-                      labelText: "Password",
+                      labelText: "Contraseña",
                       prefixIcon: const Icon(Iconsax.password_check),
                       suffixIcon: IconButton(
                           onPressed: () => controller.hidePassword.value = !controller.hidePassword.value,
@@ -51,14 +51,14 @@ class LoginForm extends StatelessWidget {
                   Row(
                     children: [
                       Obx(() => Checkbox(value: controller.rememberMe.value, onChanged: (value) => controller.rememberMe.value = !controller.rememberMe.value)),
-                      const Text("Remind me"),
+                      const Text("Recuérdame"),
                     ],
                   ),
 
                   //AQUI SI SE PUEDE PONER EL OLVIDASTE TU CONTRASEÑA
                   TextButton(
                       onPressed: () => Get.to(() => const ()),
-                      child: const Text("Forgot your password?")),
+                      child: const Text("¿Olvidaste tu contraseña?")),
                 ],
               ),
               const SizedBox(height: Sizes.spaceBtwSections),
@@ -68,17 +68,15 @@ class LoginForm extends StatelessWidget {
                   width: double.infinity,
                   child: ElevatedButton(
                       onPressed: () => controller.signIn(),
-                      child: const Text("Log In"))),
+                      child: const Text("Inicio de sesión"))),
 
               const SizedBox(height: Sizes.spaceBtwItems),
 
-              // Create Account Button
               SizedBox(
                   width: double.infinity,
                   child: OutlinedButton(
-                    //AQUI VA LO DE CREAR CUENTA
                       onPressed: () => Get.to(() => const RegisterScreen()),
-                      child: const Text("Create Account"))),
+                      child: const Text("Crear cuenta"))),
             ],
           ),
         ));

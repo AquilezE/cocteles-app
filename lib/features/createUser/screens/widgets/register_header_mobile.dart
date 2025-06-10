@@ -9,7 +9,7 @@ class RegisterHeaderMobile extends StatelessWidget {
       crossAxisAlignment: CrossAxisAlignment.start,
       children: const [
         Text(
-          'Create your account',
+          'Crea tu cuenta',
           style: TextStyle(
             fontSize: 24.0,
             fontWeight: FontWeight.bold,
@@ -17,7 +17,7 @@ class RegisterHeaderMobile extends StatelessWidget {
         ),
         SizedBox(height: 8),
         Text(
-          'Enter the following information to create your account',
+          'Ingresa la siguiente información',
           style: TextStyle(
             fontSize: 16.0,
             color: Colors.grey,
