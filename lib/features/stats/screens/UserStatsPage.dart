@@ -3,7 +3,6 @@ import 'package:fl_chart/fl_chart.dart';
 import 'package:get/get.dart';
 import 'package:cocteles_app/features/stats/controllers/StatsController.dart';
 
-
 class UserStatsPage extends StatelessWidget {
   UserStatsPage({Key? key}) : super(key: key);
 
@@ -30,10 +29,10 @@ class UserStatsPage extends StatelessWidget {
             physics: const NeverScrollableScrollPhysics(),
             childAspectRatio: 1.2,
             children: [
-              _buildUserStatsCard(),
-              _buildAlcoholPieCard(),
-              _buildTopUsersCard(),
-              _buildTopLikedRecipesCard(),
+              _buildUserStatsCard(context),
+              _buildAlcoholPieCard(context),
+              _buildTopUsersCard(context),
+              _buildTopLikedRecipesCard(context),
             ],
           ),
         );
@@ -41,7 +40,10 @@ class UserStatsPage extends StatelessWidget {
     );
   }
 
-  Widget _buildUserStatsCard() {
+  Widget _buildUserStatsCard(BuildContext context) {
+    final screenHeight = MediaQuery.of(context).size.height;
+    final chartHeight = screenHeight * 0.3;
+
     return Card(
       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
       elevation: 4,
@@ -61,7 +63,7 @@ class UserStatsPage extends StatelessWidget {
               const Center(child: Text('No hay datos de estadísticas.'))
             else
               SizedBox(
-                height: 250,
+                height: chartHeight,
                 child: BarChart(
                   BarChartData(
                     barGroups: controller.stats.asMap().entries.map((entry) {
@@ -119,7 +121,11 @@ class UserStatsPage extends StatelessWidget {
     );
   }
 
-  Widget _buildAlcoholPieCard() {
+  Widget _buildAlcoholPieCard(BuildContext context) {
+    final screenHeight = MediaQuery.of(context).size.height;
+    final pieHeight = screenHeight * 0.35;
+    final chartHeight = screenHeight * 0.22;
+
     return Card(
       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
       elevation: 4,
@@ -138,11 +144,12 @@ class UserStatsPage extends StatelessWidget {
             if (controller.alcoholStats.isEmpty)
               const Center(child: Text("No hay datos disponibles."))
             else
-              Expanded(
+              SizedBox(
+                height: pieHeight,
                 child: Column(
                   children: [
                     SizedBox(
-                      height: 180,
+                      height: chartHeight,
                       child: PieChart(
                         PieChartData(
                           sectionsSpace: 2,
@@ -167,7 +174,10 @@ class UserStatsPage extends StatelessWidget {
     );
   }
 
-  Widget _buildTopUsersCard() {
+  Widget _buildTopUsersCard(BuildContext context) {
+    final screenHeight = MediaQuery.of(context).size.height;
+    final boxHeight = screenHeight * 0.35;
+
     return Card(
       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
       elevation: 4,
@@ -186,7 +196,8 @@ class UserStatsPage extends StatelessWidget {
             if (controller.topUsers.isEmpty)
               const Center(child: Text("No hay datos disponibles."))
             else
-              Expanded(
+              SizedBox(
+                height: boxHeight,
                 child: ListView.builder(
                   physics: const NeverScrollableScrollPhysics(),
                   shrinkWrap: true,
@@ -229,7 +240,10 @@ class UserStatsPage extends StatelessWidget {
     );
   }
 
-  Widget _buildTopLikedRecipesCard() {
+  Widget _buildTopLikedRecipesCard(BuildContext context) {
+    final screenHeight = MediaQuery.of(context).size.height;
+    final boxHeight = screenHeight * 0.35;
+
     return Card(
       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
       elevation: 4,
@@ -249,7 +263,8 @@ class UserStatsPage extends StatelessWidget {
             if (controller.topLikedRecipes.isEmpty)
               const Center(child: Text("No hay recetas con likes aún."))
             else
-              Expanded(
+              SizedBox(
+                height: boxHeight,
                 child: ListView.builder(
                   physics: const NeverScrollableScrollPhysics(),
                   shrinkWrap: true,

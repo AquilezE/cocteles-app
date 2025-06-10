@@ -10,7 +10,7 @@ class StatsRepository extends GetxController {
 
   Future<List<UserStats>> getUsuariosPorMes() async {
     try {
-      const endpoint = 'api/v1/stats/usuarios/mensual';
+      const endpoint = 'api/v1/stats/users/month';
 
       final response = await AppHttpHelper.getList(endpoint, null);
       if (response is List) {
@@ -25,7 +25,7 @@ class StatsRepository extends GetxController {
   }
   Future<List<TopUserStats>> getTopUsuariosPorReceta() async {
     try {
-      const endpoint = 'api/v1/stats/usuarios/top-creadores';
+      const endpoint = 'api/v1/stats/users/top-creators';
       final response = await AppHttpHelper.getList(endpoint, null);
 
       if (response is List) {
@@ -41,7 +41,7 @@ class StatsRepository extends GetxController {
 
   Future<List<AlcoholStats>> getAlcoholesPopulares() async {
   try {
-    const endpoint = 'api/v1/stats/licores/populares';
+    const endpoint = 'api/v1/stats/liquors/popular';
     final response = await AppHttpHelper.getList(endpoint, null);
     return (response as List).map((item) => AlcoholStats.fromJson(item)).toList();
   } catch (e) {
@@ -52,7 +52,7 @@ class StatsRepository extends GetxController {
 
 Future<List<TopLikedRecipe>> getRecetasMasLikeadas() async {
   try {
-    const endpoint = 'api/v1/stats/recetas/mas-likes';
+    const endpoint = 'api/v1/stats/recipe/likes';
     final response = await AppHttpHelper.getList(endpoint, null);
 
     if (response is List) {

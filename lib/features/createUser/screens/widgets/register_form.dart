@@ -20,7 +20,8 @@ class RegisterForm extends StatelessWidget {
           children: [
             TextFormField(
               controller: controller.fullName,
-              validator: (value) => Validator.validateEmptyText('Full Name', value),
+              validator: (value) =>
+                  Validator.validateEmptyText('Full Name', value),
               decoration: const InputDecoration(
                 labelText: "Full Name",
                 prefixIcon: Icon(Iconsax.user),
@@ -38,43 +39,101 @@ class RegisterForm extends StatelessWidget {
             ),
             const SizedBox(height: Sizes.spaceBtwInputFields),
 
-            Obx(() => TextFormField(
-              controller: controller.password,
-              obscureText: controller.hidePassword.value,
-              validator: (value) => Validator.validateLenght(value),
-              decoration: InputDecoration(
-                labelText: "Password",
-                prefixIcon: const Icon(Iconsax.password_check),
-                suffixIcon: IconButton(
-                  onPressed: () => controller.hidePassword.value = !controller.hidePassword.value,
-                  icon: Icon(controller.hidePassword.value ? Iconsax.eye_slash : Iconsax.eye),
+            Obx(
+              () => TextFormField(
+                controller: controller.password,
+                obscureText: controller.hidePassword.value,
+                validator: (value) => Validator.validateLenght(value),
+                decoration: InputDecoration(
+                  labelText: "Password",
+                  prefixIcon: const Icon(Iconsax.password_check),
+                  suffixIcon: IconButton(
+                    onPressed: () => controller.hidePassword.value =
+                        !controller.hidePassword.value,
+                    icon: Icon(
+                      controller.hidePassword.value
+                          ? Iconsax.eye_slash
+                          : Iconsax.eye,
+                    ),
+                  ),
                 ),
               ),
-            )),
+            ),
             const SizedBox(height: Sizes.spaceBtwSections),
 
-            Row(
+            Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                ElevatedButton.icon(
-                  onPressed: () => controller.pickImage(),
-                  icon: const Icon(Iconsax.gallery),
-                  label: const Text('Choose Photo'),
+                const Text(
+                  'Foto de perfil',
+                  style: TextStyle(fontWeight: FontWeight.bold),
                 ),
-                const SizedBox(width: 10),
+                const SizedBox(height: 8),
+                Obx(() {
+                  final image = controller.selectedImage.value;
+                  return Row(
+                    children: [
+                      GestureDetector(
+                        onTap: image != null
+                            ? () => Get.dialog(
+                                  Dialog(child: Image.file(image)),
+                                )
+                            : null,
+                        child: ClipRRect(
+                          borderRadius: BorderRadius.circular(12),
+                          child: image != null
+                              ? Image.file(
+                                  image,
+                                  width: 100,
+                                  height: 100,
+                                  fit: BoxFit.cover,
+                                )
+                              : Container(
+                                  width: 100,
+                                  height: 100,
+                                  color: Colors.grey[300],
+                                  child: const Icon(
+                                    Iconsax.gallery,
+                                    size: 40,
+                                    color: Colors.grey,
+                                  ),
+                                ),
+                        ),
+                      ),
+                      const SizedBox(width: 16),
+                      ElevatedButton.icon(
+                        onPressed: () => controller.pickImage(),
+                        icon: const Icon(Iconsax.gallery_add),
+                        label: const Text('Select'),
+                      ),
+                    ],
+                  );
+                }),
                 Obx(() {
                   final image = controller.selectedImage.value;
                   return image != null
-                      ? Image.file(image, width: 50, height: 50)
-                      : const Text('No image selected');
+                      ? Padding(
+                          padding: const EdgeInsets.only(top: 8.0),
+                          child: Text(
+                            image.path.split('/').last,
+                            style: const TextStyle(
+                              fontSize: 12,
+                              color: Colors.grey,
+                            ),
+                          ),
+                        )
+                      : const SizedBox();
                 }),
               ],
             ),
+
             const SizedBox(height: Sizes.spaceBtwSections),
 
             SizedBox(
               width: double.infinity,
               child: ElevatedButton(
-                onPressed: () => controller.register(controller.selectedImage.value),
+                onPressed: () =>
+                    controller.register(controller.selectedImage.value),
                 child: const Text("Create Account"),
               ),
             ),
@@ -84,3 +143,4 @@ class RegisterForm extends StatelessWidget {
     );
   }
 }
+

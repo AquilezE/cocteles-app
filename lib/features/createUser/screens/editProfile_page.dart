@@ -1,8 +1,8 @@
-import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:cocteles_app/features/createUser/controllers/createUser_controller.dart';
 import 'package:cocteles_app/models/user_model.dart';
+
 
 class EditProfileScreen extends StatelessWidget {
   final UserModel user;
@@ -14,6 +14,7 @@ class EditProfileScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     controller.fullName.text = user.username ?? '';
     controller.email.text = user.email ?? '';
+    controller.bio.text = user.bio ?? ''; 
 
     return Scaffold(
       appBar: AppBar(
@@ -30,9 +31,7 @@ class EditProfileScreen extends StatelessWidget {
             children: [
               _buildAvatar(user),
               const SizedBox(height: 16),
-              const Text(
-                "Toca la imagen para actualizarla",
-              ),
+              const Text("Toca la imagen para actualizarla"),
               const SizedBox(height: 32),
 
               _buildInputField(
@@ -44,14 +43,13 @@ class EditProfileScreen extends StatelessWidget {
               const SizedBox(height: 20),
 
               _buildInputField(
-                controller: controller.email,
-                label: "Correo electrónico",
-                icon: Icons.email,
-                validator: (value) => value!.isEmpty ? 'Campo obligatorio' : null,
+                controller: controller.bio, 
+                label: "Biografía",
+                icon: Icons.info_outline,
+                validator: (value) => null,
               ),
               const SizedBox(height: 20),
 
-              // Botón para abrir diálogo cambiar contraseña
               SizedBox(
                 width: double.infinity,
                 height: 52,
@@ -94,9 +92,8 @@ class EditProfileScreen extends StatelessWidget {
                     label: "Contraseña actual",
                     icon: Icons.lock_outline,
                     obscureText: controller.hideCurrentPassword.value,
-                    validator: (value) => (value == null || value.isEmpty)
-                        ? 'Campo obligatorio'
-                        : null,
+                    validator: (value) =>
+                        (value == null || value.isEmpty) ? 'Campo obligatorio' : null,
                     suffix: IconButton(
                       icon: Icon(
                         controller.hideCurrentPassword.value
@@ -115,9 +112,8 @@ class EditProfileScreen extends StatelessWidget {
                     label: "Nueva contraseña",
                     icon: Icons.lock,
                     obscureText: controller.hidePassword.value,
-                    validator: (value) => (value == null || value.isEmpty)
-                        ? 'Campo obligatorio'
-                        : null,
+                    validator: (value) =>
+                        (value == null || value.isEmpty) ? 'Campo obligatorio' : null,
                     suffix: IconButton(
                       icon: Icon(
                         controller.hidePassword.value
@@ -125,8 +121,7 @@ class EditProfileScreen extends StatelessWidget {
                             : Icons.visibility,
                       ),
                       onPressed: () {
-                        controller.hidePassword.value =
-                            !controller.hidePassword.value;
+                        controller.hidePassword.value = !controller.hidePassword.value;
                       },
                     ),
                   )),
@@ -140,7 +135,7 @@ class EditProfileScreen extends StatelessWidget {
           ),
           ElevatedButton(
             onPressed: () async {
-              final success =  controller.changeUserPassword(user.id!);
+              final success = controller.changeUserPassword(user.id!);
               if (await success) {
                 Navigator.of(context).pop();
                 Get.snackbar("Éxito", "Contraseña actualizada correctamente");
@@ -189,6 +184,7 @@ class EditProfileScreen extends StatelessWidget {
       obscureText: obscureText,
       validator: validator,
       style: const TextStyle(fontSize: 15),
+      maxLines: label == "Biografía" ? 4 : 1, 
       decoration: InputDecoration(
         prefixIcon: Icon(icon, color: Colors.grey.shade700),
         suffixIcon: suffix,
