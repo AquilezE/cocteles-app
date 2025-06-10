@@ -185,7 +185,7 @@ static Future<dynamic> getList(String endpoint, String? jwt) async {
 
 static dynamic _handleResponseDynamic(http.Response? response) {
   if (response!.statusCode == 204 || response.statusCode == 404) {
-    return {}; // o return null;
+    return {}; 
   }
 
   if (response.statusCode >= 200 && response.statusCode < 300) {
@@ -194,7 +194,6 @@ static dynamic _handleResponseDynamic(http.Response? response) {
           response.headers['set-authorization']!;
     }
 
-    // Aquí decodifica JSON como dynamic (puede ser Map o List)
     return json.decode(response.body);
   }
 

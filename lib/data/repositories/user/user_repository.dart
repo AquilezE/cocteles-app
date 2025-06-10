@@ -12,6 +12,26 @@ class UserRepository extends GetxController{
 
   static UserRepository get instance => Get.find();
   
+
+    Future<UserModel> getUserDetails(String username, String? jwt) async{
+    
+    try{
+    var endpoint = 'api/v1/users/username/$username';
+    final response = await AppHttpHelper.get(endpoint, jwt);
+    
+    return UserModel.fromJson(response);
+    }catch(e){
+      
+      if (e is HttpException) {
+        throw HttpException(
+          e.statusCode,
+          e.responseBody
+        );
+      } else {
+        throw Exception('Failed to load user details');
+      }
+    }
+  }
 Future<void> sendVerificationEmail(String email) async {
   try {
     final endpoint = 'api/v1/verification/send';
@@ -38,7 +58,7 @@ Future<void> verifyEmailCode(String email, String code) async {
 }
 Future<UserModel> createUser(UserRegistration user) async {
   try {
-    const endpoint = 'api/v1/usuarios';
+    const endpoint = 'api/v1/users';
     final response = await AppHttpHelper.post(endpoint, user.toJson(), null);
     print("Usuario creado: $response");
     return UserModel.fromJson(response);
@@ -49,28 +69,10 @@ Future<UserModel> createUser(UserRegistration user) async {
   }
 }
 
-  Future<UserModel> getUserDetails(String username, String? jwt) async{
-    
-    try{
-    var endpoint = 'api/v1/usuarios/username/$username';
-    final response = await AppHttpHelper.get(endpoint, jwt);
-    
-    return UserModel.fromJson(response);
-    }catch(e){
-      
-      if (e is HttpException) {
-        throw HttpException(
-          e.statusCode,
-          e.responseBody
-        );
-      } else {
-        throw Exception('Failed to load user details');
-      }
-    }
-  }
+
   Future<UserModel> updateUser(UserModel user, String? jwt) async {
   try {
-    final endpoint = 'api/v1/usuarios/${user.id}';
+    final endpoint = 'api/v1/users/${user.id}';
     final response = await AppHttpHelper.put(endpoint, user.toJson(), jwt);
     return UserModel.fromJson(response);
   } catch (e) {
@@ -91,7 +93,7 @@ Future<bool> changePassword({
   required String? jwt,
 }) async {
   try {
-    final endpoint = 'api/v1/usuarios/$userId/change-password';
+    final endpoint = 'api/v1/users/$userId/change-password';
 
     final data = {
       'currentPassword': currentPassword,

@@ -1,5 +1,6 @@
 import 'dart:convert';
 import 'package:cocteles_app/data/services/video_service.dart';
+import 'package:cocteles_app/features/stats/controllers/StatsController.dart';
 import 'package:http/http.dart' as http;
 import 'package:cocteles_app/features/perzonalization/controllers/user_controller.dart';
 import 'package:cocteles_app/models/cocktail_model.dart';
@@ -12,6 +13,7 @@ import 'package:image_picker/image_picker.dart';
 class CocktailReviewPage extends StatelessWidget {
   final CocktailModel cocktail;
   const CocktailReviewPage({super.key, required this.cocktail});
+  static StatsController get statsController => Get.find<StatsController>();
 
   @override
   Widget build(BuildContext context) {
@@ -133,6 +135,7 @@ class CocktailReviewPage extends StatelessWidget {
     );
 
     if (response.statusCode == 200) {
+      await statsController.fetchMonthlyStats();
       Get.snackbar("Aprobado", "La receta ha sido aprobada correctamente.");
       await Future.delayed(const Duration(milliseconds: 3000));
       Navigator.pop(context, true);

@@ -23,6 +23,8 @@ class RegisterController extends GetxController {
   final newPassword = TextEditingController();
   RxBool hideCurrentPassword = true.obs; 
   final GlobalKey<FormState> changePassFormKey = GlobalKey<FormState>();
+  final bio = TextEditingController();
+
 
 Future<bool> showCodeVerificationDialog() {
   final codeController = TextEditingController();
@@ -30,16 +32,29 @@ Future<bool> showCodeVerificationDialog() {
 
   Get.defaultDialog(
     title: 'Verificación de correo',
-    content: Column(
-      children: [
-        Text('Ingresa el código que te enviamos al correo.'),
-        TextField(
-          controller: codeController,
-          decoration: const InputDecoration(
-            labelText: 'Código',
-          ),
-        ),
-      ],
+    content: StatefulBuilder(
+      builder: (context, setState) {
+        return Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            const Text('Ingresa el código que te enviamos al correo.'),
+            TextField(
+              controller: codeController,
+              decoration: const InputDecoration(
+                labelText: 'Código',
+              ),
+            ),
+            const SizedBox(height: 10),
+            TextButton(
+              onPressed: () async {
+                await sendVerificationCode();
+                setState(() {}); 
+              },
+              child: const Text("¿No recibiste el código? Reenviar"),
+            ),
+          ],
+        );
+      },
     ),
     textConfirm: 'Verificar',
     textCancel: 'Cancelar',
@@ -186,6 +201,7 @@ void updateProfile(int userId, String currentPhotoUrl, String currentRole) async
       email: email.text.trim(),
       profilePicture: photoUrl,
       role: currentRole,
+      bio: bio.text.trim(),
     );
     final result = await UserRepository.instance.updateUser(updatedUser, jwt);
     final userController = Get.find<UserController>();
@@ -219,6 +235,8 @@ class ProfileController extends GetxController {
     email: '',
     password: '',
     role: '',
+    profile_picture_path: '',
+    bio: '', 
   ).obs;
 
   final isLoading = true.obs;
@@ -229,7 +247,6 @@ class ProfileController extends GetxController {
     super.onInit();
     fetchUserProfile();
   }
-  
 
   void fetchUserProfile() async {
     try {
@@ -245,11 +262,12 @@ class ProfileController extends GetxController {
       final userModel = await UserRepository.instance.getUserDetails(username, jwt);
 
       user.value = UserRegistration(
-      username: userModel.username,
-      email: userModel.email,
-      password: '********',
-      role: userModel.role,
-      profile_picture_path: userModel.profilePicture,
+        username: userModel.username,
+        email: userModel.email,
+        password: '********',
+        role: userModel.role,
+        profile_picture_path: userModel.profilePicture,
+        bio: userModel.bio, 
       );
 
     } catch (e) {
@@ -259,4 +277,3 @@ class ProfileController extends GetxController {
     }
   }
 }
-
