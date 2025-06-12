@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:fl_chart/fl_chart.dart';
 import 'package:get/get.dart';
 import 'package:cocteles_app/features/stats/controllers/StatsController.dart';
-
 class UserStatsPage extends StatelessWidget {
   UserStatsPage({Key? key}) : super(key: key);
 
@@ -10,7 +9,10 @@ class UserStatsPage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final crossAxisCount = MediaQuery.of(context).size.width > 600 ? 2 : 1;
+    final screenWidth = MediaQuery.of(context).size.width;
+    final isWideScreen = screenWidth > 600;
+    final crossAxisCount = isWideScreen ? 2 : 1;
+    final childAspectRatio = isWideScreen ? 1.4 : 0.9;
 
     return Scaffold(
       appBar: AppBar(title: const Text('Estadísticas')),
@@ -27,7 +29,7 @@ class UserStatsPage extends StatelessWidget {
             mainAxisSpacing: 16,
             shrinkWrap: true,
             physics: const NeverScrollableScrollPhysics(),
-            childAspectRatio: 1.2,
+            childAspectRatio: childAspectRatio,
             children: [
               _buildUserStatsCard(context),
               _buildAlcoholPieCard(context),
@@ -41,8 +43,8 @@ class UserStatsPage extends StatelessWidget {
   }
 
   Widget _buildUserStatsCard(BuildContext context) {
-    final screenHeight = MediaQuery.of(context).size.height;
-    final chartHeight = screenHeight * 0.3;
+    final screenWidth = MediaQuery.of(context).size.width;
+    final chartHeight = screenWidth < 600 ? 200.0 : 300.0;
 
     return Card(
       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
@@ -84,33 +86,26 @@ class UserStatsPage extends StatelessWidget {
                         sideTitles: SideTitles(showTitles: true),
                       ),
                       bottomTitles: AxisTitles(
-                        sideTitles: SideTitles(
-                          showTitles: true,
-                          getTitlesWidget: (value, meta) {
-                            int index = value.toInt();
-                            if (index >= controller.stats.length) return const SizedBox.shrink();
-                            final month = controller.stats[index].mes.substring(5);
-                            final monthNames = {
-                              '01': 'ENE',
-                              '02': 'FEB',
-                              '03': 'MAR',
-                              '04': 'ABR',
-                              '05': 'MAY',
-                              '06': 'JUN',
-                              '07': 'JUL',
-                              '08': 'AGO',
-                              '09': 'SEP',
-                              '10': 'OCT',
-                              '11': 'NOV',
-                              '12': 'DIC',
-                            };
-                            return Padding(
-                              padding: const EdgeInsets.only(top: 8.0),
-                              child: Text(monthNames[month] ?? month),
-                            );
-                          },
-                        ),
-                      ),
+  sideTitles: SideTitles(
+    showTitles: true,
+    reservedSize: 30, // más espacio para texto
+    getTitlesWidget: (value, meta) {
+      int index = value.toInt();
+      if (index >= controller.stats.length) return const SizedBox.shrink();
+      final month = controller.stats[index].mes.substring(5);
+      final monthNames = {
+        '01': 'ENE', '02': 'FEB', '03': 'MAR', '04': 'ABR',
+        '05': 'MAY', '06': 'JUN', '07': 'JUL', '08': 'AGO',
+        '09': 'SEP', '10': 'OCT', '11': 'NOV', '12': 'DIC',
+      };
+       return Padding(
+        padding: const EdgeInsets.only(top: 10.0),
+        child: Text(monthNames[month] ?? month),
+      );
+    },
+  ),
+),
+
                     ),
                   ),
                 ),
@@ -121,62 +116,57 @@ class UserStatsPage extends StatelessWidget {
     );
   }
 
-  Widget _buildAlcoholPieCard(BuildContext context) {
-    final screenHeight = MediaQuery.of(context).size.height;
-    final pieHeight = screenHeight * 0.35;
-    final chartHeight = screenHeight * 0.22;
+Widget _buildAlcoholPieCard(BuildContext context) {
+  final screenWidth = MediaQuery.of(context).size.width;
+  final pieHeight = screenWidth < 600 ? 320.0 : 380.0;
 
-    return Card(
-      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
-      elevation: 4,
-      child: Padding(
-        padding: const EdgeInsets.all(16),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            const Center(
-              child: Text(
-                'Alcoholes más populares',
-                style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
-              ),
-            ),
-            const SizedBox(height: 16),
-            if (controller.alcoholStats.isEmpty)
-              const Center(child: Text("No hay datos disponibles."))
-            else
-              SizedBox(
-                height: pieHeight,
-                child: Column(
-                  children: [
-                    SizedBox(
-                      height: chartHeight,
-                      child: PieChart(
-                        PieChartData(
-                          sectionsSpace: 2,
-                          centerSpaceRadius: 40,
-                          sections: _buildPieSections(controller),
-                        ),
-                      ),
+  return Card(
+    shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
+    elevation: 4,
+    child: Padding(
+      padding: const EdgeInsets.all(16),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.center,
+        children: [
+          const Text(
+            'Alcoholes más populares',
+            style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+          ),
+          const SizedBox(height: 16),
+          if (controller.alcoholStats.isEmpty)
+            const Center(child: Text("No hay datos disponibles."))
+          else
+            Column(
+              children: [
+                SizedBox(
+                  height: 220,
+                  child: PieChart(
+                    PieChartData(
+                      sectionsSpace: 2,
+                      centerSpaceRadius: 40,
+                      sections: _buildPieSections(controller),
                     ),
-                    const SizedBox(height: 16),
-                    Wrap(
-                      spacing: 8,
-                      runSpacing: 8,
-                      alignment: WrapAlignment.center,
-                      children: _buildLegend(controller),
-                    ),
-                  ],
+                  ),
                 ),
-              ),
-          ],
-        ),
+                const SizedBox(height: 16),
+                Wrap(
+                  spacing: 12,
+                  runSpacing: 8,
+                  alignment: WrapAlignment.center,
+                  children: _buildLegend(controller),
+                ),
+              ],
+            ),
+        ],
       ),
-    );
-  }
+    ),
+  );
+}
+
 
   Widget _buildTopUsersCard(BuildContext context) {
-    final screenHeight = MediaQuery.of(context).size.height;
-    final boxHeight = screenHeight * 0.35;
+    final screenWidth = MediaQuery.of(context).size.width;
+    final boxHeight = screenWidth < 600 ? 200.0 : 280.0;
 
     return Card(
       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
@@ -241,8 +231,8 @@ class UserStatsPage extends StatelessWidget {
   }
 
   Widget _buildTopLikedRecipesCard(BuildContext context) {
-    final screenHeight = MediaQuery.of(context).size.height;
-    final boxHeight = screenHeight * 0.35;
+    final screenWidth = MediaQuery.of(context).size.width;
+    final boxHeight = screenWidth < 600 ? 200.0 : 280.0;
 
     return Card(
       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
@@ -259,7 +249,6 @@ class UserStatsPage extends StatelessWidget {
               ),
             ),
             const SizedBox(height: 16),
-            const SizedBox(height: 8),
             if (controller.topLikedRecipes.isEmpty)
               const Center(child: Text("No hay recetas con likes aún."))
             else
@@ -285,9 +274,7 @@ class UserStatsPage extends StatelessWidget {
                               children: [
                                 Text(
                                   recipe.name,
-                                  style: const TextStyle(
-                                    fontWeight: FontWeight.bold,
-                                  ),
+                                  style: const TextStyle(fontWeight: FontWeight.bold),
                                 ),
                                 Text(
                                   'por ${recipe.authorUsername}',
@@ -342,34 +329,38 @@ class UserStatsPage extends StatelessWidget {
       final percentage = ((data.total / total) * 100).toStringAsFixed(1);
 
       return PieChartSectionData(
-        color: colors[index % colors.length],
-        value: data.total.toDouble(),
-        title: "$percentage%",
-        radius: 70,
-        titleStyle: const TextStyle(
-          fontSize: 14,
-          fontWeight: FontWeight.bold,
-          color: Colors.white,
-        ),
-      );
+  color: colors[index % colors.length],
+  value: data.total.toDouble(),
+  title: "$percentage%",
+  radius: 70,
+  titlePositionPercentageOffset: 0.55, 
+  titleStyle: const TextStyle(
+    fontSize: 14,
+    fontWeight: FontWeight.bold,
+    color: Colors.white,
+  ),
+);
+
     }).toList();
   }
 
-  List<Widget> _buildLegend(StatsController controller) {
-    final List<Color> colors = [
-      Colors.teal,
-      Colors.deepOrange,
-      Colors.indigo,
-      Colors.pink,
-      Colors.green,
-      Colors.amber,
-      Colors.blueGrey,
-    ];
+ List<Widget> _buildLegend(StatsController controller) {
+  final List<Color> colors = [
+    Colors.teal,
+    Colors.deepOrange,
+    Colors.indigo,
+    Colors.pink,
+    Colors.green,
+    Colors.amber,
+    Colors.blueGrey,
+  ];
 
-    return controller.alcoholStats.asMap().entries.map((entry) {
-      final index = entry.key;
-      final alcohol = entry.value;
-      return Row(
+  return controller.alcoholStats.asMap().entries.map((entry) {
+    final index = entry.key;
+    final alcohol = entry.value;
+    return Container(
+      padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+      child: Row(
         mainAxisSize: MainAxisSize.min,
         children: [
           Container(
@@ -381,9 +372,13 @@ class UserStatsPage extends StatelessWidget {
             ),
           ),
           const SizedBox(width: 6),
-          Text(alcohol.alcoholType),
+          Text(
+            alcohol.alcoholType,
+            style: const TextStyle(fontSize: 12),
+          ),
         ],
-      );
-    }).toList();
-  }
+      ),
+    );
+  }).toList();
+}
 }
