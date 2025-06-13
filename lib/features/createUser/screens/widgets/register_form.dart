@@ -21,7 +21,7 @@ class RegisterForm extends StatelessWidget {
             TextFormField(
               controller: controller.fullName,
               validator: (value) =>
-                  Validator.validateEmptyText('Full Name', value),
+                  Validator.validateEmptyText('Nombre completo', value),
               decoration: const InputDecoration(
                 labelText: "Nombre completo",
                 prefixIcon: Icon(Iconsax.user),
@@ -43,7 +43,7 @@ class RegisterForm extends StatelessWidget {
               () => TextFormField(
                 controller: controller.password,
                 obscureText: controller.hidePassword.value,
-                validator: (value) => Validator.validateLenght(value),
+                validator: (value) => Validator.validatePassword(value),
                 decoration: InputDecoration(
                   labelText: "Contraseña",
                   prefixIcon: const Icon(Iconsax.password_check),

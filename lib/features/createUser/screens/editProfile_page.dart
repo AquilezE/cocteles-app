@@ -1,3 +1,4 @@
+import 'package:cocteles_app/utils/validators/validator.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:cocteles_app/features/createUser/controllers/createUser_controller.dart';
@@ -38,7 +39,7 @@ class EditProfileScreen extends StatelessWidget {
                 controller: controller.fullName,
                 label: "Nombre de usuario",
                 icon: Icons.person,
-                validator: (value) => value!.isEmpty ? 'Campo obligatorio' : null,
+                validator: Validator.validateFullName,
               ),
               const SizedBox(height: 20),
 
