@@ -51,6 +51,7 @@ class CommentsWidget extends StatelessWidget {
 
         TextField(
           controller: controller.commentController,
+          maxLength: 500,
           decoration: const InputDecoration(
             border: OutlineInputBorder(),
             labelText: "Escribe un comentario...",

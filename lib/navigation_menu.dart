@@ -84,11 +84,6 @@ class NavigationController extends GetxController {
           selectedIcon: Icon(Icons.live_tv),
         ),
         const NavigationDestination(
-          icon: Icon(Icons.checklist),
-          label: "Revisión",
-          selectedIcon: Icon(Icons.checklist),
-        ),
-        const NavigationDestination(
           icon: Icon(Icons.logout),
           label: 'Salir',
           selectedIcon: Icon(Icons.logout),
@@ -106,6 +101,11 @@ class NavigationController extends GetxController {
       ];
 
       destinations = [
+        const NavigationDestination(
+          icon: Icon(Icons.home),
+          label: 'Hogar',
+          selectedIcon: Icon(Icons.home_filled),
+        ),
         const NavigationDestination(
           icon: Icon(Icons.bar_chart),
           label: 'Estadísticas',

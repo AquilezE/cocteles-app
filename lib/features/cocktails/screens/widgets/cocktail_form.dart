@@ -3,6 +3,7 @@ import 'package:cocteles_app/features/cocktails/screens/widgets/ingredients_form
 import 'package:cocteles_app/utils/constants/sizes.dart';
 import 'package:cocteles_app/utils/validators/validator.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:get/get.dart';
 import 'package:iconsax/iconsax.dart';
 import 'package:cocteles_app/features/perzonalization/controllers/user_controller.dart';
@@ -25,6 +26,7 @@ class CocktailForm extends StatelessWidget {
 
             TextFormField(
               controller: controller.name,
+              maxLength: 50,
               validator: (value) => Validator.validateEmptyText('Nombre del cóctel', value),
               decoration: const InputDecoration(
                 labelText: "Nombre del cóctel",
@@ -39,6 +41,7 @@ class CocktailForm extends StatelessWidget {
 
             TextFormField(
               controller: controller.creationSteps,
+              maxLength: 250,
               maxLines: 4,
               validator: (value) => Validator.validateEmptyText('Pasos de preparación', value),
               decoration: const InputDecoration(
@@ -50,7 +53,9 @@ class CocktailForm extends StatelessWidget {
 
             TextFormField(
               controller: controller.preparationTime,
+              maxLength: 3,
               keyboardType: TextInputType.number,
+              inputFormatters: [FilteringTextInputFormatter.digitsOnly],
               validator: (value) => Validator.validateEmptyText('Tiempo de preparación', value),
               decoration: const InputDecoration(
                 labelText: "Tiempo (en minutos)",
@@ -71,7 +76,7 @@ class CocktailForm extends StatelessWidget {
               child: DropdownButtonFormField<String>(
                 value: controller.alcoholType.text.isNotEmpty ? controller.alcoholType.text : null,
                 items: [
-                  "Ron Blanco",
+                  "Ron",
                   "Vodka",
                   "Tequila",
                   "Whisky",

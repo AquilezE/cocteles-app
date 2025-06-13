@@ -182,6 +182,7 @@ class CocktailReviewPage extends StatelessWidget {
         title: const Text("Motivo de rechazo"),
         content: TextField(
           controller: controller,
+          maxLength: 250,
           decoration: const InputDecoration(hintText: "Escribe el motivo"),
         ),
         actions: [
