@@ -68,7 +68,7 @@ class LoginForm extends StatelessWidget {
                   width: double.infinity,
                   child: ElevatedButton(
                       onPressed: () => controller.signIn(),
-                      child: const Text("Inicio de sesión"))),
+                      child: const Text("Iniciar sesión"))),
 
               const SizedBox(height: Sizes.spaceBtwItems),
 

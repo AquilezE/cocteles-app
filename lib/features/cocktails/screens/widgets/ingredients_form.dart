@@ -27,6 +27,7 @@ class IngredientInput extends StatelessWidget {
               flex: 2,
               child: TextField(
                 controller: ingredientController,
+                maxLength: 50,
                 decoration: const InputDecoration(
                   labelText: 'Ingrediente',
                   prefixIcon: Icon(Iconsax.flag),
@@ -38,6 +39,7 @@ class IngredientInput extends StatelessWidget {
               flex: 1,
               child: TextField(
                 controller: quantityController,
+                maxLength: 30,
                 decoration: const InputDecoration(
                   labelText: 'Cantidad',
                   prefixIcon: Icon(Iconsax.tag),

@@ -120,7 +120,7 @@ class _IndexCocktailsPageState extends State<IndexCocktailsPage> {
                         labelText: 'Tipo de alcohol',
                         border: OutlineInputBorder(),
                       ),
-                      items: ['Ron Blanco', 'Vodka', 'Tequila', 'Whisky', 'Ginebra','Mezcal']
+                      items: ['Ron', 'Vodka', 'Tequila', 'Whisky', 'Ginebra','Mezcal']
                           .map((type) => DropdownMenuItem(
                                 value: type,
                                 child: Text(type),
