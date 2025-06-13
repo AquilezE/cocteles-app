@@ -214,7 +214,7 @@ void updateProfile(int userId, String currentPhotoUrl, String currentRole) async
     }
 
   } catch (e) {
-    Get.snackbar("Error", "Error al actualizar el perfil: $e", snackPosition: SnackPosition.BOTTOM);
+    Get.snackbar("Error", "Error al actualizar el perfil:", snackPosition: SnackPosition.BOTTOM);
   }
 }
 

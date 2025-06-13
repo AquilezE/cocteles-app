@@ -26,7 +26,26 @@ class NavigationMenu extends StatelessWidget {
           onDestinationSelected: (index) {
             final label = controller.destinations[index].label;
             if (label == 'Salir') {
-              controller.logout();
+              showDialog(
+                context: context,
+                builder: (context) => AlertDialog(
+                  title: const Text("Confirmación"),
+                  content: const Text("¿Está seguro de que desea cerrar sesión?"),
+                  actions: [
+                    TextButton(
+                      onPressed: () => Navigator.of(context).pop(), 
+                      child: const Text("No"),
+                    ),
+                    ElevatedButton(
+                      onPressed: () {
+                        Navigator.of(context).pop(); 
+                        controller.logout();
+                      },
+                      child: const Text("Sí"),
+                    ),
+                  ],
+                ),
+              );
             } else {
               controller.selectedIndex.value = index;
             }
@@ -54,7 +73,6 @@ class NavigationController extends GetxController {
         IndexCocktailsPage(),
         ProfileScreen(),
         IndexLivestreamPage(),
-        LogoutScreen(),
       ];
 
       destinations = [
@@ -92,12 +110,11 @@ class NavigationController extends GetxController {
     } else {
       screens = [
         PlaceholderScreen(title: 'Hogar'),
-        UserStatsPage(),        
-        IndexCocktailsPage(),   
-        ProfileScreen(),        
-        IndexLivestreamPage(),  
+        UserStatsPage(),
+        IndexCocktailsPage(),
+        ProfileScreen(),
+        IndexLivestreamPage(),
         CocktailApprovalPage(),
-        LogoutScreen(),         
       ];
 
       destinations = [
@@ -154,14 +171,5 @@ class PlaceholderScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Center(child: Text('Pantalla $title'));
-  }
-}
-
-class LogoutScreen extends StatelessWidget {
-  @override
-  Widget build(BuildContext context) {
-    return const Center(
-      child: Text('Saliendo...'),
-    );
   }
 }
