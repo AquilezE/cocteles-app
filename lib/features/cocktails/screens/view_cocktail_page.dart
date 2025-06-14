@@ -4,11 +4,9 @@ import 'package:cocteles_app/utils/constants/sizes.dart';
 import 'package:flutter/material.dart';
 import 'package:cocteles_app/models/cocktail_model.dart';
 import 'package:cocteles_app/utils/constants/spacing_styles.dart';
-import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:iconsax/iconsax.dart';
 import 'package:get/get.dart';
 import 'package:cocteles_app/features/cocktails/screens/widgets/video_player_widget.dart';
-import 'package:http/http.dart' as http;
 import 'package:image_picker/image_picker.dart';
 import 'package:cocteles_app/features/cocktails/screens/widgets/comments_cocktail.dart';
 
@@ -112,7 +110,7 @@ class CocktailDetailPage extends StatelessWidget {
     detailController.fetchComments(cocktail.id!, jwt);
     final userId = UserController.instance.user.value.id;
     final videoNotifier = ValueNotifier<XFile?>(null);
-    final videoFuture = cocktail != null ? detailController.getVideoDownloadedFuture(cocktail!.videoUrl!, jwt) : Future.value(null);
+    final videoFuture = detailController.getVideoDownloadedFuture(cocktail.videoUrl!, jwt);
     detailController.checkIfLiked(cocktail.id!, userId!);
 
     return Column(

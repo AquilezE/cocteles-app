@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:cocteles_app/features/cocktails/controllers/cocktail_controller_view.dart';
-import 'package:cocteles_app/features/perzonalization/controllers/user_controller.dart';
 
 class CommentsWidget extends StatelessWidget {
   final int cocktailId;
@@ -10,8 +9,6 @@ class CommentsWidget extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final controller = Get.find<CocktailDetailController>();
-    final username = UserController.instance.user.value.username;
-    final profilePic = UserController.instance.user.value.profilePicture;
 
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
@@ -26,7 +23,6 @@ class CommentsWidget extends StatelessWidget {
           if (commentList.isEmpty) {
             return const Text("Sé el primero en comentar");
           }
-          print("Renderizando comentarios: ${commentList.length}");
 
           return Column(
             children: commentList.map((comment) {
