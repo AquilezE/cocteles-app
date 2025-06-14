@@ -61,17 +61,6 @@ class CocktailController extends GetxController {
     }
   }
 
-  void clearForm() {
-    name.clear();
-    creationSteps.clear();
-    preparationTime.clear();
-    imageUrl.clear();
-    alcoholType.clear();
-    isNonAlcoholic.value = false;
-    selectedIngredients.clear();
-    manualIngredients.clear();
-  }
-
   Future<String?> uploadImage(File file) async {
     final uri = Uri.parse('${dotenv.env['BASE_URL']}/api/v1/upload');
     final request = http.MultipartRequest('POST', uri)
@@ -84,7 +73,6 @@ class CocktailController extends GetxController {
       final baseUrl = '${dotenv.env['BASE_URL']}';
       return "$baseUrl${data['imageUrl']}";
     } else {
-      print('Error subiendo imagen: ${response.statusCode}');
       return null;
     }
   }
@@ -106,9 +94,8 @@ class CocktailController extends GetxController {
       try {
         final uploadedUrl = await CocktailRepository.instance.uploadImage(file);
         imageUrl.text = uploadedUrl ?? '';
-        print("Imagen subida correctamente: $uploadedUrl");
       } catch (e) {
-        Get.snackbar("Error", "No se pudo subir la imagen: $e");
+        Get.snackbar("Error", "Ocurrió un error al subir la imagen, por favor intente más tarde.");
       }
     }
   }
@@ -126,7 +113,6 @@ class CocktailController extends GetxController {
 
       video.value = picked;
       initializeVideoController();
-      print("Video seleccionado: ${video.value!.path}");
     }
   }
 
@@ -153,7 +139,7 @@ class CocktailController extends GetxController {
     }
 
     if (!isNonAlcoholic.value && alcoholType.text.trim().isEmpty) {
-      Get.snackbar("Error", "Debes seleccionar el tipo de alcohol si el cóctel no es sin alcohol.");
+      Get.snackbar("Error", "Debes seleccionar un tipo de alcohol o si el cóctel es sin alcohol.");
       isLoading.value = false;
       return;
     }
@@ -180,7 +166,7 @@ class CocktailController extends GetxController {
       await CocktailRepository.instance.createCocktail(cocktail, jwt);
       await CocktailRepository.instance.uploadVideo(video.value!, videoUrlString, jwt);
 
-      Get.snackbar("Éxito", "La receta ha sido enviada a revisión por un moderador.");
+      Get.snackbar("Éxito", "La receta de cóctel ha sido enviada a revisión. Recibirás una respuesta por correo tan pronto como sea posible.");
       await Future.delayed(const Duration(seconds: 3));
 
       if (Navigator.of(context).canPop()) {
@@ -189,7 +175,7 @@ class CocktailController extends GetxController {
         Get.offAllNamed('/');
       }
     } catch (e) {
-      Get.snackbar("Error", e.toString());
+      Get.snackbar("Error", "Ocurrió un error al publicar la receta, por favor intente más tarde.");
       await Future.delayed(const Duration(seconds: 3));
     } finally {
       isLoading.value = false;

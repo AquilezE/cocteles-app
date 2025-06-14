@@ -12,7 +12,7 @@ class CocktailApprovalController extends GetxController {
       final cocktails = await CocktailRepository.instance.getPendingCocktails(jwt);
       pendingCocktails.assignAll(cocktails);
     } catch (e) {
-      Get.snackbar("Error", "No se pudieron cargar los cócteles pendientes");
+      Get.snackbar("Error", "No se pudieron cargar los cócteles pendientes de revisión, por favor intente más tarde.");
     } finally {
       isLoading.value = false;
     }

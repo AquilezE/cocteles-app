@@ -136,7 +136,7 @@ class CocktailReviewPage extends StatelessWidget {
 
     if (response.statusCode == 200) {
       await statsController.fetchMonthlyStats();
-      Get.snackbar("Aprobado", "La receta ha sido aprobada correctamente.");
+      Get.snackbar("Aprobado", "La receta de cóctel ha sido aprobada correctamente.");
       await Future.delayed(const Duration(milliseconds: 3000));
       Navigator.pop(context, true);
     }
@@ -165,7 +165,7 @@ class CocktailReviewPage extends StatelessWidget {
     );
 
     if (response.statusCode == 200) {
-      Get.snackbar("Rechazado", "El cóctel ha sido rechazado correctamente.");
+      Get.snackbar("Rechazado", "La receta de cóctel ha sido rechazada correctamente.");
       await Future.delayed(const Duration(milliseconds: 3000));
       Navigator.pop(context, true);
     }

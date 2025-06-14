@@ -19,7 +19,7 @@ class CocktailApprovalPage extends StatelessWidget {
         if (controller.isLoading.value) return const Center(child: CircularProgressIndicator());
 
         if (controller.pendingCocktails.isEmpty) {
-          return const Center(child: Text('No hay cócteles pendientes'));
+          return const Center(child: Text('No hay cócteles pendientes de revisón.'));
         }
 
         return ListView.builder(
@@ -43,7 +43,7 @@ class CocktailApprovalPage extends StatelessWidget {
                       await controller.fetchPendingCocktails(jwt);
                     }
                   } catch (e) {
-                    Get.snackbar("Error", "No se pudo cargar el detalle del cóctel");
+                    Get.snackbar("Error", "Ocurrió un error al cargar la información del cóctel, por favor intente más tarde.");
                   }
                 },
                 child: Row(

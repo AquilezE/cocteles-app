@@ -9,14 +9,17 @@ import 'package:image_picker/image_picker.dart';
 
 class CocktailDetailController extends GetxController {
   RxList<CommentModel> comments = <CommentModel>[].obs;
-  static UserController get userController => Get.find<UserController>();
-  CocktailModel? cocktail;
   RxList<CocktailModel> cocktails = <CocktailModel>[].obs;
+
+  static UserController get userController => Get.find<UserController>();
+  static StatsController get statsController => Get.find<StatsController>();
+
+  XFile? video;
+  CocktailModel? cocktail;
   RxBool hasLiked = false.obs;
+
   late String videoUrl;
   var isLoading = false.obs;
-  XFile? video;
-  static StatsController get statsController => Get.find<StatsController>();
   final commentController = TextEditingController();
 
   Future<XFile> getVideoDownloadedFuture(String videoUrl, String jwt) async {
@@ -29,7 +32,7 @@ class CocktailDetailController extends GetxController {
       final jwt = UserController.instance.userCredentials!.jwt;
       cocktails.value = await CocktailRepository.instance.getAcceptedCocktails(jwt);
     } catch (e) {
-      Get.snackbar("Error", "No se pudieron cargar los cócteles aceptados");
+      Get.snackbar("Error", "Ocurrió un error al cargar los cócteles, por favor intente más tarde.");
     } finally {
       isLoading.value = false;
     }
@@ -54,7 +57,7 @@ class CocktailDetailController extends GetxController {
         jwt: jwt,
       );
     } catch (e) {
-      Get.snackbar("Error", "No se pudieron cargar los cócteles con filtros");
+      Get.snackbar("Error", "Ocurrió un error al buscar los cócteles, por favor intente más tarde.");
     } finally {
       isLoading.value = false;
     }
@@ -64,7 +67,7 @@ class CocktailDetailController extends GetxController {
     try {
       hasLiked.value = await CocktailRepository.instance.hasUserLikedCocktail(cocktailId, userId);
     } catch (e) {
-      Get.snackbar("Error", "No se pudo verificar si le diste like");
+      Get.snackbar("Error", "Estamos teniendo problemas, por favor vuelve más tarde.");
     }
   }
 
@@ -82,19 +85,27 @@ class CocktailDetailController extends GetxController {
       cocktails.refresh();
       await statsController.fetchTopLikedRecipes();
     } catch (e) {
-      Get.snackbar("Error", "No se pudo cambiar el like: $e");
+      Get.snackbar("Error", "Estamos teniendo problemas, por favor vuelve más tarde.");
     }
   }
 
   Future<void> fetchComments(int cocktailId, String jwt) async {
-    print('Fetching comments for cocktail $cocktailId with jwt: $jwt');
     try {
       final data = await CocktailRepository.instance.getCommentsByCocktailId(cocktailId, jwt);
-      print('Comentarios recibidos: ${data.length}');
       comments.value = data;
     } catch (e) {
-      print('Error al recuperar comentarios: $e');
-      Get.snackbar("Error", "No se pudieron cargar los comentarios");
+      Get.snackbar("Error", "Ocurrió un error al cargar los comentarios, por favor intente más tarde.");
+    }
+  }
+
+  Future<void> deleteCocktail(int cocktailId) async {
+    final jwt = UserController.instance.userCredentials!.jwt;
+    try {
+      await CocktailRepository.instance.deleteCocktail(cocktailId, jwt);
+      Get.back();
+      Get.snackbar("Éxito", "El cóctel ha sido eliminado correctamente.");
+    } catch (e) {
+      Get.snackbar("Error", "Ocurrió un error al eliminar el cóctel, por favor intente más tarde.");
     }
   }
 
@@ -117,7 +128,7 @@ class CocktailDetailController extends GetxController {
       await fetchComments(cocktailId, jwt);
       Get.snackbar("Éxito", "Comentario enviado");
     } catch (e) {
-      Get.snackbar("Error", "No se pudo enviar el comentario: $e");
+      Get.snackbar("Error", "Ocurrió un error al enviar el comentario, por favor intente más tarde.");
     }
   }
 }

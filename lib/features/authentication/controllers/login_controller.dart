@@ -116,7 +116,7 @@ void onInit() async {
       Get.to(() => NavigationMenu());
     } catch (e) {
       print('Error: $e');
-      Get.snackbar('Error', 'Ocurrió un error al intenter inicar sesión');
+      Get.snackbar('Error', 'Ocurrió un error al intentar iniciar sesión.');
     }
   }
 }

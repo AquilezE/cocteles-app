@@ -122,6 +122,10 @@ class CocktailDetailPage extends StatelessWidget {
         Text(cocktail.name ?? 'N/A', style: const TextStyle(fontSize: 16)),
 
         const SizedBox(height: 16),
+        Text("Autor", style: Theme.of(context).textTheme.titleMedium),
+        Text(cocktail.authorName ?? 'No especificado'),
+
+        const SizedBox(height: 16),
         Text("Pasos de preparación", style: Theme.of(context).textTheme.titleMedium),
         Text(cocktail.creationSteps ?? 'N/A'),
 
@@ -212,50 +216,29 @@ class CocktailDetailPage extends StatelessWidget {
       ],
     );
   }
-  
-  void _confirmAndDelete(BuildContext context, int cocktailId) async {
-    final jwt = UserController.instance.userCredentials!.jwt;
 
-    final confirm = await showDialog<bool>(
+  void _confirmAndDelete(BuildContext context, int cocktailId) {
+    showDialog(
       context: context,
-      builder: (context) => AlertDialog(
+      builder: (ctx) => AlertDialog(
         title: const Text("Confirmar eliminación"),
-        content: const Text("¿Estás seguro de que deseas eliminar este cóctel? Esta acción no se puede deshacer."),
+        content: const Text("¿Estás seguro de que quieres eliminar este cóctel? Esta acción no se puede deshacer."),
         actions: [
           TextButton(
-            onPressed: () => Navigator.pop(context, false),
             child: const Text("Cancelar"),
+            onPressed: () => Navigator.of(ctx).pop(),
           ),
-          TextButton(
-            onPressed: () => Navigator.pop(context, true),
-            child: const Text("Eliminar", style: TextStyle(color: Colors.red)),
+          ElevatedButton(
+            style: ElevatedButton.styleFrom(backgroundColor: Colors.red),
+            child: const Text("Eliminar"),
+            onPressed: () {
+              Navigator.of(ctx).pop();
+              final detailController = Get.find<CocktailDetailController>();
+              detailController.deleteCocktail(cocktailId);
+            },
           ),
         ],
       ),
     );
-
-    if (confirm != true) return;
-
-    final url = '${dotenv.env['BASE_URL']}/api/v1/cocktails/$cocktailId';
-    final response = await http.delete(
-      Uri.parse(url),
-      headers: {
-        'Authorization': 'Bearer $jwt',
-      },
-    );
-
-    if (response.statusCode == 200) {
-      Get.snackbar("Éxito", "El cóctel ha sido eliminado correctamente.");
-    
-      await Future.delayed(const Duration(milliseconds: 3000));
-    
-      if (Navigator.of(context).canPop()) {
-        Navigator.of(context).pop();
-      } else {
-        Get.offAllNamed('/');
-      }
-    } else {
-      Get.snackbar("Error", "No se pudo eliminar el cóctel.");
-    }
   }
 }

@@ -6,7 +6,6 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:cocteles_app/features/createUser/screens/createUser_page.dart';
 
-
 class LoginForm extends StatelessWidget {
   const LoginForm({super.key});
 
@@ -21,7 +20,6 @@ class LoginForm extends StatelessWidget {
               vertical: Sizes.spaceBtwSections),
           child: Column(
             children: [
-              // Email
               TextFormField(
                 controller: controller.email,
                 validator: (value) =>  Validator.validateEmail(value),
@@ -55,7 +53,6 @@ class LoginForm extends StatelessWidget {
                     ],
                   ),
 
-                  //AQUI SI SE PUEDE PONER EL OLVIDASTE TU CONTRASEÑA
                   TextButton(
                       onPressed: () => Get.to(() => const ()),
                       child: const Text("¿Olvidaste tu contraseña?")),
@@ -63,7 +60,6 @@ class LoginForm extends StatelessWidget {
               ),
               const SizedBox(height: Sizes.spaceBtwSections),
 
-              // Sign In Button
               SizedBox(
                   width: double.infinity,
                   child: ElevatedButton(

@@ -3,7 +3,6 @@ import 'package:cocteles_app/features/cocktails/controllers/cocktail_controller.
 import 'package:cocteles_app/features/cocktails/screens/widgets/video_preview_widget.dart';
 import 'package:flutter/material.dart';
 import 'package:cocteles_app/features/cocktails/screens/widgets/cocktail_form.dart';
-import 'package:cocteles_app/features/authentication/screens/widgets/login_header_mobile.dart';
 import 'package:cocteles_app/utils/constants/spacing_styles.dart';
 import 'package:get/get.dart';
 import 'package:iconsax/iconsax.dart';
@@ -203,7 +202,6 @@ class CreateCocktailPage extends StatelessWidget {
               ],
             );
           }),
-
           const SizedBox(height: 24),
           const CocktailForm(),
         ],

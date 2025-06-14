@@ -1,5 +1,7 @@
+import 'package:cocteles_app/data/repositories/cocktails/cocktail_repository.dart';
 import 'package:cocteles_app/features/cocktails/screens/create_cocktail_page.dart';
 import 'package:cocteles_app/features/cocktails/screens/view_cocktail_page.dart';
+import 'package:cocteles_app/features/perzonalization/controllers/user_controller.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:cocteles_app/features/cocktails/controllers/cocktail_controller_view.dart';
@@ -187,7 +189,15 @@ class CocktailCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return GestureDetector(
-      onTap: () => Get.to(() => CocktailDetailPage(cocktail: cocktail)),
+      onTap: () async {
+        final jwt = UserController.instance.userCredentials!.jwt;
+        try {
+          final fullCocktail = await CocktailRepository.instance.getFullCocktailById(cocktail.id!, jwt);
+          Get.to(() => CocktailDetailPage(cocktail: fullCocktail));
+        } catch (e) {
+          Get.snackbar("Error", "Ocurrió un error al cargar la información del cóctel, por favor intente más tarde.");
+        }
+      },
       child: Card(
         elevation: 4,
         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),

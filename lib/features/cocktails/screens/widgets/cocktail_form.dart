@@ -58,7 +58,7 @@ class CocktailForm extends StatelessWidget {
               inputFormatters: [FilteringTextInputFormatter.digitsOnly],
               validator: (value) => Validator.validateEmptyText('Tiempo de preparación', value),
               decoration: const InputDecoration(
-                labelText: "Tiempo (en minutos)",
+                labelText: "Tiempo de preparación (en minutos)",
                 prefixIcon: Icon(Iconsax.timer),
               ),
             ),
