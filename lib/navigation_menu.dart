@@ -68,28 +68,22 @@ class NavigationController extends GetxController {
   NavigationController(UserCredentials userCredentials) {
     if (userCredentials.role == 'user') {
       screens = [
-        PlaceholderScreen(title: 'Hogar'),
-        UserStatsPage(),
         IndexCocktailsPage(),
+        UserStatsPage(),
         ProfileScreen(),
         IndexLivestreamPage(),
       ];
 
       destinations = [
         const NavigationDestination(
-          icon: Icon(Icons.home),
-          label: 'Hogar',
-          selectedIcon: Icon(Icons.home_filled),
+          icon: Icon(Icons.menu_book),
+          label: 'Recetas',
+          selectedIcon: Icon(Icons.menu_book),
         ),
         const NavigationDestination(
           icon: Icon(Icons.bar_chart),
           label: 'Estadísticas',
           selectedIcon: Icon(Icons.bar_chart),
-        ),
-        const NavigationDestination(
-          icon: Icon(Icons.menu_book),
-          label: 'Recetas',
-          selectedIcon: Icon(Icons.menu_book),
         ),
         const NavigationDestination(
           icon: Icon(Icons.face),
@@ -109,9 +103,8 @@ class NavigationController extends GetxController {
       ];
     } else {
       screens = [
-        PlaceholderScreen(title: 'Hogar'),
-        UserStatsPage(),
         IndexCocktailsPage(),
+        UserStatsPage(),
         ProfileScreen(),
         IndexLivestreamPage(),
         CocktailApprovalPage(),
@@ -119,19 +112,14 @@ class NavigationController extends GetxController {
 
       destinations = [
         const NavigationDestination(
-          icon: Icon(Icons.home),
-          label: 'Hogar',
-          selectedIcon: Icon(Icons.home_filled),
+          icon: Icon(Icons.menu_book),
+          label: 'Recetas',
+          selectedIcon: Icon(Icons.menu_book),
         ),
         const NavigationDestination(
           icon: Icon(Icons.bar_chart),
           label: 'Estadísticas',
           selectedIcon: Icon(Icons.bar_chart),
-        ),
-        const NavigationDestination(
-          icon: Icon(Icons.menu_book),
-          label: 'Recetas',
-          selectedIcon: Icon(Icons.menu_book),
         ),
         const NavigationDestination(
           icon: Icon(Icons.face),

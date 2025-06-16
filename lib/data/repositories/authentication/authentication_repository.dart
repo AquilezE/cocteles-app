@@ -66,12 +66,11 @@ class AuthenticationRepository extends GetxController {
       var response = await AppHttpHelper.post(endpoint, body, null);
       return UserCredentials.fromJson(response);
     } catch (e) {
-      print(e);
       if (e is HttpException) {
         throw HttpException(e.statusCode, e.responseBody);
       } else {
         Get.offAll(() => const LoginPage());
-        throw Exception('Failed to login');
+        throw Exception('Ocurrió un error al intentar iniciar sesión.');
       }
     }
   }

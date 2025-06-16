@@ -12,7 +12,7 @@ class ProfileScreen extends StatelessWidget {
     final controller = Get.put(UserController());
 
     return Scaffold(
-      appBar: AppBar(title: const Text('Perfil de usuario')),
+      appBar: AppBar(title: const Text('Perfil de usuario'), automaticallyImplyLeading: false),
       body: Obx(() {
         final user = controller.user.value;
         if (user == null) {

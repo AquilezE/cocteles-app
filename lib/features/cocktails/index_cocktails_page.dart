@@ -46,7 +46,7 @@ class _IndexCocktailsPageState extends State<IndexCocktailsPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: const Text("Cócteles")),
+      appBar: AppBar(title: const Text("Cócteles"), automaticallyImplyLeading: false),
       floatingActionButton: FloatingActionButton(
         tooltip: 'Crear cóctel',
         child: const Icon(Icons.add),

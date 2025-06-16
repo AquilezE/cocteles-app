@@ -9,7 +9,6 @@ class LiveSessionsRepository {
   Future<List<LivestreamModel>> fetchActive() async {
     const _base = 'api/v1/livesession';
     final raw = await AppHttpHelper.get('$_base?active=true', null);
-    // Extrae la lista de dentro del map
     print(raw);
     final list = (raw['sessions'] as List<dynamic>);
     return list
@@ -17,7 +16,6 @@ class LiveSessionsRepository {
         .toList();
   }
 
-  /// Llama POST /api/live_sessions con { user_id, title }
   Future<LivestreamModel> create({
     required String title,
   }) async {

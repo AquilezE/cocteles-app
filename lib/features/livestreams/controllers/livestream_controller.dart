@@ -34,8 +34,7 @@ class LivestreamController extends GetxController {
       livestreams.insert(0, session);
       return session;
     } catch (e) {
-      print(e);
-      Get.snackbar('Error', 'No se pudo crear la transmisión');
+      Get.snackbar('Error', '$e');
       return null;
     } finally {
       isLoading.value = false;

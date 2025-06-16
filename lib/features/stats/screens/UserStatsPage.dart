@@ -15,7 +15,7 @@ class UserStatsPage extends StatelessWidget {
     final childAspectRatio = isWideScreen ? 1.4 : 0.9;
 
     return Scaffold(
-      appBar: AppBar(title: const Text('Estadísticas')),
+      appBar: AppBar(title: const Text('Estadísticas'), automaticallyImplyLeading: false),
       body: Obx(() {
         if (controller.isLoading.value) {
           return const Center(child: CircularProgressIndicator());

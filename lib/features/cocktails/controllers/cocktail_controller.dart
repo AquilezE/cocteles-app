@@ -175,7 +175,7 @@ class CocktailController extends GetxController {
         Get.offAllNamed('/');
       }
     } catch (e) {
-      Get.snackbar("Error", "Ocurrió un error al publicar la receta, por favor intente más tarde.");
+      Get.snackbar("Error", '$e');
       await Future.delayed(const Duration(seconds: 3));
     } finally {
       isLoading.value = false;

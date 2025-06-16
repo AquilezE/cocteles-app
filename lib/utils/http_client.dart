@@ -20,12 +20,24 @@ class AppHttpHelper{
   headers['Authorization'] = 'Bearer $jwt';
 }
 
+    http.Response response;
 
-    final response = await http.get(
+    try{
+       response = await http.get(
         Uri.parse('$baseUrl/$endpoint'),
         headers: headers
     );
     
+    }on SocketException catch (_, e) {
+        response = http.Response(
+          json.encode({
+            'message': 'No pudimos establecer una conexión con nuestro servidor, inténtalo de nuevo más tarde.',
+          }),
+          500
+        );
+      } 
+
+   
     return _handleResponse(response);
   }
 static Future<dynamic> getList(String endpoint, String? jwt) async {
@@ -33,67 +45,120 @@ static Future<dynamic> getList(String endpoint, String? jwt) async {
     headers['Authorization'] = 'Bearer $jwt';
   }
 
-  final response = await http.get(
+  http.Response response;
+
+  try{
+    response = await http.get(
     Uri.parse('$baseUrl/$endpoint'),
     headers: headers,
   );
+  } on SocketException catch (_, e) {
+        response = http.Response(
+          json.encode({
+            'message': 'No pudimos establecer una conexión con nuestro servidor, inténtalo de nuevo más tarde.',
+          }),
+          500
+        );
+      } 
+
 
   return _handleResponseDynamic(response);
 }
 
   static Future<Map<String, dynamic>> post(String endpoint, dynamic data, String? jwt) async {
-      print('la url es$baseUrl');
-      print('POST: $baseUrl/$endpoint');
-      print('DATA: $data');
-      
       if (jwt != null) {
-      headers['Authorization'] = 'Bearer $jwt';
+        headers['Authorization'] = 'Bearer $jwt';
       }
 
+      http.Response response;
 
-      final response = await http.post(Uri.parse('$baseUrl/$endpoint'),
+      try{
+          response = await http.post(Uri.parse('$baseUrl/$endpoint'),
           headers: headers,
           body: json.encode(data)
       );
-
-      return _handleResponse(response);
-  }
-  static Future<Map<String, dynamic>> patch(String endpoint, dynamic data, String? jwt) async {
-  if (jwt != null) {
-    headers['Authorization'] = 'Bearer $jwt';
-  }
-
-  final response = await http.patch(
-    Uri.parse('$baseUrl/$endpoint'),
-    headers: headers,
-    body: json.encode(data),
-  );
-
-  return _handleResponse(response);
-}
-
-
-    static Future<Map<String, dynamic>> put(String endpoint, dynamic data, String? jwt) async {
-
-    if (jwt != null) headers['Authorization'] = 'Bearer $jwt';
-
-    final response = await http.put(
-        Uri.parse('$baseUrl/$endpoint'),
-        headers: headers,
-        body: json.encode(data)
-    );
+      } on SocketException catch (_, e) {
+        response = http.Response(
+          json.encode({
+            'message': 'No pudimos establecer una conexión con nuestro servidor, inténtalo de nuevo más tarde.',
+          }),
+          500
+        );
+      } 
 
     return _handleResponse(response);
   }
 
-    static Future<Map<String, dynamic>> delete(String endpoint, String? jwt) async {
+  static Future<Map<String, dynamic>> patch(String endpoint, dynamic data, String? jwt) async {
+    if (jwt != null) {
+      headers['Authorization'] = 'Bearer $jwt';
+    }
+
+    http.Response response;
+
+    try{
+      response = await http.patch(
+        Uri.parse('$baseUrl/$endpoint'),
+        headers: headers,
+        body: json.encode(data),
+      );
+    } on SocketException catch (_, e) {
+        response = http.Response(
+          json.encode({
+            'message': 'No pudimos establecer una conexión con nuestro servidor, inténtalo de nuevo más tarde.',
+          }),
+          500
+        );
+      } 
+  
+  return _handleResponse(response);
+}
+
+
+  static Future<Map<String, dynamic>> put(String endpoint, dynamic data, String? jwt) async {
 
     if (jwt != null) headers['Authorization'] = 'Bearer $jwt';
 
-    final response = await http.delete(
+    http.Response response;
+    try{
+      response = await http.put(
+        Uri.parse('$baseUrl/$endpoint'),
+        headers: headers,
+        body: json.encode(data)
+    );
+    } on SocketException catch (_, e) {
+        response = http.Response(
+          json.encode({
+            'message': 'No pudimos establecer una conexión con nuestro servidor, inténtalo de nuevo más tarde.',
+          }),
+          500
+        );
+      } 
+
+
+    return _handleResponse(response);
+  }
+
+  static Future<Map<String, dynamic>> delete(String endpoint, String? jwt) async {
+
+    if (jwt != null) headers['Authorization'] = 'Bearer $jwt';
+
+    http.Response response;
+    try{
+      response = await http.delete(
         Uri.parse('$baseUrl/$endpoint'),
       headers: headers
     );
+    } on SocketException catch (_, e) {
+        response = http.Response(
+          json.encode({
+            'message': 'No pudimos establecer una conexión con nuestro servidor, inténtalo de nuevo más tarde.',
+          }),
+          500
+        );
+      } 
+
+    
     return _handleResponse(response);
   }
 
@@ -118,7 +183,7 @@ static Future<dynamic> getList(String endpoint, String? jwt) async {
     }
   }
 
-    static Future<Map<String, dynamic>> postFile(String endpoint, String fileName, File file, String? jwt) async {
+  static Future<Map<String, dynamic>> postFile(String endpoint, String fileName, File file, String? jwt) async {
     var uri = Uri.parse('$baseUrl/$endpoint');
     var request = http.MultipartRequest('POST', uri);
 

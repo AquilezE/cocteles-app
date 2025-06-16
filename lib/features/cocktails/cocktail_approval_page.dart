@@ -14,7 +14,7 @@ class CocktailApprovalPage extends StatelessWidget {
     controller.fetchPendingCocktails(jwt);
 
     return Scaffold(
-      appBar: AppBar(title: const Text('Revisión de cócteles')),
+      appBar: AppBar(title: const Text('Revisión de cócteles'), automaticallyImplyLeading: false),
       body: Obx(() {
         if (controller.isLoading.value) return const Center(child: CircularProgressIndicator());
 

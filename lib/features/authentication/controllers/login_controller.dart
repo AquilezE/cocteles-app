@@ -83,15 +83,6 @@ void onInit() async {
       String emailString = email.text.trim();
       String passwordString = password.text.trim();
 
-/*
-      bool response = await AuthenticationRepository.instance.checkEmailVerified(emailString);
-
-      if (!response) {
-        Get.to(() => VerifyEmailScreen(email: email.text.trim()));
-        return;
-      }
-*/
-
       if (rememberMe.value) {
         localStorage.write("EMAIL_RECUERDAME", emailString);
         localStorage.write("PASSWORD_RECUERDAME", passwordString);
@@ -115,8 +106,7 @@ void onInit() async {
 
       Get.to(() => NavigationMenu());
     } catch (e) {
-      print('Error: $e');
-      Get.snackbar('Error', 'Ocurrió un error al intentar iniciar sesión.');
+      Get.snackbar('Error', '$e');
     }
   }
 }
