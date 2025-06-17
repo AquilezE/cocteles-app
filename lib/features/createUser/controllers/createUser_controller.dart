@@ -25,61 +25,67 @@ class RegisterController extends GetxController {
   final GlobalKey<FormState> changePassFormKey = GlobalKey<FormState>();
   final bio = TextEditingController();
 
-
-Future<bool> showCodeVerificationDialog() {
+Future<bool> showCodeVerificationDialog() async {
   final codeController = TextEditingController();
   final completer = Completer<bool>();
 
-  Get.defaultDialog(
-    title: 'Verificación de correo',
-    content: StatefulBuilder(
-      builder: (context, setState) {
-        return Column(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            const Text('Ingresa el código que te enviamos al correo.'),
-            TextField(
-              controller: codeController,
-              decoration: const InputDecoration(
-                labelText: 'Código',
-              ),
-            ),
-            const SizedBox(height: 10),
-            TextButton(
-              onPressed: () async {
-                await sendVerificationCode();
-                setState(() {}); 
-              },
-              child: const Text("¿No recibiste el código? Reenviar"),
-            ),
-          ],
-        );
-      },
-    ),
-    textConfirm: 'Verificar',
-    textCancel: 'Cancelar',
-    onConfirm: () async {
-      bool success = await verifyCode(codeController.text.trim());
-      if (success) {
-        Get.back();
-        if (!completer.isCompleted) {
-          completer.complete(true);
-        }
-      } else {
-        Get.snackbar("Error", "Código incorrecto o expirado", snackPosition: SnackPosition.BOTTOM);
-      }
-    },
-    onCancel: () {
-      if (!completer.isCompleted) {
-        completer.complete(false);
-      }
-      Get.back();
-    },
+  await showDialog(
+    context: Get.context!,
     barrierDismissible: false,
+    builder: (context) {
+      return StatefulBuilder(
+        builder: (context, setState) {
+          return AlertDialog(
+            title: const Text('Verificación de correo'),
+            content: Column(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                const Text('Ingresa el código que te enviamos al correo.'),
+                TextField(
+                  controller: codeController,
+                  decoration: const InputDecoration(labelText: 'Código'),
+                ),
+                const SizedBox(height: 10),
+                TextButton(
+                  onPressed: () async {
+                    await sendVerificationCode();
+                    setState(() {}); 
+                  },
+                  child: const Text("¿No recibiste el código? Reenviar"),
+                ),
+              ],
+            ),
+            actions: [
+              TextButton(
+                onPressed: () {
+                  if (!completer.isCompleted) completer.complete(false);
+                  Navigator.of(context).pop();
+                },
+                child: const Text('Cancelar'),
+              ),
+              ElevatedButton(
+                onPressed: () async {
+                  bool success = await verifyCode(codeController.text.trim());
+                  if (success) {
+                    if (!completer.isCompleted) completer.complete(true);
+                    Navigator.of(context).pop();
+                  } else {
+                    Get.snackbar("Error", "Código incorrecto o expirado",
+                        snackPosition: SnackPosition.BOTTOM);
+                  }
+                },
+                child: const Text('Verificar'),
+              ),
+            ],
+          );
+        },
+      );
+    },
   );
 
   return completer.future;
 }
+
 
   Future<void> sendVerificationCode() async {
     try {
@@ -165,23 +171,36 @@ Future<bool> changeUserPassword(int userId) async {
 
 
 void pickImage() async {
+  final allowedExtensions = ['jpg', 'jpeg', 'png'];
+
   if (Platform.isMacOS || Platform.isWindows || Platform.isLinux) {
-    final XTypeGroup imageGroup = XTypeGroup(
+    final imageGroup = XTypeGroup(
       label: 'images',
-      extensions: ['jpg', 'jpeg', 'png'],
+      extensions: allowedExtensions,
     );
     final XFile? pickedFile = await openFile(acceptedTypeGroups: [imageGroup]);
     if (pickedFile != null) {
-      selectedImage.value = File(pickedFile.path);
+      final extension = pickedFile.name.split('.').last.toLowerCase();
+      if (allowedExtensions.contains(extension)) {
+        selectedImage.value = File(pickedFile.path);
+      } else {
+        Get.snackbar("Formato no válido", "Selecciona una imagen JPG o PNG");
+      }
     }
   } else {
     final picker = ImagePicker();
     final pickedFile = await picker.pickImage(source: ImageSource.gallery);
     if (pickedFile != null) {
-      selectedImage.value = File(pickedFile.path);
+      final extension = pickedFile.name.split('.').last.toLowerCase();
+      if (allowedExtensions.contains(extension)) {
+        selectedImage.value = File(pickedFile.path);
+      } else {
+        Get.snackbar("Formato no válido", "Selecciona una imagen JPG o PNG");
+      }
     }
   }
 }
+
 
 void updateProfile(int userId, String currentPhotoUrl, String currentRole) async {
   if (!formKey.currentState!.validate()) return;

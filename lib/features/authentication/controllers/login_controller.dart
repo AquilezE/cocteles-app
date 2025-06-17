@@ -71,10 +71,7 @@ void onInit() async {
     try {
       final isConnected = await NetworkManager.instance.isConnected();
 
-      if (!isConnected) {
-        Get.snackbar('Sin internet', 'Por favor revisa tu conexión a internet');
-        return;
-      }
+      
 
       if (!formKey.currentState!.validate()) {
         return;

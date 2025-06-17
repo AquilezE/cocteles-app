@@ -22,9 +22,26 @@ class RegisterForm extends StatelessWidget {
               controller: controller.fullName,
               validator: (value) =>
                   Validator.validateEmptyText('Nombre completo', value),
-              decoration: const InputDecoration(
-                labelText: "Nombre completo",
-                prefixIcon: Icon(Iconsax.user),
+              decoration: InputDecoration(
+                label: RichText(
+                  text: TextSpan(
+                    text: 'Nombre completo',
+                    style: TextStyle(
+                      color: Colors.grey[700],
+                      fontSize: 16,
+                    ),
+                    children: const [
+                      TextSpan(
+                        text: ' *',
+                        style: TextStyle(
+                          color: Colors.red,
+                          fontWeight: FontWeight.bold,
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+                prefixIcon: const Icon(Iconsax.user),
               ),
             ),
             const SizedBox(height: Sizes.spaceBtwInputFields),
@@ -32,9 +49,26 @@ class RegisterForm extends StatelessWidget {
             TextFormField(
               controller: controller.email,
               validator: (value) => Validator.validateEmail(value),
-              decoration: const InputDecoration(
-                labelText: "Correo",
-                prefixIcon: Icon(Iconsax.direct),
+              decoration: InputDecoration(
+                label: RichText(
+                  text: TextSpan(
+                    text: 'Correo',
+                    style: TextStyle(
+                      color: Colors.grey[700],
+                      fontSize: 16,
+                    ),
+                    children: const [
+                      TextSpan(
+                        text: ' *',
+                        style: TextStyle(
+                          color: Colors.red,
+                          fontWeight: FontWeight.bold,
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+                prefixIcon: const Icon(Iconsax.direct),
               ),
             ),
             const SizedBox(height: Sizes.spaceBtwInputFields),
@@ -45,7 +79,24 @@ class RegisterForm extends StatelessWidget {
                 obscureText: controller.hidePassword.value,
                 validator: (value) => Validator.validatePassword(value),
                 decoration: InputDecoration(
-                  labelText: "Contraseña",
+                  label: RichText(
+                    text: TextSpan(
+                      text: 'Contraseña',
+                      style: TextStyle(
+                        color: Colors.grey[700],
+                        fontSize: 16,
+                      ),
+                      children: const [
+                        TextSpan(
+                          text: ' *',
+                          style: TextStyle(
+                            color: Colors.red,
+                            fontWeight: FontWeight.bold,
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
                   prefixIcon: const Icon(Iconsax.password_check),
                   suffixIcon: IconButton(
                     onPressed: () => controller.hidePassword.value =
@@ -143,4 +194,3 @@ class RegisterForm extends StatelessWidget {
     );
   }
 }
-
