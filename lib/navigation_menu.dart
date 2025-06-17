@@ -2,6 +2,7 @@ import 'package:cocteles_app/features/authentication/models/user_credentials.dar
 import 'package:cocteles_app/features/authentication/screens/login_page.dart';
 import 'package:cocteles_app/features/cocktails/cocktail_approval_page.dart';
 import 'package:cocteles_app/features/cocktails/index_cocktails_page.dart';
+import 'package:cocteles_app/features/livestreams/controllers/livestream_controller.dart';
 import 'package:cocteles_app/features/livestreams/screens/index_livestream_page.dart';
 import 'package:cocteles_app/features/perzonalization/controllers/user_controller.dart';
 import 'package:flutter/material.dart';
@@ -33,12 +34,12 @@ class NavigationMenu extends StatelessWidget {
                   content: const Text("¿Está seguro de que desea cerrar sesión?"),
                   actions: [
                     TextButton(
-                      onPressed: () => Navigator.of(context).pop(), 
+                      onPressed: () => Navigator.of(context).pop(),
                       child: const Text("No"),
                     ),
                     ElevatedButton(
                       onPressed: () {
-                        Navigator.of(context).pop(); 
+                        Navigator.of(context).pop();
                         controller.logout();
                       },
                       child: const Text("Sí"),
@@ -48,6 +49,11 @@ class NavigationMenu extends StatelessWidget {
               );
             } else {
               controller.selectedIndex.value = index;
+
+              if (label == 'Directos') {
+                final livestreamController = Get.find<LivestreamController>();
+                livestreamController.fetchSessions();
+              }
             }
           },
           backgroundColor: Colors.white,

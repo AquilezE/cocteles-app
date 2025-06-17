@@ -242,7 +242,7 @@ class ChatMobile extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
-      height: 400, // o ajusta según prefieras
+      height: 400, 
       padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
       child: Column(
         children: [
