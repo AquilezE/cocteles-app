@@ -55,7 +55,7 @@ class CreateCocktailPage extends StatelessWidget {
                             child: Image.file(imageFile, fit: BoxFit.contain),
                           )
                         : const Center(
-                            child: Text("Sin imagen seleccionada", style: TextStyle(fontSize: 16, color: Colors.black54)),
+                            child: Text("Sin imagen seleccionada *", style: TextStyle(fontSize: 16, color: Colors.black54)),
                           ),
                   );
                 }),
@@ -93,7 +93,7 @@ class CreateCocktailPage extends StatelessWidget {
                         color: Colors.white,
                       ),
                       child: const Center(
-                        child: Text("Sin video seleccionado", style: TextStyle(fontSize: 16, color: Colors.black54)),
+                        child: Text("Sin video seleccionado *", style: TextStyle(fontSize: 16, color: Colors.black54)),
                       ),
                     );
                   }

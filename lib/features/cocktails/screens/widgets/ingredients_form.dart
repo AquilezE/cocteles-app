@@ -18,7 +18,7 @@ class IngredientInput extends StatelessWidget {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        const Text("Ingredientes", style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold)),
+        const Text("Ingredientes *", style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold)),
         const SizedBox(height: 8),
 
         Row(

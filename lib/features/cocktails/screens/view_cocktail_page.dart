@@ -105,13 +105,14 @@ class CocktailDetailPage extends StatelessWidget {
   
   Widget _buildCocktailInfo(BuildContext context) {
     final detailController = Get.find<CocktailDetailController>();
-    detailController.cocktail = cocktail; 
     final jwt = UserController.instance.userCredentials!.jwt;
+
+    detailController.fetchCocktailById(cocktail.id!, jwt);
+    detailController.checkIfLiked(cocktail.id!, UserController.instance.user.value.id!);
     detailController.fetchComments(cocktail.id!, jwt);
-    final userId = UserController.instance.user.value.id;
+
     final videoNotifier = ValueNotifier<XFile?>(null);
     final videoFuture = detailController.getVideoDownloadedFuture(cocktail.videoUrl!, jwt);
-    detailController.checkIfLiked(cocktail.id!, userId!);
 
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
@@ -193,7 +194,8 @@ class CocktailDetailPage extends StatelessWidget {
               ),
               onPressed: () => detailController.toggleLike(cocktail.id!, jwt),
             ),
-            Text("${cocktail.likes ?? 0} likes", style: Theme.of(context).textTheme.titleMedium),
+            Text("${detailController.cocktail?.likes ?? 0} likes",
+              style: Theme.of(context).textTheme.titleMedium),
           ],
         )),
 

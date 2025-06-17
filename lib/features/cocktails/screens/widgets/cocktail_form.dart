@@ -29,7 +29,7 @@ class CocktailForm extends StatelessWidget {
               maxLength: 50,
               validator: (value) => Validator.validateEmptyText('Nombre del cóctel', value),
               decoration: const InputDecoration(
-                labelText: "Nombre del cóctel",
+                labelText: "Nombre del cóctel *",
                 prefixIcon: Icon(Iconsax.cup),
               ),
             ),
@@ -45,7 +45,7 @@ class CocktailForm extends StatelessWidget {
               maxLines: 4,
               validator: (value) => Validator.validateEmptyText('Pasos de preparación', value),
               decoration: const InputDecoration(
-                labelText: "Pasos de preparación",
+                labelText: "Pasos de preparación *",
                 prefixIcon: Icon(Iconsax.note_text),
               ),
             ),
@@ -58,7 +58,7 @@ class CocktailForm extends StatelessWidget {
               inputFormatters: [FilteringTextInputFormatter.digitsOnly],
               validator: (value) => Validator.validateEmptyText('Tiempo de preparación', value),
               decoration: const InputDecoration(
-                labelText: "Tiempo de preparación (en minutos)",
+                labelText: "Tiempo de preparación (en minutos) *",
                 prefixIcon: Icon(Iconsax.timer),
               ),
             ),

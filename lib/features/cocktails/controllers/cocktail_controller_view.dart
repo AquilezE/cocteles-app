@@ -25,6 +25,16 @@ class CocktailDetailController extends GetxController {
   Future<XFile> getVideoDownloadedFuture(String videoUrl, String jwt) async {
     return CocktailRepository.instance.downloadVideo(videoUrl, jwt);
   }
+  
+  Future<void> fetchCocktailById(int cocktailId, String jwt) async {
+    try {
+      final data = await CocktailRepository.instance.getCocktailById(cocktailId, jwt);
+      cocktail = data;
+      cocktails.refresh();
+    } catch (e) {
+      Get.snackbar("Error", "No se pudo cargar el cóctel. Intenta más tarde.");
+    }
+  }
 
   Future<void> fetchAcceptedCocktails() async {
     isLoading.value = true;
