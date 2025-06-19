@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:cocteles_app/features/stats/model/AlcoholStats.dart';
 import 'package:cocteles_app/features/stats/model/TopLikedRecipe.dart';
 import 'package:cocteles_app/features/stats/model/TopUserStats.dart';
@@ -10,10 +12,20 @@ class StatsController extends GetxController {
   final isLoading = false.obs;
   final alcoholStats = <AlcoholStats>[].obs;
   final topLikedRecipes = <TopLikedRecipe>[].obs;
+   Timer? _timer;
 
   @override
   void onInit() {
     super.onInit();
+    fetchMonthlyStats();
+    fetchAlcoholStats();
+    fetchTopUsersStats();
+    fetchTopLikedRecipes();
+    _timer = Timer.periodic(const Duration(seconds: 30), (_) {
+      fetchAllStats();
+    });
+  }
+  void fetchAllStats() {
     fetchMonthlyStats();
     fetchAlcoholStats();
     fetchTopUsersStats();
@@ -32,7 +44,11 @@ Future<void> fetchTopUsersStats() async {
     isLoading.value = false;
   }
 }
-
+ @override
+  void onClose() {
+    _timer?.cancel(); 
+    super.onClose();
+  }
 
 Future<void> fetchAlcoholStats() async {
   try {
